@@ -2,31 +2,50 @@
 
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export default function TopNav() {
   const { data: session } = useSession();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const [isFixed, setIsFixed] = useState(false);
+  const navRef = useRef(null);
 
-  // Get the first letter of the user's email or a default icon when not logged in
+  // Toggle fixed position based on scroll position
+  useEffect(() => {
+    const menuHeight = navRef.current ? navRef.current.offsetHeight : 60; // Default to 60px if undefined
+    const scrollThreshold = menuHeight + 5; // Set threshold a little more than the menu height
+
+    const handleScroll = () => {
+      if (window.scrollY > scrollThreshold) {
+        //setIsFixed(true);
+      } else {
+        // setIsFixed(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const userInitial = session?.user?.email
     ? session.user.email[0].toUpperCase()
     : null;
 
   return (
-    <nav className="bg-gray-800 text-white p-4">
+    <nav
+      className={`bg-gray-800 text-white p-4 ${
+        isFixed ? "fixed top-0 w-full shadow-md z-50" : ""
+      }`}
+    >
       <div className="container mx-auto flex justify-between items-center">
-        {/* Logo or Brand */}
         <div className="text-lg font-semibold">
           <Link href="/" className="hover:text-gray-300">
             MyWebsite
           </Link>
         </div>
 
-        {/* Right Section: Profile Icon and Hamburger Menu */}
         <div className="flex items-center space-x-4 sm:hidden">
-          {/* Profile Icon */}
           <div className="relative">
             <button
               onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
@@ -52,7 +71,6 @@ export default function TopNav() {
               )}
             </button>
 
-            {/* Profile Dropdown Menu */}
             {isProfileDropdownOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-gray-700 text-white rounded-lg shadow-lg py-2">
                 {session ? (
@@ -86,7 +104,6 @@ export default function TopNav() {
             )}
           </div>
 
-          {/* Hamburger Menu Icon */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="focus:outline-none"
@@ -108,7 +125,6 @@ export default function TopNav() {
           </button>
         </div>
 
-        {/* Desktop Menu Links */}
         <div className="hidden sm:flex space-x-4">
           <Link href="/" className="hover:text-gray-300">
             Home
@@ -121,7 +137,6 @@ export default function TopNav() {
           </Link>
         </div>
 
-        {/* User Info and Sign Out for Desktop */}
         <div className="hidden sm:flex items-center space-x-4">
           {session ? (
             <>
@@ -147,7 +162,6 @@ export default function TopNav() {
         </div>
       </div>
 
-      {/* Mobile Menu (expanded when isMobileMenuOpen is true) */}
       {isMobileMenuOpen && (
         <div className="sm:hidden bg-gray-700 text-white p-4 space-y-4">
           <Link href="/" className="block hover:text-gray-300">
