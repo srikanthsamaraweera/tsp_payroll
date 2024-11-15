@@ -14,11 +14,11 @@ export default function TopNav() {
   // Toggle fixed position based on scroll position
   useEffect(() => {
     const menuHeight = navRef.current ? navRef.current.offsetHeight : 60; // Default to 60px if undefined
-    const scrollThreshold = menuHeight + 5; // Set threshold a little more than the menu height
+    const scrollThreshold = menuHeight + 5; // Set threshold slightly more than the menu height
 
     const handleScroll = () => {
       if (window.scrollY > scrollThreshold) {
-        //setIsFixed(true);
+        // setIsFixed(true);
       } else {
         // setIsFixed(false);
       }
@@ -34,18 +34,22 @@ export default function TopNav() {
 
   return (
     <nav
+      ref={navRef}
       className={`bg-gray-800 text-white p-4 ${
         isFixed ? "fixed top-0 w-full shadow-md z-50" : ""
       }`}
     >
       <div className="container mx-auto flex justify-between items-center">
+        {/* Branding */}
         <div className="text-lg font-semibold">
           <Link href="/" className="hover:text-gray-300">
-            MyWebsite
+            TSP PAYROLL
           </Link>
         </div>
 
-        <div className="flex items-center space-x-4 sm:hidden">
+        {/* Mobile Menu and Hamburger */}
+        <div className="flex items-center space-x-4 lg:hidden">
+          {/* Profile Dropdown */}
           <div className="relative">
             <button
               onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
@@ -104,6 +108,7 @@ export default function TopNav() {
             )}
           </div>
 
+          {/* Hamburger Menu */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="focus:outline-none"
@@ -125,19 +130,21 @@ export default function TopNav() {
           </button>
         </div>
 
-        <div className="hidden sm:flex space-x-4">
+        {/* Desktop Menu */}
+        <div className="hidden lg:flex space-x-4">
           <Link href="/" className="hover:text-gray-300">
             Home
           </Link>
-          <Link href="/about" className="hover:text-gray-300">
-            About
+          <Link href="/view-employees" className="hover:text-gray-300">
+            Employee View/Manage
           </Link>
-          <Link href="/contact" className="hover:text-gray-300">
-            Contact
+          <Link href="/admin-dashboard" className="hover:text-gray-300">
+            Dashboard
           </Link>
         </div>
 
-        <div className="hidden sm:flex items-center space-x-4">
+        {/* Desktop Profile Info */}
+        <div className="hidden lg:flex items-center space-x-4">
           {session ? (
             <>
               <p className="truncate max-w-[200px]">
@@ -162,16 +169,17 @@ export default function TopNav() {
         </div>
       </div>
 
+      {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="sm:hidden bg-gray-700 text-white p-4 space-y-4">
+        <div className="lg:hidden bg-gray-700 text-white p-4 space-y-4">
           <Link href="/" className="block hover:text-gray-300">
             Home
           </Link>
-          <Link href="/about" className="block hover:text-gray-300">
-            About
+          <Link href="/view-employees" className="block hover:text-gray-300">
+            View Employees
           </Link>
-          <Link href="/contact" className="block hover:text-gray-300">
-            Contact
+          <Link href="/admin-dashboard" className="block hover:text-gray-300">
+            Dashboard
           </Link>
         </div>
       )}

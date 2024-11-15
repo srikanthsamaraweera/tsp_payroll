@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrashAlt, faEdit } from "@fortawesome/free-solid-svg-icons";
+import { faTrashAlt, faEdit, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function EmployeeList() {
-    // Retrieve session data
-    const { data: session } = useSession();
+    const { data: session, status } = useSession();
     const [employees, setEmployees] = useState([]);
     const [error, setError] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
@@ -16,11 +17,24 @@ export default function EmployeeList() {
     const [search, setSearch] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
     const [editModalOpen, setEditModalOpen] = useState(false);
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [editEmployee, setEditEmployee] = useState(null);
+    const [employeeToDelete, setEmployeeToDelete] = useState(null);
+    const [randomNumber, setRandomNumber] = useState(null);
+    const [inputNumber, setInputNumber] = useState("");
     const itemsPerPage = 6;
+    const router = useRouter();
+    const [loading, setLoading] = useState(true);
 
-    // Debugging log to ensure session data is valid
-    console.log("Session data on frontend:", session);
+    useEffect(() => {
+        if (status === "loading") return; // Wait for session to load
+        if (!session) {
+            // Redirect if user is not logged in
+            router.push("/login");
+        } else {
+            setLoading(false);
+        }
+    }, [session, status, router]);
 
     useEffect(() => {
         const fetchEmployees = async () => {
@@ -46,6 +60,8 @@ export default function EmployeeList() {
 
     const handleEdit = (employee) => {
         if (session?.user?.account_type === "admin") {
+            setError('')
+            setSuccessMessage('')
             setEditEmployee(employee);
             setEditModalOpen(true);
         } else {
@@ -83,6 +99,52 @@ export default function EmployeeList() {
         }
     };
 
+    const handleDelete = (employee) => {
+        if (session?.user?.account_type === "admin") {
+            setError('')
+            setSuccessMessage('')
+            setEmployeeToDelete(employee);
+            const random = Math.floor(Math.random() * 90000000) + 10000000; // Generates a random 4-digit number
+            setRandomNumber(random);
+            setDeleteModalOpen(true);
+        } else {
+            alert("Only admins can delete records.");
+        }
+    };
+
+    const confirmDelete = async () => {
+        if (parseInt(inputNumber) !== randomNumber) {
+            setError("Incorrect number entered. Please try again.");
+            return;
+        }
+
+        try {
+            const response = await fetch("/api/delemployee", {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ id: employeeToDelete.id }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || "Failed to delete employee");
+            }
+
+            setSuccessMessage("Record deleted successfully!");
+            setEmployees((prevEmployees) =>
+                prevEmployees.filter((emp) => emp.id !== employeeToDelete.id)
+            );
+            setDeleteModalOpen(false);
+
+            setTimeout(() => setSuccessMessage(""), 3000);
+        } catch (err) {
+            setError(err.message || "An error occurred. Please try again.");
+        }
+    };
+
     const goToNextPage = () => {
         if (currentPage < totalPages) setCurrentPage(currentPage + 1);
     };
@@ -100,25 +162,39 @@ export default function EmployeeList() {
     return (
         <div className="min-h-screen bg-gray-100 p-6">
             <h2 className="text-3xl font-bold text-center mb-6">Employee List</h2>
+            <div className="grid md:grid-cols-[90%_10%] justify-center items-stretch bg-gray-100">
+                <div id="searchbar" className="border-solid text-center md:text-left">
+                    {/* Search Bar */}
+                    <form onSubmit={handleSearch} className="flex justify-center mb-6">
+                        <input
+                            type="text"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            placeholder="Search employees..."
+                            className="w-full max-w-md px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        <button
+                            type="submit"
+                            className="px-4 py-2 bg-blue-500 text-white rounded-r-md hover:bg-blue-600"
+                        >
+                            Search
+                        </button>
+                    </form>
+                </div>
+                <div id="searchbar" className="border-solid text-center mb-5 md:mb-0 md:text-right">
+                    <Link
+                        href="/addemployee"
+                        target="_blank" // Opens the link in a new tab/window
+                        className="inline-flex items-center justify-center px-6 py-3 bg-blue-500  text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition duration-300"
+                    >
+                        <FontAwesomeIcon icon={faPlus} className="mr-2" />
+                        <span className="text-xs">Add</span>
+                    </Link>
+                </div>
+            </div>
 
-            {/* Search Bar */}
-            <form onSubmit={handleSearch} className="flex justify-center mb-6">
-                <input
-                    type="text"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Search employees..."
-                    className="w-full max-w-md px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <button
-                    type="submit"
-                    className="px-4 py-2 bg-blue-500 text-white rounded-r-md hover:bg-blue-600"
-                >
-                    Search
-                </button>
-            </form>
 
-            {error && <p className="text-red-500 text-center">{error}</p>}
+            {/* {error && <p className="text-red-500 text-center">{error}</p>} */}
             {successMessage && (
                 <p className="text-green-500 text-center">{successMessage}</p>
             )}
@@ -138,7 +214,7 @@ export default function EmployeeList() {
                             <button onClick={() => handleEdit(employee)} aria-label="Edit">
                                 <FontAwesomeIcon icon={faEdit} className="text-blue-500 hover:text-blue-700" />
                             </button>
-                            <button onClick={() => handleDelete(employee.id)} aria-label="Delete">
+                            <button onClick={() => handleDelete(employee)} aria-label="Delete">
                                 <FontAwesomeIcon icon={faTrashAlt} className="text-red-500 hover:text-red-700" />
                             </button>
                         </div>
@@ -166,6 +242,7 @@ export default function EmployeeList() {
                 </button>
             </div>
 
+            {/* Edit Modal */}
             {editModalOpen && (
                 <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
                     <div className="bg-white p-8 rounded-md shadow-lg max-w-lg w-full relative">
@@ -231,6 +308,38 @@ export default function EmployeeList() {
                         ) : (
                             <p className="text-red-500 text-center">Only admins can edit records.</p>
                         )}
+                    </div>
+                </div>
+            )}
+
+            {/* Delete Confirmation Modal */}
+            {deleteModalOpen && (
+                <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
+                    <div className="bg-white p-8 rounded-md shadow-lg max-w-md w-full">
+                        <h3 className="text-xl font-semibold mb-4 text-center">Confirm Deletion</h3>
+                        {error && <p className="text-red-500 text-center">{error}</p>}
+                        <p className="text-gray-700 mb-4">
+                            Please enter the number <span className="font-bold">{randomNumber}</span> below to confirm deletion:
+                        </p>
+                        <input
+                            type="number"
+                            value={inputNumber}
+                            onChange={(e) => setInputNumber(e.target.value)}
+                            placeholder="Enter number"
+                            className="w-full p-3 border rounded-md mb-4"
+                        />
+                        <button
+                            onClick={confirmDelete}
+                            className="w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600"
+                        >
+                            Confirm
+                        </button>
+                        <button
+                            onClick={() => setDeleteModalOpen(false)}
+                            className="mt-3 text-gray-500 hover:underline text-center w-full"
+                        >
+                            Cancel
+                        </button>
                     </div>
                 </div>
             )}
