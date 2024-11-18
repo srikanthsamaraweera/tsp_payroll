@@ -182,14 +182,20 @@ export default function EmployeeList() {
                     </form>
                 </div>
                 <div id="searchbar" className="border-solid text-center mb-5 md:mb-0 md:text-right">
-                    <Link
-                        href="/addemployee"
-                        target="_blank" // Opens the link in a new tab/window
-                        className="inline-flex items-center justify-center px-6 py-3 bg-blue-500  text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition duration-300"
-                    >
-                        <FontAwesomeIcon icon={faPlus} className="mr-2" />
-                        <span className="text-xs">Add</span>
-                    </Link>
+                    {session?.user?.account_type === "admin" ? (
+                        <>
+                            <Link
+                                href="/addemployee"
+                                target="_blank" // Opens the link in a new tab/window
+                                className="inline-flex items-center justify-center px-6 py-3 bg-blue-500  text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition duration-300"
+                            >
+                                <FontAwesomeIcon icon={faPlus} className="mr-2" />
+                                <span className="text-xs">Add</span>
+                            </Link>
+                        </>
+                    ) : ""}
+
+
                 </div>
             </div>
 

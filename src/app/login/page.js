@@ -16,11 +16,11 @@ export default function LoginPage() {
         const result = await signIn("credentials", {
             redirect: false,
             email,
-            password
+            password,
         });
 
         if (result.ok) {
-            router.push("/"); // Redirect to home or another protected page
+            router.push("/admin-dashboard"); // Redirect to home or another protected page
         } else {
             setError("Invalid email, password, or account is disabled.");
         }
