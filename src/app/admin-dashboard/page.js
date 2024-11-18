@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation"; // Use next/navigation for App Router
 import { useSession } from "next-auth/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUsers } from "@fortawesome/free-solid-svg-icons";
+import { faCoins, faUsers } from "@fortawesome/free-solid-svg-icons";
 
 export default function Dashboard() {
     const { data: session, status } = useSession();
@@ -63,6 +63,21 @@ export default function Dashboard() {
                         View Employees
                     </h2>
                     <p className="text-gray-500 text-sm">Manage and view employee details</p>
+                </div>
+
+                {/* pay rate Button */}
+                <div
+                    onClick={() => router.push("/pay-rates")}
+                    className="group cursor-pointer bg-white shadow-md hover:shadow-xl transition-shadow duration-300 rounded-lg p-6 w-full max-w-xs text-center"
+                >
+                    <FontAwesomeIcon
+                        icon={faCoins}
+                        className="text-blue-500 group-hover:text-blue-600 transition-colors duration-300 text-4xl mb-4"
+                    />
+                    <h2 className="text-xl font-semibold text-gray-700 group-hover:text-blue-600 transition-colors duration-300">
+                        Pay Rates
+                    </h2>
+                    <p className="text-gray-500 text-sm">Manage and view Pay Rates</p>
                 </div>
 
                 {/* Future Links or Features Placeholder */}
