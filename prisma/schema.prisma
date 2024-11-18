@@ -24,3 +24,10 @@ model user {
   enabled      Int    @default(0)
   password     String @db.VarChar(450)
 }
+
+model pay_rates {
+  id          Int    @id @default(autoincrement())
+  description String @db.VarChar(100)
+  pay_rate    Float  @default(0)
+  pay_code    Int    @unique(map: "pay_code_UNIQUE")
+}
