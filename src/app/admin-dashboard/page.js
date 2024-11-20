@@ -10,6 +10,7 @@ export default function Dashboard() {
     const { data: session, status } = useSession();
     const router = useRouter();
     const [loading, setLoading] = useState(true);
+    const [buttonLoading, setButtonLoading] = useState(null); // State for button loading
 
     useEffect(() => {
         if (status === "loading") return; // Wait for session to load
@@ -21,23 +22,17 @@ export default function Dashboard() {
         }
     }, [session, status, router]);
 
+    const handleButtonClick = (path) => {
+        setButtonLoading(path); // Set loading for the clicked button
+        router.push(path);
+    };
+
     if (loading || status === "loading") {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-100">
                 <p className="text-lg text-gray-600">Loading...</p>
             </div>
         );
-    }
-
-    // Restrict access to only admin users
-    if (session?.user?.account_type === "admin") {
-        // return (
-        //     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        //         <p className="text-red-500 font-bold text-xl">
-        //             Only admins have access to this feature.
-        //         </p>
-        //     </div>
-        // );
     }
 
     return (
@@ -52,32 +47,46 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
                 {/* Employee View Button */}
                 <div
-                    onClick={() => router.push("/view-employees")}
-                    className="group cursor-pointer bg-white shadow-md hover:shadow-xl transition-shadow duration-300 rounded-lg p-6 w-full max-w-xs text-center"
+                    onClick={() => handleButtonClick("/view-employees")}
+                    className={`group cursor-pointer bg-white shadow-md hover:shadow-xl transition-shadow duration-300 rounded-lg p-6 w-full max-w-xs text-center ${buttonLoading === "/view-employees" ? "opacity-50 pointer-events-none" : ""
+                        }`}
                 >
-                    <FontAwesomeIcon
-                        icon={faUsers}
-                        className="text-blue-500 group-hover:text-blue-600 transition-colors duration-300 text-4xl mb-4"
-                    />
-                    <h2 className="text-xl font-semibold text-gray-700 group-hover:text-blue-600 transition-colors duration-300">
-                        View Employees
-                    </h2>
-                    <p className="text-gray-500 text-sm">Manage and view employee details</p>
+                    {buttonLoading === "/view-employees" ? (
+                        <p className="text-blue-500 text-lg font-semibold">Loading...</p>
+                    ) : (
+                        <>
+                            <FontAwesomeIcon
+                                icon={faUsers}
+                                className="text-blue-500 group-hover:text-blue-600 transition-colors duration-300 text-4xl mb-4"
+                            />
+                            <h2 className="text-xl font-semibold text-gray-700 group-hover:text-blue-600 transition-colors duration-300">
+                                View Employees
+                            </h2>
+                            <p className="text-gray-500 text-sm">Manage and view employee details</p>
+                        </>
+                    )}
                 </div>
 
-                {/* pay rate Button */}
+                {/* Pay Rate Button */}
                 <div
-                    onClick={() => router.push("/pay-rates")}
-                    className="group cursor-pointer bg-white shadow-md hover:shadow-xl transition-shadow duration-300 rounded-lg p-6 w-full max-w-xs text-center"
+                    onClick={() => handleButtonClick("/pay-rates")}
+                    className={`group cursor-pointer bg-white shadow-md hover:shadow-xl transition-shadow duration-300 rounded-lg p-6 w-full max-w-xs text-center ${buttonLoading === "/pay-rates" ? "opacity-50 pointer-events-none" : ""
+                        }`}
                 >
-                    <FontAwesomeIcon
-                        icon={faCoins}
-                        className="text-blue-500 group-hover:text-blue-600 transition-colors duration-300 text-4xl mb-4"
-                    />
-                    <h2 className="text-xl font-semibold text-gray-700 group-hover:text-blue-600 transition-colors duration-300">
-                        Pay Rates
-                    </h2>
-                    <p className="text-gray-500 text-sm">Manage and view Pay Rates</p>
+                    {buttonLoading === "/pay-rates" ? (
+                        <p className="text-blue-500 text-lg font-semibold">Loading...</p>
+                    ) : (
+                        <>
+                            <FontAwesomeIcon
+                                icon={faCoins}
+                                className="text-blue-500 group-hover:text-blue-600 transition-colors duration-300 text-4xl mb-4"
+                            />
+                            <h2 className="text-xl font-semibold text-gray-700 group-hover:text-blue-600 transition-colors duration-300">
+                                Pay Rates
+                            </h2>
+                            <p className="text-gray-500 text-sm">Manage and view Pay Rates</p>
+                        </>
+                    )}
                 </div>
 
                 {/* Future Links or Features Placeholder */}
