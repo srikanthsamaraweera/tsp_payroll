@@ -1,0 +1,5 @@
+Linux start script
+NODE_ENV=development node foo.js
+
+the equivalent in Windows would be:
+SET NODE_ENV=development & node foo.js

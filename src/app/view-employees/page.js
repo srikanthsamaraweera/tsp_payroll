@@ -38,6 +38,7 @@ export default function EmployeeList() {
 
     useEffect(() => {
         const fetchEmployees = async () => {
+            setLoading('Loading...')
             try {
                 const response = await fetch(
                     `/api/viewemployees?page=${currentPage}&itemsPerPage=${itemsPerPage}&search=${encodeURIComponent(
@@ -53,6 +54,7 @@ export default function EmployeeList() {
                 console.error("Error fetching employees:", err);
                 setError("Could not load employee data. Please try again later.");
             }
+            setLoading('')
         };
 
         fetchEmployees();
@@ -70,6 +72,7 @@ export default function EmployeeList() {
     };
 
     const handleSave = async () => {
+        setLoading('Talking to server...')
         try {
             const response = await fetch("/api/editemployee", {
                 method: "PUT",
@@ -97,16 +100,20 @@ export default function EmployeeList() {
         } catch (err) {
             setError(err.message || "An error occurred. Please try again.");
         }
+        setLoading('')
     };
 
     const handleDelete = (employee) => {
+
         if (session?.user?.account_type === "admin") {
+            setLoading('Talking to server...')
             setError('')
             setSuccessMessage('')
             setEmployeeToDelete(employee);
             const random = Math.floor(Math.random() * 90000000) + 10000000; // Generates a random 4-digit number
             setRandomNumber(random);
             setDeleteModalOpen(true);
+            setLoading('')
         } else {
             alert("Only admins can delete records.");
         }
@@ -119,6 +126,7 @@ export default function EmployeeList() {
         }
 
         try {
+            setLoading('Talking to server...')
             const response = await fetch("/api/delemployee", {
                 method: "DELETE",
                 headers: {
@@ -132,7 +140,7 @@ export default function EmployeeList() {
             if (!response.ok) {
                 throw new Error(data.error || "Failed to delete employee");
             }
-
+            setLoading('')
             setSuccessMessage("Record deleted successfully!");
             setEmployees((prevEmployees) =>
                 prevEmployees.filter((emp) => emp.id !== employeeToDelete.id)
@@ -204,8 +212,9 @@ export default function EmployeeList() {
             {successMessage && (
                 <p className="text-green-500 text-center">{successMessage}</p>
             )}
-
+            {loading ? <div className="mb-4 p-4 bg-blue-100 rounded-lg"><p className="animate-bounce text-xl text-center text-blue-600">{loading}</p></div> : ""}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
                 {employees.map((employee) => (
                     <div key={employee.id} className="bg-white rounded-lg shadow-md p-6 relative">
                         <h3 className="text-xl font-semibold mb-2">
@@ -259,6 +268,7 @@ export default function EmployeeList() {
                             ✕
                         </button>
                         <h3 className="text-xl font-semibold mb-6 text-center">Edit Employee</h3>
+                        {loading ? <div className="mb-4 p-4 bg-blue-100 rounded-lg"><p className="animate-bounce text-lg text-center text-blue-600">{loading}</p></div> : ""}
                         {error && <p className="text-red-500 text-center">{error}</p>}
                         {session?.user?.account_type === "admin" ? (
                             <>
@@ -323,6 +333,7 @@ export default function EmployeeList() {
                 <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
                     <div className="bg-white p-8 rounded-md shadow-lg max-w-md w-full">
                         <h3 className="text-xl font-semibold mb-4 text-center">Confirm Deletion</h3>
+                        {loading ? <div className="mb-4 p-4 bg-blue-100 rounded-lg"><p className="animate-bounce text-xl text-center text-blue-600">{loading}</p></div> : ""}
                         {error && <p className="text-red-500 text-center">{error}</p>}
                         <p className="text-gray-700 mb-4">
                             Please enter the number <span className="font-bold">{randomNumber}</span> below to confirm deletion:

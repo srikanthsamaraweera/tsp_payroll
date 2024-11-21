@@ -8,16 +8,18 @@ export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    const [loading, setloading] = useState("")
     const router = useRouter();
 
     const handleLogin = async (e) => {
         e.preventDefault();
-
+        setloading('Please Wait! Loading...')
         const result = await signIn("credentials", {
             redirect: false,
             email,
             password,
         });
+        setloading('')
 
         if (result.ok) {
             router.push("/admin-dashboard"); // Redirect to home or another protected page
@@ -30,7 +32,7 @@ export default function LoginPage() {
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
             <form onSubmit={handleLogin} className="w-full max-w-md bg-white p-8 rounded-lg shadow-md">
                 <h2 className="text-2xl font-bold text-center mb-6">Login</h2>
-
+                <p className="text-yellow-500-500 text-sm mb-4">{loading}</p>
                 {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
 
                 <div className="mb-4">
@@ -64,6 +66,7 @@ export default function LoginPage() {
                 <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition-colors">
                     Log in
                 </button>
+
             </form>
         </div>
     );

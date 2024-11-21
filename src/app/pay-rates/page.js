@@ -18,6 +18,7 @@ export default function PayRates() {
     const [modal, setModal] = useState({ type: "", data: null, isOpen: false });
     const [randomNumber, setRandomNumber] = useState(null);
     const [inputNumber, setInputNumber] = useState("");
+    const [loading, setLoading] = useState("");
     const itemsPerPage = 10;
     const router = useRouter();
 
@@ -36,6 +37,7 @@ export default function PayRates() {
 
     // Fetch Pay Rates
     const fetchPayRates = async () => {
+        setLoading('Loading Data...')
         try {
             const response = await fetch(
                 `/api/pay_rates?page=${currentPage}&itemsPerPage=${itemsPerPage}&search=${encodeURIComponent(searchTerm)}`
@@ -49,6 +51,7 @@ export default function PayRates() {
             console.error("Error fetching pay rates:", err);
             setError("Could not load pay rates. Please try again later.");
         }
+        setLoading('')
     };
 
     useEffect(() => {
@@ -88,14 +91,20 @@ export default function PayRates() {
     };
 
     const handleDelete = async () => {
+        setLoading('Trying to Delete...')
         if (parseInt(inputNumber) !== randomNumber) {
             setError("Confirmation number does not match.");
+            setLoading('')
             return;
         }
 
         try {
             const response = await fetch(`/api/pay_rates/${modal.data.id}`, { method: "DELETE" });
-            if (!response.ok) throw new Error("Failed to delete pay rate.");
+            if (!response.ok) {
+
+                throw new Error("Failed to delete pay rate.")
+            };
+
 
             setSuccessMessage("Pay rate deleted successfully!");
             setModal({ type: "", data: null, isOpen: false });
@@ -104,6 +113,7 @@ export default function PayRates() {
         } catch (err) {
             setError(err.message || "An error occurred. Please try again.");
         }
+        setLoading('')
     };
 
     return (
@@ -151,6 +161,7 @@ export default function PayRates() {
 
             {/* Pay Rates Table */}
             <div className="overflow-auto bg-white rounded-md shadow-md">
+                {loading ? <div className="mb-4 p-4 bg-blue-100 rounded-lg"> <h1 className="text-yellow-500 text-center animate-bounce text-2xl z-10">{loading}</h1></div> : ""}
                 <table className="w-full text-left">
                     <thead className="bg-gray-200">
                         <tr>
@@ -161,6 +172,7 @@ export default function PayRates() {
                         </tr>
                     </thead>
                     <tbody>
+
                         {payRates.map((rate) => (
                             <tr key={rate.id} className="border-t">
                                 <td className="p-4">{rate.description}</td>
@@ -189,6 +201,7 @@ export default function PayRates() {
                         ))}
                     </tbody>
                 </table>
+                {loading ? <div className="mb-4 p-4 bg-blue-100 rounded-lg"> <h1 className="text-yellow-500 text-center animate-bounce text-2xl z-10">{loading}</h1></div> : ""}
             </div>
 
             {/* Pagination */}
@@ -221,19 +234,22 @@ export default function PayRates() {
                         {/* Add/Edit Modal */}
                         {(modal.type === "add" || modal.type === "edit") && (
                             <form
-                                onSubmit={(e) => {
+                                onSubmit={async (e) => {
                                     e.preventDefault();
-                                    handleAddEdit({
+                                    setLoading('Talking to server...')
+                                    await handleAddEdit({
                                         id: modal.data?.id,
                                         description: e.target.description.value,
                                         pay_rate: parseFloat(e.target.pay_rate.value),
                                         pay_code: parseInt(e.target.pay_code.value),
                                     });
+                                    setLoading('')
                                 }}
                             >
                                 <h3 className="text-xl font-semibold mb-4">
                                     {modal.type === "add" ? "Add Pay Rate" : "Edit Pay Rate"}
                                 </h3>
+                                {loading ? <h1 className="text-yellow-500 text-center animate-pulse text-xl">{loading}</h1> : ""}
                                 {error && <p className="text-red-500 text-center">{error}</p>}
                                 <input
                                     name="description"
@@ -272,6 +288,7 @@ export default function PayRates() {
                                 <p className="text-center text-gray-600 mb-4">
                                     You are about to delete: <strong>{modal.data.description}</strong>
                                 </p>
+                                {loading ? <p className="text-yellow-500 text-center animate-pulse text-xl">{loading}</p> : ""}
                                 {error && <p className="text-red-500 text-center">{error}</p>}
                                 <p className="mb-4 text-center">
                                     Enter the number <strong>{randomNumber}</strong> to confirm deletion.
