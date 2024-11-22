@@ -47,8 +47,29 @@ export default function PayrollManagement() {
         normal_ot: "",
         double_ot: "",
         triple_ot: "",
+        sundays: "",
+        stat_days: "",
+        poya_days: "",
     });
     const recordsPerPage = 50;
+
+    const resetPayrollFields = () => {
+        setPayrollFields({
+            work_days: "",
+            per_day_salary: "",
+            payroll_date: "",
+            advance: "",
+            festival_advance: "",
+            loan_amount: "",
+            night_shifts: "",
+            normal_ot: "",
+            double_ot: "",
+            triple_ot: "",
+            sundays: "",
+            stat_days: "",
+            poya_days: "",
+        });
+    };
 
     // Fetch payroll data
     const fetchPayrollData = async () => {
@@ -113,6 +134,7 @@ export default function PayrollManagement() {
         const doubleotallowanceval = await fetchPayRates(9)
         const tripleotrateval = await fetchPayRates(10)
         const tripleotallowanceval = await fetchPayRates(11)
+        const sundayallowance = await fetchPayRates(12)
 
         setDayrate(ratesetval)
         setbra2005(bra2005val)
@@ -125,6 +147,7 @@ export default function PayrollManagement() {
         setdoubleotallowance(doubleotallowanceval)
         settripleotrate(tripleotrateval)
         settripleotallowance(tripleotallowanceval)
+        setsundayallowance(sundayallowance)
     }
 
     useEffect(() => {
@@ -146,9 +169,20 @@ export default function PayrollManagement() {
         fetchPayrollData();
     };
 
+    const preventScroll = (e) => e.target.blur(); // Prevent mouse scroll adjustment
+
     const handlePayrollFieldChange = (e) => {
         const { name, value } = e.target;
-        setPayrollFields((prev) => ({ ...prev, [name]: value }));
+        const numericValue = Math.max(0, Number(value)); // Prevent negative values
+        setPayrollFields((prev) => ({ ...prev, [name]: numericValue }));
+    };
+
+    const handleDateFieldChange = (e) => {
+        const { name, value } = e.target;
+        setPayrollFields((prev) => ({
+            ...prev,
+            [name]: value, // Directly set the date value
+        }));
     };
 
     const handleSavePayroll = async () => {
@@ -164,8 +198,20 @@ export default function PayrollManagement() {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    ...payrollFields,
                     emp_id: selectedEmployee.id,
+                    ...payrollFields,
+                    per_day_salary: dayrate,
+                    bra_2005: bra2005,
+                    bra_2016: bra2016,
+                    sunday_allowance: sundayallowance,
+                    stat_allowance: statallowance,
+                    poya_allowance: poyaallowance,
+                    normal_ot_rate: normalotrate,
+                    normal_ot_allowance: normalotallowance,
+                    double_ot_rate: doubleotrate,
+                    double_ot_allowance: doubleotallowance,
+                    triple_ot_rate: tripleotrate,
+                    triple_ot_allowance: tripleotallowance,
                 }),
             });
 
@@ -183,6 +229,7 @@ export default function PayrollManagement() {
             alert("An error occurred while saving payroll.");
         }
     };
+
 
     return (
         <div className="min-h-screen bg-gray-100 p-6">
@@ -239,6 +286,7 @@ export default function PayrollManagement() {
                     onClick={() => {
                         //fetchPayRates(1);
                         //    payrateset();
+                        resetPayrollFields();
                         setAddPayrollModalOpen(true);
                     }}
                     className="px-6 py-2 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600 focus:outline-none"
@@ -327,8 +375,9 @@ export default function PayrollManagement() {
                                     id="payroll_date"
                                     name="payroll_date"
                                     value={payrollFields.payroll_date}
-                                    onChange={handlePayrollFieldChange}
+                                    onChange={handleDateFieldChange}
                                     className="w-full px-4 py-2 border rounded-lg"
+                                    required
                                 />
                             </div>
                             <div className="form-group">
@@ -342,6 +391,8 @@ export default function PayrollManagement() {
                                     value={payrollFields.work_days}
                                     onChange={handlePayrollFieldChange}
                                     className="w-full px-4 py-2 border rounded-lg"
+                                    onWheel={preventScroll}
+                                    required
                                 />
                             </div>
                             <div className="form-group">
@@ -398,11 +449,13 @@ export default function PayrollManagement() {
                                     value={payrollFields.sundays}
                                     onChange={handlePayrollFieldChange}
                                     className="w-full px-4 py-2 border rounded-lg"
+                                    onWheel={preventScroll}
+                                    required
                                 />
                             </div>
                             <div className="form-group">
                                 <label htmlFor="sunday_allowance" className="block text-gray-700 font-medium mb-2">
-                                    Sunday Allowance
+                                    Sunday Allowance-Code 12
                                 </label>
                                 <input
                                     type="number"
@@ -425,6 +478,8 @@ export default function PayrollManagement() {
                                     value={payrollFields.stat_days}
                                     onChange={handlePayrollFieldChange}
                                     className="w-full px-4 py-2 border rounded-lg"
+                                    onWheel={preventScroll}
+                                    required
                                 />
                             </div>
                             <div className="form-group">
@@ -452,6 +507,8 @@ export default function PayrollManagement() {
                                     value={payrollFields.poya_days}
                                     onChange={handlePayrollFieldChange}
                                     className="w-full px-4 py-2 border rounded-lg"
+                                    onWheel={preventScroll}
+                                    required
                                 />
                             </div>
                             <div className="form-group">
@@ -479,6 +536,8 @@ export default function PayrollManagement() {
                                     value={payrollFields.night_shifts}
                                     onChange={handlePayrollFieldChange}
                                     className="w-full px-4 py-2 border rounded-lg"
+                                    onWheel={preventScroll}
+                                    required
                                 />
                             </div>
                             <div className="form-group">
@@ -492,6 +551,8 @@ export default function PayrollManagement() {
                                     value={payrollFields.normal_ot}
                                     onChange={handlePayrollFieldChange}
                                     className="w-full px-4 py-2 border rounded-lg"
+                                    onWheel={preventScroll}
+                                    required
                                 />
                             </div>
                             <div className="form-group">
@@ -533,6 +594,8 @@ export default function PayrollManagement() {
                                     value={payrollFields.double_ot}
                                     onChange={handlePayrollFieldChange}
                                     className="w-full px-4 py-2 border rounded-lg"
+                                    onWheel={preventScroll}
+                                    required
                                 />
                             </div>
                             <div className="form-group">
@@ -574,6 +637,8 @@ export default function PayrollManagement() {
                                     value={payrollFields.triple_ot}
                                     onChange={handlePayrollFieldChange}
                                     className="w-full px-4 py-2 border rounded-lg"
+                                    onWheel={preventScroll}
+                                    required
                                 />
                             </div>
                             <div className="form-group">
@@ -612,9 +677,11 @@ export default function PayrollManagement() {
                                     type="number"
                                     id="advance"
                                     name="advance"
-                                    value={payrollFields.advance}
+                                    value={payrollFields.advance || 0}
                                     onChange={handlePayrollFieldChange}
                                     className="w-full px-4 py-2 border rounded-lg"
+                                    onWheel={preventScroll}
+
                                 />
                             </div>
                             <div className="form-group">
@@ -625,9 +692,10 @@ export default function PayrollManagement() {
                                     type="number"
                                     id="festival_advance"
                                     name="festival_advance"
-                                    value={payrollFields.festival_advance}
+                                    value={payrollFields.festival_advance || 0}
                                     onChange={handlePayrollFieldChange}
                                     className="w-full px-4 py-2 border rounded-lg"
+                                    onWheel={preventScroll}
                                 />
                             </div>
                             <div className="form-group">
@@ -638,9 +706,10 @@ export default function PayrollManagement() {
                                     type="number"
                                     id="loan_amount"
                                     name="loan_amount"
-                                    value={payrollFields.loan_amount}
+                                    value={payrollFields.loan_amount || 0}
                                     onChange={handlePayrollFieldChange}
                                     className="w-full px-4 py-2 border rounded-lg"
+                                    onWheel={preventScroll}
                                 />
                             </div>
                         </div>
