@@ -47,7 +47,13 @@ export const authOptions = {
     pages: {
         signIn: "/login" // Custom login page route
     },
-    secret: process.env.NEXTAUTH_SECRET
+    secret: process.env.NEXTAUTH_SECRET,
+    session: {
+        strategy: "jwt", // Use JWT-based session management
+    },
+    jwt: {
+        secret: process.env.NEXTAUTH_SECRET,
+    },
 };
 
 const handler = NextAuth(authOptions);
