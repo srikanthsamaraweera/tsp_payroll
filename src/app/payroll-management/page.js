@@ -423,7 +423,7 @@ export default function PayrollManagement() {
                         <div className="overflow-y-auto max-h-[50vh] ">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
                                 <div className="form-group">
-                                    <label htmlFor="employee_id" className="block text-gray-700 font-medium mb-2">
+                                    <label htmlFor="employee_id" className="block text-gray-700 font-medium mb-2 text-sm">
                                         Employee ID
                                     </label>
                                     <input
@@ -437,7 +437,7 @@ export default function PayrollManagement() {
                                     />
                                 </div>
                                 <div className="form-group">
-                                    <label htmlFor="payroll_date" className="block text-gray-700 font-medium mb-2">
+                                    <label htmlFor="payroll_date" className="block text-gray-700 font-medium mb-2 text-sm">
                                         Payroll Date
                                     </label>
                                     <input
@@ -453,7 +453,7 @@ export default function PayrollManagement() {
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-5">
                                 <div className="form-group">
-                                    <label htmlFor="work_days" className="block text-gray-700 font-medium mb-2">
+                                    <label htmlFor="work_days" className="block text-gray-700 font-medium mb-2 text-sm">
                                         Work Days
                                     </label>
                                     <input
@@ -515,7 +515,7 @@ export default function PayrollManagement() {
 
 
                                 <div className="form-group">
-                                    <label htmlFor="sundays" className="block text-gray-700 font-medium mb-2">
+                                    <label htmlFor="sundays" className="block text-gray-700 font-medium mb-2 text-sm">
                                         Sundays
                                     </label>
                                     <input
@@ -530,7 +530,7 @@ export default function PayrollManagement() {
                                     />
                                 </div>
                                 <div className="form-group">
-                                    <label htmlFor="sunday_allowance" className="block text-gray-700 font-medium text-xs mb-2">
+                                    <label htmlFor="sunday_allowance" className="block text-gray-700 font-medium text-sm mb-2">
                                         Sunday Allowance-Code 12
                                     </label>
                                     <input
@@ -544,7 +544,7 @@ export default function PayrollManagement() {
                                     />
                                 </div>
                                 <div className="form-group">
-                                    <label htmlFor="stat_days" className="block text-gray-700 font-medium mb-2">
+                                    <label htmlFor="stat_days" className="block text-gray-700 font-medium mb-2 text-sm">
                                         Stat Days
                                     </label>
                                     <input
@@ -578,7 +578,7 @@ export default function PayrollManagement() {
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 ">
 
                                 <div className="form-group">
-                                    <label htmlFor="poya_days" className="block text-gray-700 font-medium mb-2">
+                                    <label htmlFor="poya_days" className="block text-gray-700 font-medium mb-2 text-sm">
                                         Poya Days
                                     </label>
                                     <input
@@ -607,7 +607,7 @@ export default function PayrollManagement() {
                                     />
                                 </div>
                                 <div className="form-group">
-                                    <label htmlFor="night_shifts" className="block text-gray-700 font-medium mb-2">
+                                    <label htmlFor="night_shifts" className="block text-gray-700 font-medium mb-2 text-sm">
                                         Night Shifts
                                     </label>
                                     <input
@@ -622,7 +622,7 @@ export default function PayrollManagement() {
                                     />
                                 </div>
                                 <div className="form-group">
-                                    <label htmlFor="normal_ot" className="block text-gray-700 font-medium mb-2">
+                                    <label htmlFor="normal_ot" className="block text-gray-700 font-medium mb-2 text-sm">
                                         Normal OT
                                     </label>
                                     <input
@@ -651,7 +651,7 @@ export default function PayrollManagement() {
                                     />
                                 </div>
                                 <div className="form-group">
-                                    <label htmlFor="normal_ot_allowance" className="block text-gray-700 font-medium mb-2 text-xs">
+                                    <label htmlFor="normal_ot_allowance" className="block text-gray-700 font-medium mb-2 text-sm">
                                         Normal OT Allowance-Code 7
                                     </label>
                                     <input
@@ -665,7 +665,7 @@ export default function PayrollManagement() {
                                     />
                                 </div>
                                 <div className="form-group">
-                                    <label htmlFor="double_ot" className="block text-gray-700 font-medium mb-2">
+                                    <label htmlFor="double_ot" className="block text-gray-700 font-medium mb-2 text-sm">
                                         Double OT
                                     </label>
                                     <input
@@ -680,7 +680,7 @@ export default function PayrollManagement() {
                                     />
                                 </div>
                                 <div className="form-group">
-                                    <label htmlFor="double_ot_rate" className="block text-gray-700 font-medium mb-2 text-xs">
+                                    <label htmlFor="double_ot_rate" className="block text-gray-700 font-medium mb-2 text-sm">
                                         Double OT Rate-Code 8
                                     </label>
                                     <input
@@ -694,7 +694,7 @@ export default function PayrollManagement() {
                                     />
                                 </div>
                                 <div className="form-group">
-                                    <label htmlFor="double_ot_allowance" className="block text-gray-700 font-medium mb-2 text-xs">
+                                    <label htmlFor="double_ot_allowance" className="block text-gray-700 font-medium mb-2 text-sm">
                                         Double OT Allowance-Code 9
                                     </label>
                                     <input
@@ -708,7 +708,7 @@ export default function PayrollManagement() {
                                     />
                                 </div>
                                 <div className="form-group">
-                                    <label htmlFor="triple_ot" className="block text-gray-700 font-medium mb-2">
+                                    <label htmlFor="triple_ot" className="block text-gray-700 font-medium mb-2 text-sm">
                                         Triple OT
                                     </label>
                                     <input
@@ -723,7 +723,7 @@ export default function PayrollManagement() {
                                     />
                                 </div>
                                 <div className="form-group">
-                                    <label htmlFor="triple_ot_rate" className="block text-gray-700 font-medium mb-2 text-xs">
+                                    <label htmlFor="triple_ot_rate" className="block text-gray-700 font-medium mb-2 text-sm">
                                         Triple OT Rate-Code 10
                                     </label>
                                     <input
@@ -737,7 +737,7 @@ export default function PayrollManagement() {
                                     />
                                 </div>
                                 <div className="form-group">
-                                    <label htmlFor="triple_ot_allowance" className="block text-gray-700 font-medium mb-2 text-xs">
+                                    <label htmlFor="triple_ot_allowance" className="block text-gray-700 font-medium mb-2 text-sm">
                                         Triple OT Allowance-Code 11
                                     </label>
                                     <input
@@ -751,7 +751,7 @@ export default function PayrollManagement() {
                                     />
                                 </div>
                                 <div className="form-group">
-                                    <label htmlFor="advance" className="block text-gray-700 font-medium mb-2">
+                                    <label htmlFor="advance" className="block text-gray-700 font-medium mb-2 text-sm">
                                         Advance
                                     </label>
                                     <input
@@ -766,7 +766,7 @@ export default function PayrollManagement() {
                                     />
                                 </div>
                                 <div className="form-group">
-                                    <label htmlFor="festival_advance" className="block text-gray-700 font-medium mb-2">
+                                    <label htmlFor="festival_advance" className="block text-gray-700 font-medium mb-2 text-sm">
                                         Festival Advance
                                     </label>
                                     <input
@@ -780,7 +780,7 @@ export default function PayrollManagement() {
                                     />
                                 </div>
                                 <div className="form-group">
-                                    <label htmlFor="loan_amount" className="block text-gray-700 font-medium mb-2">
+                                    <label htmlFor="loan_amount" className="block text-gray-700 font-medium mb-2 text-sm">
                                         Loan Amount
                                     </label>
                                     <input
