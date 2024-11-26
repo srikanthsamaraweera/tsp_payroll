@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch, faPlus, faTimes, faTrash, faEdit } from "@fortawesome/free-solid-svg-icons";
-import { fetchData } from "next-auth/client/_utils";
+import { faSearch, faPlus, faTimes, faTrash, faEdit, faEye } from "@fortawesome/free-solid-svg-icons";
 import FormatDate from "@/functions/formatdate";
 
 export default function PayrollManagement() {
@@ -39,6 +38,9 @@ export default function PayrollManagement() {
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [editRecord, setEditRecord] = useState(null);
     const [selectededrow, setselectedrow] = useState('');
+
+    const [fulledit, setfulledit] = useState(false);
+    const [viewascol, setviewascol] = useState(false)
 
 
     const [payrollFields, setPayrollFields] = useState({
@@ -190,9 +192,29 @@ export default function PayrollManagement() {
         }));
     };
 
+    const handleEditRecordChange = (e) => {
+        const { name, value } = e.target;
+
+        // Prevent negative values
+        const numericValue = Math.max(0, Number(value));
+
+        setEditRecord((prev) => ({
+            ...prev,
+            [name]: numericValue, // Only allow non-negative values
+        }));
+    };
+
     const handleSavePayroll = async () => {
         if (!selectedEmployee) {
             alert("Please select an employee.");
+            return;
+        }
+        if (!payrollFields.payroll_date) {
+            alert("Please select payroll date.");
+            return;
+        }
+        if (!payrollFields.work_days > 0) {
+            alert("Please enter work days.");
             return;
         }
 
@@ -228,6 +250,7 @@ export default function PayrollManagement() {
 
             alert("Payroll record added successfully!");
             setAddPayrollModalOpen(false);
+            setSelectedEmployee(null)
             fetchPayrollData();
         } catch (error) {
             console.error("Error saving payroll record:", error);
@@ -235,9 +258,40 @@ export default function PayrollManagement() {
         }
     };
 
+    const handleEditPayroll = async () => {
+        try {
+            const response = await fetch("/api/payroll/editpayroll", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(editRecord),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || "Failed to update payroll record");
+            }
+
+            alert("Payroll record updated successfully!");
+            setEditModalOpen(false); // Close the modal
+            fetchPayrollData(); // Refresh the data table
+        } catch (error) {
+            console.error("Error updating payroll record:", error);
+            alert("An error occurred while updating payroll.");
+        }
+    };
+
+
     const handleEdit = (record) => {
         setEditRecord(record);
         setEditModalOpen(true);
+    };
+
+    const handleviewascol = (record) => {
+        setEditRecord(record);
+        setviewascol(true);
     };
 
 
@@ -313,7 +367,11 @@ export default function PayrollManagement() {
                     <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl relative overflow-y-auto max-h-[90vh]">
                         {/* Close Button */}
                         <button
-                            onClick={() => setAddPayrollModalOpen(false)}
+                            onClick={() => {
+                                setfulledit(false)
+                                setSelectedEmployee(null)
+                                setAddPayrollModalOpen(false)
+                            }}
                             className="absolute top-4 right-4 text-gray-600 hover:text-gray-800"
                         >
                             <FontAwesomeIcon icon={faTimes} />
@@ -360,371 +418,383 @@ export default function PayrollManagement() {
                                 </ul>
                             )}
                         </div>
-
+                        <div className="text-right pr-1 pb-1"><button className={` p-1 pr-4 pl-4 ${fulledit ? "bg-red-200" : "bg-slate-300"}`} onClick={() => setfulledit(!fulledit)}>Full Edit <FontAwesomeIcon icon={faEdit} /></button></div>
                         {/* Payroll Fields */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[50vh] overflow-y-auto">
-                            <div className="form-group">
-                                <label htmlFor="employee_id" className="block text-gray-700 font-medium mb-2">
-                                    Employee ID
-                                </label>
-                                <input
-                                    type="number"
-                                    id="employee_id"
-                                    name="employee_id"
-                                    value={selectedEmployee ? selectedEmployee.id : ""}
-                                    onChange={handlePayrollFieldChange}
-                                    className="w-full px-4 py-2 border rounded-lg bg-gray-200"
-                                    readOnly
-                                />
+                        <div className="overflow-y-auto max-h-[50vh] ">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+                                <div className="form-group">
+                                    <label htmlFor="employee_id" className="block text-gray-700 font-medium mb-2">
+                                        Employee ID
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="employee_id"
+                                        name="employee_id"
+                                        value={selectedEmployee ? selectedEmployee.id : ""}
+                                        onChange={handlePayrollFieldChange}
+                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
+                                        readOnly
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="payroll_date" className="block text-gray-700 font-medium mb-2">
+                                        Payroll Date
+                                    </label>
+                                    <input
+                                        type="date"
+                                        id="payroll_date"
+                                        name="payroll_date"
+                                        value={payrollFields.payroll_date}
+                                        onChange={handleDateFieldChange}
+                                        className="w-full px-4 py-2 border rounded-lg"
+                                        required
+                                    />
+                                </div>
                             </div>
-                            <div className="form-group">
-                                <label htmlFor="payroll_date" className="block text-gray-700 font-medium mb-2">
-                                    Payroll Date
-                                </label>
-                                <input
-                                    type="date"
-                                    id="payroll_date"
-                                    name="payroll_date"
-                                    value={payrollFields.payroll_date}
-                                    onChange={handleDateFieldChange}
-                                    className="w-full px-4 py-2 border rounded-lg"
-                                    required
-                                />
+                            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-5">
+                                <div className="form-group">
+                                    <label htmlFor="work_days" className="block text-gray-700 font-medium mb-2">
+                                        Work Days
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="work_days"
+                                        name="work_days"
+                                        value={payrollFields.work_days}
+                                        onChange={handlePayrollFieldChange}
+                                        className="w-full px-4 py-2 border rounded-lg"
+                                        onWheel={preventScroll}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="per_day_salary" className="block text-gray-700 font-medium mb-2 text-sm">
+                                        Per Day Salary - Code 2
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="per_day_salary"
+                                        name="per_day_salary"
+                                        value={dayrate}
+                                        onChange={handlePayrollFieldChange}
+                                        className={`w-full px-4 py-2 border rounded-lg  ${fulledit ? "" : "bg-gray-200"}`}
+                                        readOnly={!fulledit}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="bra_2005" className="block text-gray-700 font-medium mb-2 text-sm">
+                                        BRA 2005-Code 1
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="bra_2005"
+                                        name="bra_2005"
+                                        value={bra2005}
+                                        onChange={handlePayrollFieldChange}
+                                        className={`w-full px-4 py-2 border rounded-lg  ${fulledit ? "" : "bg-gray-200"}`}
+                                        readOnly={!fulledit}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="bra_2016" className="block text-gray-700 font-medium mb-2 text-sm">
+                                        BRA 2016-Code 4
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="bra_2016"
+                                        name="bra_2016"
+                                        value={bra2016}
+                                        onChange={handlePayrollFieldChange}
+                                        className={`w-full px-4 py-2 border rounded-lg  ${fulledit ? "" : "bg-gray-200"}`}
+                                        readOnly={!fulledit}
+                                    />
+                                </div>
                             </div>
-                            <div className="form-group">
-                                <label htmlFor="work_days" className="block text-gray-700 font-medium mb-2">
-                                    Work Days
-                                </label>
-                                <input
-                                    type="number"
-                                    id="work_days"
-                                    name="work_days"
-                                    value={payrollFields.work_days}
-                                    onChange={handlePayrollFieldChange}
-                                    className="w-full px-4 py-2 border rounded-lg"
-                                    onWheel={preventScroll}
-                                    required
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="per_day_salary" className="block text-gray-700 font-medium mb-2">
-                                    Per Day Salary - Code 2
-                                </label>
-                                <input
-                                    type="number"
-                                    id="per_day_salary"
-                                    name="per_day_salary"
-                                    value={dayrate}
-                                    onChange={handlePayrollFieldChange}
-                                    className="w-full px-4 py-2 border rounded-lg bg-gray-200"
-                                    readOnly
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="bra_2005" className="block text-gray-700 font-medium mb-2">
-                                    BRA 2005-Code 1
-                                </label>
-                                <input
-                                    type="number"
-                                    id="bra_2005"
-                                    name="bra_2005"
-                                    value={bra2005}
-                                    onChange={handlePayrollFieldChange}
-                                    className="w-full px-4 py-2 border rounded-lg bg-gray-200"
 
-                                    readOnly
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="bra_2016" className="block text-gray-700 font-medium mb-2">
-                                    BRA 2016-Code 4
-                                </label>
-                                <input
-                                    type="number"
-                                    id="bra_2016"
-                                    name="bra_2016"
-                                    value={bra2016}
-                                    onChange={handlePayrollFieldChange}
-                                    className="w-full px-4 py-2 border rounded-lg bg-gray-200"
-                                    readOnly
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="sundays" className="block text-gray-700 font-medium mb-2">
-                                    Sundays
-                                </label>
-                                <input
-                                    type="number"
-                                    id="sundays"
-                                    name="sundays"
-                                    value={payrollFields.sundays}
-                                    onChange={handlePayrollFieldChange}
-                                    className="w-full px-4 py-2 border rounded-lg"
-                                    onWheel={preventScroll}
-                                    required
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="sunday_allowance" className="block text-gray-700 font-medium mb-2">
-                                    Sunday Allowance-Code 12
-                                </label>
-                                <input
-                                    type="number"
-                                    id="sunday_allowance"
-                                    name="sunday_allowance"
-                                    value={sundayallowance}
-                                    onChange={handlePayrollFieldChange}
-                                    className="w-full px-4 py-2 border rounded-lg bg-gray-200"
-                                    readOnly
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="stat_days" className="block text-gray-700 font-medium mb-2">
-                                    Stat Days
-                                </label>
-                                <input
-                                    type="number"
-                                    id="stat_days"
-                                    name="stat_days"
-                                    value={payrollFields.stat_days}
-                                    onChange={handlePayrollFieldChange}
-                                    className="w-full px-4 py-2 border rounded-lg"
-                                    onWheel={preventScroll}
-                                    required
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="stat_allowance" className="block text-gray-700 font-medium mb-2">
-                                    Stat Allowance-Code 3
-                                </label>
-                                <input
-                                    type="number"
-                                    id="stat_allowance"
-                                    name="stat_allowance"
-                                    value={statallowance}
-                                    onChange={handlePayrollFieldChange}
-                                    className="w-full px-4 py-2 border rounded-lg bg-gray-200"
-                                    readOnly
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="poya_days" className="block text-gray-700 font-medium mb-2">
-                                    Poya Days
-                                </label>
-                                <input
-                                    type="number"
-                                    id="poya_days"
-                                    name="poya_days"
-                                    value={payrollFields.poya_days}
-                                    onChange={handlePayrollFieldChange}
-                                    className="w-full px-4 py-2 border rounded-lg"
-                                    onWheel={preventScroll}
-                                    required
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="poya_allowance" className="block text-gray-700 font-medium mb-2">
-                                    Poya Allowance-Code 5
-                                </label>
-                                <input
-                                    type="number"
-                                    id="poya_allowance"
-                                    name="poya_allowance"
-                                    value={poyaallowance}
-                                    onChange={handlePayrollFieldChange}
-                                    className="w-full px-4 py-2 border rounded-lg bg-gray-200"
-                                    readOnly
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="night_shifts" className="block text-gray-700 font-medium mb-2">
-                                    Night Shifts
-                                </label>
-                                <input
-                                    type="number"
-                                    id="night_shifts"
-                                    name="night_shifts"
-                                    value={payrollFields.night_shifts}
-                                    onChange={handlePayrollFieldChange}
-                                    className="w-full px-4 py-2 border rounded-lg"
-                                    onWheel={preventScroll}
-                                    required
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="normal_ot" className="block text-gray-700 font-medium mb-2">
-                                    Normal OT
-                                </label>
-                                <input
-                                    type="number"
-                                    id="normal_ot"
-                                    name="normal_ot"
-                                    value={payrollFields.normal_ot}
-                                    onChange={handlePayrollFieldChange}
-                                    className="w-full px-4 py-2 border rounded-lg"
-                                    onWheel={preventScroll}
-                                    required
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="normal_ot_rate" className="block text-gray-700 font-medium mb-2">
-                                    Normal OT Rate-Code 6
-                                </label>
-                                <input
-                                    type="number"
-                                    id="normal_ot_rate"
-                                    name="normal_ot_rate"
-                                    value={normalotrate}
-                                    onChange={handlePayrollFieldChange}
-                                    className="w-full px-4 py-2 border rounded-lg bg-gray-200"
-                                    readOnly
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="normal_ot_allowance" className="block text-gray-700 font-medium mb-2">
-                                    Normal OT Allowance-Code 7
-                                </label>
-                                <input
-                                    type="number"
-                                    id="normal_ot_allowance"
-                                    name="normal_ot_allowance"
-                                    value={normalotallowance}
-                                    onChange={handlePayrollFieldChange}
-                                    className="w-full px-4 py-2 border rounded-lg bg-gray-200"
-                                    readOnly
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="double_ot" className="block text-gray-700 font-medium mb-2">
-                                    Double OT
-                                </label>
-                                <input
-                                    type="number"
-                                    id="double_ot"
-                                    name="double_ot"
-                                    value={payrollFields.double_ot}
-                                    onChange={handlePayrollFieldChange}
-                                    className="w-full px-4 py-2 border rounded-lg"
-                                    onWheel={preventScroll}
-                                    required
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="double_ot_rate" className="block text-gray-700 font-medium mb-2">
-                                    Double OT Rate-Code 8
-                                </label>
-                                <input
-                                    type="number"
-                                    id="double_ot_rate"
-                                    name="double_ot_rate"
-                                    value={doubleotrate}
-                                    onChange={handlePayrollFieldChange}
-                                    className="w-full px-4 py-2 border rounded-lg bg-gray-200"
-                                    readOnly
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="double_ot_allowance" className="block text-gray-700 font-medium mb-2">
-                                    Double OT Allowance-Code 9
-                                </label>
-                                <input
-                                    type="number"
-                                    id="double_ot_allowance"
-                                    name="double_ot_allowance"
-                                    value={doubleotallowance}
-                                    onChange={handlePayrollFieldChange}
-                                    className="w-full px-4 py-2 border rounded-lg bg-gray-200"
-                                    readOnly
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="triple_ot" className="block text-gray-700 font-medium mb-2">
-                                    Triple OT
-                                </label>
-                                <input
-                                    type="number"
-                                    id="triple_ot"
-                                    name="triple_ot"
-                                    value={payrollFields.triple_ot}
-                                    onChange={handlePayrollFieldChange}
-                                    className="w-full px-4 py-2 border rounded-lg"
-                                    onWheel={preventScroll}
-                                    required
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="triple_ot_rate" className="block text-gray-700 font-medium mb-2">
-                                    Triple OT Rate-Code 10
-                                </label>
-                                <input
-                                    type="number"
-                                    id="triple_ot_rate"
-                                    name="triple_ot_rate"
-                                    value={tripleotrate}
-                                    onChange={handlePayrollFieldChange}
-                                    className="w-full px-4 py-2 border rounded-lg bg-gray-200"
-                                    readOnly
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="triple_ot_allowance" className="block text-gray-700 font-medium mb-2">
-                                    Triple OT Allowance-Code 11
-                                </label>
-                                <input
-                                    type="number"
-                                    id="triple_ot_allowance"
-                                    name="triple_ot_allowance"
-                                    value={tripleotallowance}
-                                    onChange={handlePayrollFieldChange}
-                                    className="w-full px-4 py-2 border rounded-lg bg-gray-200"
-                                    readOnly
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="advance" className="block text-gray-700 font-medium mb-2">
-                                    Advance
-                                </label>
-                                <input
-                                    type="number"
-                                    id="advance"
-                                    name="advance"
-                                    value={payrollFields.advance || 0}
-                                    onChange={handlePayrollFieldChange}
-                                    className="w-full px-4 py-2 border rounded-lg"
-                                    onWheel={preventScroll}
+                            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-5">
 
-                                />
+
+                                <div className="form-group">
+                                    <label htmlFor="sundays" className="block text-gray-700 font-medium mb-2">
+                                        Sundays
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="sundays"
+                                        name="sundays"
+                                        value={payrollFields.sundays}
+                                        onChange={handlePayrollFieldChange}
+                                        className="w-full px-4 py-2 border rounded-lg"
+                                        onWheel={preventScroll}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="sunday_allowance" className="block text-gray-700 font-medium text-xs mb-2">
+                                        Sunday Allowance-Code 12
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="sunday_allowance"
+                                        name="sunday_allowance"
+                                        value={sundayallowance}
+                                        onChange={handlePayrollFieldChange}
+                                        className={`w-full px-4 py-2 border rounded-lg  ${fulledit ? "" : "bg-gray-200"}`}
+                                        readOnly={!fulledit}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="stat_days" className="block text-gray-700 font-medium mb-2">
+                                        Stat Days
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="stat_days"
+                                        name="stat_days"
+                                        value={payrollFields.stat_days}
+                                        onChange={handlePayrollFieldChange}
+                                        className="w-full px-4 py-2 border rounded-lg"
+                                        onWheel={preventScroll}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="stat_allowance" className="block text-gray-700 font-medium mb-2 text-sm">
+                                        Stat Allowance-Code 3
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="stat_allowance"
+                                        name="stat_allowance"
+                                        value={statallowance}
+                                        onChange={handlePayrollFieldChange}
+                                        className={`w-full px-4 py-2 border rounded-lg  ${fulledit ? "" : "bg-gray-200"}`}
+                                        readOnly={!fulledit}
+                                    />
+                                </div>
+
                             </div>
-                            <div className="form-group">
-                                <label htmlFor="festival_advance" className="block text-gray-700 font-medium mb-2">
-                                    Festival Advance
-                                </label>
-                                <input
-                                    type="number"
-                                    id="festival_advance"
-                                    name="festival_advance"
-                                    value={payrollFields.festival_advance || 0}
-                                    onChange={handlePayrollFieldChange}
-                                    className="w-full px-4 py-2 border rounded-lg"
-                                    onWheel={preventScroll}
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="loan_amount" className="block text-gray-700 font-medium mb-2">
-                                    Loan Amount
-                                </label>
-                                <input
-                                    type="number"
-                                    id="loan_amount"
-                                    name="loan_amount"
-                                    value={payrollFields.loan_amount || 0}
-                                    onChange={handlePayrollFieldChange}
-                                    className="w-full px-4 py-2 border rounded-lg"
-                                    onWheel={preventScroll}
-                                />
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 ">
+
+                                <div className="form-group">
+                                    <label htmlFor="poya_days" className="block text-gray-700 font-medium mb-2">
+                                        Poya Days
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="poya_days"
+                                        name="poya_days"
+                                        value={payrollFields.poya_days}
+                                        onChange={handlePayrollFieldChange}
+                                        className="w-full px-4 py-2 border rounded-lg"
+                                        onWheel={preventScroll}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="poya_allowance" className="block text-gray-700 font-medium mb-2 text-sm">
+                                        Poya Allowance-Code 5
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="poya_allowance"
+                                        name="poya_allowance"
+                                        value={poyaallowance}
+                                        onChange={handlePayrollFieldChange}
+                                        className={`w-full px-4 py-2 border rounded-lg  ${fulledit ? "" : "bg-gray-200"}`}
+                                        readOnly={!fulledit}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="night_shifts" className="block text-gray-700 font-medium mb-2">
+                                        Night Shifts
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="night_shifts"
+                                        name="night_shifts"
+                                        value={payrollFields.night_shifts}
+                                        onChange={handlePayrollFieldChange}
+                                        className="w-full px-4 py-2 border rounded-lg"
+                                        onWheel={preventScroll}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="normal_ot" className="block text-gray-700 font-medium mb-2">
+                                        Normal OT
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="normal_ot"
+                                        name="normal_ot"
+                                        value={payrollFields.normal_ot}
+                                        onChange={handlePayrollFieldChange}
+                                        className="w-full px-4 py-2 border rounded-lg"
+                                        onWheel={preventScroll}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="normal_ot_rate" className="block text-gray-700 font-medium mb-2 text-sm">
+                                        Normal OT Rate-Code 6
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="normal_ot_rate"
+                                        name="normal_ot_rate"
+                                        value={normalotrate}
+                                        onChange={handlePayrollFieldChange}
+                                        className={`w-full px-4 py-2 border rounded-lg  ${fulledit ? "" : "bg-gray-200"}`}
+                                        readOnly={!fulledit}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="normal_ot_allowance" className="block text-gray-700 font-medium mb-2 text-xs">
+                                        Normal OT Allowance-Code 7
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="normal_ot_allowance"
+                                        name="normal_ot_allowance"
+                                        value={normalotallowance}
+                                        onChange={handlePayrollFieldChange}
+                                        className={`w-full px-4 py-2 border rounded-lg  ${fulledit ? "" : "bg-gray-200"}`}
+                                        readOnly={!fulledit}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="double_ot" className="block text-gray-700 font-medium mb-2">
+                                        Double OT
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="double_ot"
+                                        name="double_ot"
+                                        value={payrollFields.double_ot}
+                                        onChange={handlePayrollFieldChange}
+                                        className="w-full px-4 py-2 border rounded-lg"
+                                        onWheel={preventScroll}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="double_ot_rate" className="block text-gray-700 font-medium mb-2 text-xs">
+                                        Double OT Rate-Code 8
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="double_ot_rate"
+                                        name="double_ot_rate"
+                                        value={doubleotrate}
+                                        onChange={handlePayrollFieldChange}
+                                        className={`w-full px-4 py-2 border rounded-lg  ${fulledit ? "" : "bg-gray-200"}`}
+                                        readOnly={!fulledit}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="double_ot_allowance" className="block text-gray-700 font-medium mb-2 text-xs">
+                                        Double OT Allowance-Code 9
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="double_ot_allowance"
+                                        name="double_ot_allowance"
+                                        value={doubleotallowance}
+                                        onChange={handlePayrollFieldChange}
+                                        className={`w-full px-4 py-2 border rounded-lg  ${fulledit ? "" : "bg-gray-200"}`}
+                                        readOnly={!fulledit}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="triple_ot" className="block text-gray-700 font-medium mb-2">
+                                        Triple OT
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="triple_ot"
+                                        name="triple_ot"
+                                        value={payrollFields.triple_ot}
+                                        onChange={handlePayrollFieldChange}
+                                        className="w-full px-4 py-2 border rounded-lg"
+                                        onWheel={preventScroll}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="triple_ot_rate" className="block text-gray-700 font-medium mb-2 text-xs">
+                                        Triple OT Rate-Code 10
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="triple_ot_rate"
+                                        name="triple_ot_rate"
+                                        value={tripleotrate}
+                                        onChange={handlePayrollFieldChange}
+                                        className={`w-full px-4 py-2 border rounded-lg  ${fulledit ? "" : "bg-gray-200"}`}
+                                        readOnly={!fulledit}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="triple_ot_allowance" className="block text-gray-700 font-medium mb-2 text-xs">
+                                        Triple OT Allowance-Code 11
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="triple_ot_allowance"
+                                        name="triple_ot_allowance"
+                                        value={tripleotallowance}
+                                        onChange={handlePayrollFieldChange}
+                                        className={`w-full px-4 py-2 border rounded-lg  ${fulledit ? "" : "bg-gray-200"}`}
+                                        readOnly={!fulledit}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="advance" className="block text-gray-700 font-medium mb-2">
+                                        Advance
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="advance"
+                                        name="advance"
+                                        value={payrollFields.advance || 0}
+                                        onChange={handlePayrollFieldChange}
+                                        className="w-full px-4 py-2 border rounded-lg"
+                                        onWheel={preventScroll}
+
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="festival_advance" className="block text-gray-700 font-medium mb-2">
+                                        Festival Advance
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="festival_advance"
+                                        name="festival_advance"
+                                        value={payrollFields.festival_advance || 0}
+                                        onChange={handlePayrollFieldChange}
+                                        className="w-full px-4 py-2 border rounded-lg"
+                                        onWheel={preventScroll}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="loan_amount" className="block text-gray-700 font-medium mb-2">
+                                        Loan Amount
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="loan_amount"
+                                        name="loan_amount"
+                                        value={payrollFields.loan_amount || 0}
+                                        onChange={handlePayrollFieldChange}
+                                        className="w-full px-4 py-2 border rounded-lg"
+                                        onWheel={preventScroll}
+                                    />
+                                </div>
                             </div>
                         </div>
-
 
                         {/* Save Button */}
                         <button
@@ -744,7 +814,438 @@ export default function PayrollManagement() {
                         <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl relative overflow-y-auto max-h-[90vh]">
                             {/* Close Button */}
                             <button
-                                onClick={() => setEditModalOpen(false)}
+                                onClick={() => {
+                                    setEditModalOpen(false)
+                                    setfulledit(false)
+                                }}
+                                className="absolute top-4 right-4 text-gray-600 hover:text-gray-800"
+                            >
+                                <FontAwesomeIcon icon={faTimes} />
+                            </button>
+                            <h3 className="text-xl font-semibold mb-4">Edit Record</h3>
+                            <div className="mb-4 p-4 bg-blue-100 rounded-lg">
+                                <p className="text-gray-800">
+                                    <strong>Selected Employee:</strong>{editRecord.employee?.id}{" "} {editRecord.employee?.Firstname}{" "}
+                                    {editRecord.employee?.Surname} (NIC: {editRecord.employee?.Nic_Passport},
+                                    EmpNo: {editRecord.employee?.EmpNo}, EPFNo: {editRecord.employee?.EpfNo})
+                                </p>
+                            </div>
+
+                            {/* Selected Employee */}
+
+
+
+                            <div className="text-right pr-1 pb-1"><button className={` p-1 pr-4 pl-4 ${fulledit ? "bg-red-200" : "bg-slate-300"}`} onClick={() => setfulledit(!fulledit)}>Full Edit <FontAwesomeIcon icon={faEdit} /></button></div>
+                            {/* Payroll Fields */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-h-[50vh] overflow-y-auto">
+                                <div className="form-group">
+                                    <label htmlFor="employee_id" className="block text-gray-700 font-medium mb-2">
+                                        Record ID
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="record_id"
+                                        name="record_id"
+                                        value={editRecord.id}
+
+                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
+                                        readOnly
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="employee_id" className="block text-gray-700 font-medium mb-2">
+                                        Employee ID
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="employee_id"
+                                        name="employee_id"
+                                        value={editRecord.employee.id}
+
+                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
+                                        readOnly
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="payroll_date" className="block text-gray-700 font-medium mb-2">
+                                        Payroll Date
+                                    </label>
+                                    <input
+                                        type="date"
+                                        id="payroll_date"
+                                        name="payroll_date"
+                                        value={FormatDate(editRecord.payroll_date)}
+                                        onChange={handleDateFieldChange}
+                                        className="w-full px-4 py-2 border rounded-lg"
+                                        required
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label htmlFor="work_days" className="block text-gray-700 font-medium mb-2">
+                                        Work Days
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="work_days"
+                                        name="work_days"
+                                        value={editRecord.work_days || ""}
+                                        onChange={handleEditRecordChange
+                                        }
+                                        className="w-full px-4 py-2 border rounded-lg"
+                                        onWheel={preventScroll}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="per_day_salary" className="block text-gray-700 font-medium mb-2">
+                                        Per Day Salary - Code 2
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="per_day_salary"
+                                        name="per_day_salary"
+                                        value={dayrate}
+
+                                        className={`w-full px-4 py-2 border rounded-lg  ${fulledit ? "" : "bg-gray-200"}`}
+                                        readOnly={!fulledit}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="bra_2005" className="block text-gray-700 font-medium mb-2">
+                                        BRA 2005-Code 1
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="bra_2005"
+                                        name="bra_2005"
+                                        value={bra2005}
+
+                                        className={`w-full px-4 py-2 border rounded-lg  ${fulledit ? "" : "bg-gray-200"}`}
+                                        readOnly={!fulledit}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="bra_2016" className="block text-gray-700 font-medium mb-2">
+                                        BRA 2016-Code 4
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="bra_2016"
+                                        name="bra_2016"
+                                        value={bra2016}
+
+                                        className={`w-full px-4 py-2 border rounded-lg  ${fulledit ? "" : "bg-gray-200"}`}
+                                        readOnly={!fulledit}
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label htmlFor="sundays" className="block text-gray-700 font-medium mb-2">
+                                        Sundays
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="sundays"
+                                        name="sundays"
+                                        value={editRecord.sundays}
+                                        onChange={handleEditRecordChange}
+                                        className="w-full px-4 py-2 border rounded-lg"
+                                        onWheel={preventScroll}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="sunday_allowance" className="block text-gray-700 font-medium mb-2">
+                                        Sunday Allowance-Code 12
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="sunday_allowance"
+                                        name="sunday_allowance"
+                                        value={sundayallowance}
+
+                                        className={`w-full px-4 py-2 border rounded-lg  ${fulledit ? "" : "bg-gray-200"}`}
+                                        readOnly={!fulledit}
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label htmlFor="stat_days" className="block text-gray-700 font-medium mb-2">
+                                        Stat Days
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="stat_days"
+                                        name="stat_days"
+                                        value={editRecord.stat_days}
+                                        onChange={handleEditRecordChange}
+                                        className="w-full px-4 py-2 border rounded-lg"
+                                        onWheel={preventScroll}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="stat_allowance" className="block text-gray-700 font-medium mb-2">
+                                        Stat Allowance-Code 3
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="stat_allowance"
+                                        name="stat_allowance"
+                                        value={statallowance}
+
+                                        className={`w-full px-4 py-2 border rounded-lg  ${fulledit ? "" : "bg-gray-200"}`}
+                                        readOnly={!fulledit}
+                                    />
+                                </div>
+                                <div className="form-group"></div>
+                                <div className="form-group">
+                                    <label htmlFor="poya_days" className="block text-gray-700 font-medium mb-2">
+                                        Poya Days
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="poya_days"
+                                        name="poya_days"
+                                        value={editRecord.poya_days}
+                                        onChange={handleEditRecordChange}
+                                        className="w-full px-4 py-2 border rounded-lg"
+                                        onWheel={preventScroll}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="poya_allowance" className="block text-gray-700 font-medium mb-2">
+                                        Poya Allowance-Code 5
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="poya_allowance"
+                                        name="poya_allowance"
+                                        value={poyaallowance}
+
+                                        className={`w-full px-4 py-2 border rounded-lg  ${fulledit ? "" : "bg-gray-200"}`}
+                                        readOnly={!fulledit}
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label htmlFor="night_shifts" className="block text-gray-700 font-medium mb-2">
+                                        Night Shifts
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="night_shifts"
+                                        name="night_shifts"
+                                        value={editRecord.night_shifts}
+                                        onChange={handleEditRecordChange}
+                                        className="w-full px-4 py-2 border rounded-lg"
+                                        onWheel={preventScroll}
+                                        required
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label htmlFor="normal_ot" className="block text-gray-700 font-medium mb-2">
+                                        Normal OT
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="normal_ot"
+                                        name="normal_ot"
+                                        value={editRecord.normal_ot}
+                                        onChange={handleEditRecordChange}
+                                        className="w-full px-4 py-2 border rounded-lg"
+                                        onWheel={preventScroll}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="normal_ot_rate" className="block text-gray-700 font-medium mb-2">
+                                        Normal OT Rate-Code 6
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="normal_ot_rate"
+                                        name="normal_ot_rate"
+                                        value={normalotrate}
+                                        onChange={handleEditRecordChange}
+                                        className={`w-full px-4 py-2 border rounded-lg  ${fulledit ? "" : "bg-gray-200"}`}
+                                        readOnly={!fulledit}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="normal_ot_allowance" className="block text-gray-700 font-medium mb-2">
+                                        Normal OT Allowance-Code 7
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="normal_ot_allowance"
+                                        name="normal_ot_allowance"
+                                        value={normalotallowance}
+                                        onChange={handleEditRecordChange}
+                                        className={`w-full px-4 py-2 border rounded-lg  ${fulledit ? "" : "bg-gray-200"}`}
+                                        readOnly={!fulledit}
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label htmlFor="double_ot" className="block text-gray-700 font-medium mb-2">
+                                        Double OT
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="double_ot"
+                                        name="double_ot"
+                                        value={editRecord.double_ot}
+                                        onChange={handleEditRecordChange}
+                                        className="w-full px-4 py-2 border rounded-lg"
+                                        onWheel={preventScroll}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="double_ot_rate" className="block text-gray-700 font-medium mb-2">
+                                        Double OT Rate-Code 8
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="double_ot_rate"
+                                        name="double_ot_rate"
+                                        value={doubleotrate}
+                                        onChange={handleEditRecordChange}
+                                        className={`w-full px-4 py-2 border rounded-lg  ${fulledit ? "" : "bg-gray-200"}`}
+                                        readOnly={!fulledit}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="double_ot_allowance" className="block text-gray-700 font-medium mb-2">
+                                        Double OT Allowance-Code 9
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="double_ot_allowance"
+                                        name="double_ot_allowance"
+                                        value={doubleotallowance}
+                                        onChange={handleEditRecordChange}
+                                        className={`w-full px-4 py-2 border rounded-lg  ${fulledit ? "" : "bg-gray-200"}`}
+                                        readOnly={!fulledit}
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label htmlFor="triple_ot" className="block text-gray-700 font-medium mb-2">
+                                        Triple OT
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="triple_ot"
+                                        name="triple_ot"
+                                        value={editRecord.triple_ot}
+                                        onChange={handleEditRecordChange}
+                                        className="w-full px-4 py-2 border rounded-lg"
+                                        onWheel={preventScroll}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="triple_ot_rate" className="block text-gray-700 font-medium mb-2">
+                                        Triple OT Rate-Code 10
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="triple_ot_rate"
+                                        name="triple_ot_rate"
+                                        value={tripleotrate}
+                                        onChange={handleEditRecordChange}
+                                        className={`w-full px-4 py-2 border rounded-lg  ${fulledit ? "" : "bg-gray-200"}`}
+                                        readOnly={!fulledit}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="triple_ot_allowance" className="block text-gray-700 font-medium mb-2">
+                                        Triple OT Allowance-Code 11
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="triple_ot_allowance"
+                                        name="triple_ot_allowance"
+                                        value={tripleotallowance}
+                                        onChange={handleEditRecordChange}
+                                        className={`w-full px-4 py-2 border rounded-lg  ${fulledit ? "" : "bg-gray-200"}`}
+                                        readOnly={!fulledit}
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label htmlFor="advance" className="block text-gray-700 font-medium mb-2">
+                                        Advance
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="advance"
+                                        name="advance"
+                                        value={editRecord.advance || 0}
+                                        onChange={handleEditRecordChange}
+                                        className="w-full px-4 py-2 border rounded-lg"
+                                        onWheel={preventScroll}
+
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="festival_advance" className="block text-gray-700 font-medium mb-2">
+                                        Festival Advance
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="festival_advance"
+                                        name="festival_advance"
+                                        value={editRecord.festival_advance || 0}
+                                        onChange={handleEditRecordChange}
+                                        className="w-full px-4 py-2 border rounded-lg"
+                                        onWheel={preventScroll}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="loan_amount" className="block text-gray-700 font-medium mb-2">
+                                        Loan Amount
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="loan_amount"
+                                        name="loan_amount"
+                                        value={editRecord.loan_amount || 0}
+                                        onChange={handleEditRecordChange}
+                                        className="w-full px-4 py-2 border rounded-lg"
+                                        onWheel={preventScroll}
+                                    />
+                                </div>
+                            </div>
+
+
+                            {/* Save Button */}
+                            <button
+                                onClick={handleEditPayroll}
+                                className="mt-4 px-6 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none"
+                            >
+                                Save Edit
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {viewascol && (
+                <div>
+                    <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+                        <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl relative overflow-y-auto max-h-[90vh]">
+                            {/* Close Button */}
+                            <button
+                                onClick={() => {
+
+                                    setviewascol(false)
+                                }}
                                 className="absolute top-4 right-4 text-gray-600 hover:text-gray-800"
                             >
                                 <FontAwesomeIcon icon={faTimes} />
@@ -764,17 +1265,17 @@ export default function PayrollManagement() {
 
 
                             {/* Payroll Fields */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[50vh] overflow-y-auto">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-h-[50vh] overflow-y-auto">
                                 <div className="form-group">
                                     <label htmlFor="employee_id" className="block text-gray-700 font-medium mb-2">
                                         Record ID
                                     </label>
                                     <input
                                         type="number"
-                                        id="employee_id"
-                                        name="employee_id"
+                                        id="record_id"
+                                        name="record_id"
                                         value={editRecord.id}
-                                        onChange={handlePayrollFieldChange}
+
                                         className="w-full px-4 py-2 border rounded-lg bg-gray-200"
                                         readOnly
                                     />
@@ -788,7 +1289,7 @@ export default function PayrollManagement() {
                                         id="employee_id"
                                         name="employee_id"
                                         value={editRecord.employee.id}
-                                        onChange={handlePayrollFieldChange}
+
                                         className="w-full px-4 py-2 border rounded-lg bg-gray-200"
                                         readOnly
                                     />
@@ -802,12 +1303,12 @@ export default function PayrollManagement() {
                                         id="payroll_date"
                                         name="payroll_date"
                                         value={FormatDate(editRecord.payroll_date)}
-                                        onChange={handleDateFieldChange}
-                                        className="w-full px-4 py-2 border rounded-lg"
-                                        required
+
+                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
+                                        readOnly
                                     />
                                 </div>
-                                <div className="form-group"></div>
+
                                 <div className="form-group">
                                     <label htmlFor="work_days" className="block text-gray-700 font-medium mb-2">
                                         Work Days
@@ -817,12 +1318,10 @@ export default function PayrollManagement() {
                                         id="work_days"
                                         name="work_days"
                                         value={editRecord.work_days || ""}
-                                        onChange={(e) =>
-                                            setEditRecord((prev) => ({ ...prev, work_days: e.target.value }))
-                                        }
-                                        className="w-full px-4 py-2 border rounded-lg"
+
+                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
                                         onWheel={preventScroll}
-                                        required
+                                        readOnly
                                     />
                                 </div>
                                 <div className="form-group">
@@ -834,8 +1333,8 @@ export default function PayrollManagement() {
                                         id="per_day_salary"
                                         name="per_day_salary"
                                         value={dayrate}
-                                        onChange={handlePayrollFieldChange}
-                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
+
+                                        className={`w-full px-4 py-2 border rounded-lg bg-gray-200`}
                                         readOnly
                                     />
                                 </div>
@@ -848,9 +1347,8 @@ export default function PayrollManagement() {
                                         id="bra_2005"
                                         name="bra_2005"
                                         value={bra2005}
-                                        onChange={handlePayrollFieldChange}
-                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
 
+                                        className={`w-full px-4 py-2 border rounded-lg bg-gray-200`}
                                         readOnly
                                     />
                                 </div>
@@ -863,11 +1361,12 @@ export default function PayrollManagement() {
                                         id="bra_2016"
                                         name="bra_2016"
                                         value={bra2016}
-                                        onChange={handlePayrollFieldChange}
-                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
+
+                                        className={`w-full px-4 py-2 border rounded-lg  bg-gray-200`}
                                         readOnly
                                     />
                                 </div>
+
                                 <div className="form-group">
                                     <label htmlFor="sundays" className="block text-gray-700 font-medium mb-2">
                                         Sundays
@@ -877,10 +1376,10 @@ export default function PayrollManagement() {
                                         id="sundays"
                                         name="sundays"
                                         value={editRecord.sundays}
-                                        onChange={handlePayrollFieldChange}
-                                        className="w-full px-4 py-2 border rounded-lg"
+
+                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
                                         onWheel={preventScroll}
-                                        required
+                                        readOnly
                                     />
                                 </div>
                                 <div className="form-group">
@@ -892,11 +1391,12 @@ export default function PayrollManagement() {
                                         id="sunday_allowance"
                                         name="sunday_allowance"
                                         value={sundayallowance}
-                                        onChange={handlePayrollFieldChange}
-                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
+
+                                        className={`w-full px-4 py-2 border rounded-lg  bg-gray-200`}
                                         readOnly
                                     />
                                 </div>
+
                                 <div className="form-group">
                                     <label htmlFor="stat_days" className="block text-gray-700 font-medium mb-2">
                                         Stat Days
@@ -906,10 +1406,10 @@ export default function PayrollManagement() {
                                         id="stat_days"
                                         name="stat_days"
                                         value={editRecord.stat_days}
-                                        onChange={handlePayrollFieldChange}
-                                        className="w-full px-4 py-2 border rounded-lg"
+
+                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
                                         onWheel={preventScroll}
-                                        required
+                                        readOnly
                                     />
                                 </div>
                                 <div className="form-group">
@@ -921,11 +1421,12 @@ export default function PayrollManagement() {
                                         id="stat_allowance"
                                         name="stat_allowance"
                                         value={statallowance}
-                                        onChange={handlePayrollFieldChange}
-                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
+
+                                        className={`w-full px-4 py-2 border rounded-lg  bg-gray-200`}
                                         readOnly
                                     />
                                 </div>
+                                <div className="form-group"></div>
                                 <div className="form-group">
                                     <label htmlFor="poya_days" className="block text-gray-700 font-medium mb-2">
                                         Poya Days
@@ -935,10 +1436,10 @@ export default function PayrollManagement() {
                                         id="poya_days"
                                         name="poya_days"
                                         value={editRecord.poya_days}
-                                        onChange={handlePayrollFieldChange}
-                                        className="w-full px-4 py-2 border rounded-lg"
+
+                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
                                         onWheel={preventScroll}
-                                        required
+                                        readOnly
                                     />
                                 </div>
                                 <div className="form-group">
@@ -950,11 +1451,12 @@ export default function PayrollManagement() {
                                         id="poya_allowance"
                                         name="poya_allowance"
                                         value={poyaallowance}
-                                        onChange={handlePayrollFieldChange}
-                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
+
+                                        className={`w-full px-4 py-2 border rounded-lg  bg-gray-200`}
                                         readOnly
                                     />
                                 </div>
+
                                 <div className="form-group">
                                     <label htmlFor="night_shifts" className="block text-gray-700 font-medium mb-2">
                                         Night Shifts
@@ -964,12 +1466,13 @@ export default function PayrollManagement() {
                                         id="night_shifts"
                                         name="night_shifts"
                                         value={editRecord.night_shifts}
-                                        onChange={handlePayrollFieldChange}
-                                        className="w-full px-4 py-2 border rounded-lg"
+
+                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
                                         onWheel={preventScroll}
-                                        required
+                                        readOnly
                                     />
                                 </div>
+
                                 <div className="form-group">
                                     <label htmlFor="normal_ot" className="block text-gray-700 font-medium mb-2">
                                         Normal OT
@@ -979,10 +1482,10 @@ export default function PayrollManagement() {
                                         id="normal_ot"
                                         name="normal_ot"
                                         value={editRecord.normal_ot}
-                                        onChange={handlePayrollFieldChange}
-                                        className="w-full px-4 py-2 border rounded-lg"
+
+                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
                                         onWheel={preventScroll}
-                                        required
+                                        readOnly
                                     />
                                 </div>
                                 <div className="form-group">
@@ -994,8 +1497,8 @@ export default function PayrollManagement() {
                                         id="normal_ot_rate"
                                         name="normal_ot_rate"
                                         value={normalotrate}
-                                        onChange={handlePayrollFieldChange}
-                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
+
+                                        className={`w-full px-4 py-2 border rounded-lg  bg-gray-200`}
                                         readOnly
                                     />
                                 </div>
@@ -1008,11 +1511,12 @@ export default function PayrollManagement() {
                                         id="normal_ot_allowance"
                                         name="normal_ot_allowance"
                                         value={normalotallowance}
-                                        onChange={handlePayrollFieldChange}
-                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
+
+                                        className={`w-full px-4 py-2 border rounded-lg  bg-gray-200`}
                                         readOnly
                                     />
                                 </div>
+
                                 <div className="form-group">
                                     <label htmlFor="double_ot" className="block text-gray-700 font-medium mb-2">
                                         Double OT
@@ -1022,10 +1526,10 @@ export default function PayrollManagement() {
                                         id="double_ot"
                                         name="double_ot"
                                         value={editRecord.double_ot}
-                                        onChange={handlePayrollFieldChange}
-                                        className="w-full px-4 py-2 border rounded-lg"
+
+                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
                                         onWheel={preventScroll}
-                                        required
+                                        readOnly
                                     />
                                 </div>
                                 <div className="form-group">
@@ -1037,8 +1541,8 @@ export default function PayrollManagement() {
                                         id="double_ot_rate"
                                         name="double_ot_rate"
                                         value={doubleotrate}
-                                        onChange={handlePayrollFieldChange}
-                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
+
+                                        className={`w-full px-4 py-2 border rounded-lg  bg-gray-200`}
                                         readOnly
                                     />
                                 </div>
@@ -1051,11 +1555,12 @@ export default function PayrollManagement() {
                                         id="double_ot_allowance"
                                         name="double_ot_allowance"
                                         value={doubleotallowance}
-                                        onChange={handlePayrollFieldChange}
-                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
+
+                                        className={`w-full px-4 py-2 border rounded-lg  bg-gray-200`}
                                         readOnly
                                     />
                                 </div>
+
                                 <div className="form-group">
                                     <label htmlFor="triple_ot" className="block text-gray-700 font-medium mb-2">
                                         Triple OT
@@ -1065,10 +1570,10 @@ export default function PayrollManagement() {
                                         id="triple_ot"
                                         name="triple_ot"
                                         value={editRecord.triple_ot}
-                                        onChange={handlePayrollFieldChange}
-                                        className="w-full px-4 py-2 border rounded-lg"
+
+                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
                                         onWheel={preventScroll}
-                                        required
+                                        readOnly
                                     />
                                 </div>
                                 <div className="form-group">
@@ -1080,8 +1585,8 @@ export default function PayrollManagement() {
                                         id="triple_ot_rate"
                                         name="triple_ot_rate"
                                         value={tripleotrate}
-                                        onChange={handlePayrollFieldChange}
-                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
+
+                                        className={`w-full px-4 py-2 border rounded-lg  bg-gray-200`}
                                         readOnly
                                     />
                                 </div>
@@ -1094,11 +1599,12 @@ export default function PayrollManagement() {
                                         id="triple_ot_allowance"
                                         name="triple_ot_allowance"
                                         value={tripleotallowance}
-                                        onChange={handlePayrollFieldChange}
-                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
+
+                                        className={`w-full px-4 py-2 border rounded-lg  bg-gray-200`}
                                         readOnly
                                     />
                                 </div>
+
                                 <div className="form-group">
                                     <label htmlFor="advance" className="block text-gray-700 font-medium mb-2">
                                         Advance
@@ -1108,10 +1614,10 @@ export default function PayrollManagement() {
                                         id="advance"
                                         name="advance"
                                         value={editRecord.advance || 0}
-                                        onChange={handlePayrollFieldChange}
-                                        className="w-full px-4 py-2 border rounded-lg"
-                                        onWheel={preventScroll}
 
+                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
+                                        onWheel={preventScroll}
+                                        readOnly
                                     />
                                 </div>
                                 <div className="form-group">
@@ -1123,9 +1629,10 @@ export default function PayrollManagement() {
                                         id="festival_advance"
                                         name="festival_advance"
                                         value={editRecord.festival_advance || 0}
-                                        onChange={handlePayrollFieldChange}
-                                        className="w-full px-4 py-2 border rounded-lg"
+
+                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
                                         onWheel={preventScroll}
+                                        readOnly
                                     />
                                 </div>
                                 <div className="form-group">
@@ -1137,25 +1644,21 @@ export default function PayrollManagement() {
                                         id="loan_amount"
                                         name="loan_amount"
                                         value={editRecord.loan_amount || 0}
-                                        onChange={handlePayrollFieldChange}
-                                        className="w-full px-4 py-2 border rounded-lg"
+
+                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
                                         onWheel={preventScroll}
+                                        readOnly
                                     />
                                 </div>
                             </div>
 
 
-                            {/* Save Button */}
-                            <button
-                                onClick={handleSavePayroll}
-                                className="mt-4 px-6 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none"
-                            >
-                                Save Payroll
-                            </button>
+
                         </div>
                     </div>
                 </div>
             )}
+
 
             {/* Data Table */}
             <div id="tablewrapper" className="overflow-auto max-h-[500px] border rounded-lg shadow-md">
@@ -1163,47 +1666,48 @@ export default function PayrollManagement() {
                     <p className="text-center text-gray-500">Loading...</p>
                 ) : (
                     <table className="w-full table-auto bg-white">
-                        <thead className="bg-gray-200 text-gray-600">
+                        <thead className="bg-gray-200 text-gray-600 sticky top-0 z-10">
                             <tr>
                                 {/* Employee Table Fields */}
-                                <th className="px-4 py-2">First Name</th>
-                                <th className="px-4 py-2">Last Name</th>
-                                <th className="px-4 py-2">Initials</th>
-                                <th className="px-4 py-2">Employee No</th>
-                                <th className="px-4 py-2">EPF No</th>
-                                <th className="px-4 py-2">NIC/Passport</th>
+                                <th className="px-4 py-2   ">First Name</th>
+                                <th className="px-4 py-2  ">Last Name</th>
+                                <th className="px-4 py-2  ">Initials</th>
+                                <th className="px-4 py-2  ">Employee No</th>
+                                <th className="px-4 py-2  ">EPF No</th>
+                                <th className="px-4 py-2  ">NIC/Passport</th>
 
                                 {/* Payroll Table Fields */}
-                                <th className="px-4 py-2">Payroll Date</th>
-                                <th className="px-4 py-2">Work Days</th>
-                                <th className="px-4 py-2">Per Day Salary</th>
-                                <th className="px-4 py-2">BRA 2005</th>
-                                <th className="px-4 py-2">BRA 2016</th>
-                                <th className="px-4 py-2">Sundays</th>
-                                <th className="px-4 py-2">Sunday Allowance</th>
-                                <th className="px-4 py-2">Stat Days</th>
-                                <th className="px-4 py-2">Stat Allowance</th>
-                                <th className="px-4 py-2">Poya Days</th>
-                                <th className="px-4 py-2">Poya Allowance</th>
-                                <th className="px-4 py-2">Night Shifts</th>
-                                <th className="px-4 py-2">Normal OT</th>
-                                <th className="px-4 py-2">Normal OT Rate</th>
-                                <th className="px-4 py-2">Normal OT Allowance</th>
-                                <th className="px-4 py-2">Double OT</th>
-                                <th className="px-4 py-2">Double OT Rate</th>
-                                <th className="px-4 py-2">Double OT Allowance</th>
-                                <th className="px-4 py-2">Triple OT</th>
-                                <th className="px-4 py-2">Triple OT Rate</th>
-                                <th className="px-4 py-2">Triple OT Allowance</th>
-                                <th className="px-4 py-2">Advance</th>
-                                <th className="px-4 py-2">Festival Advance</th>
-                                <th className="px-4 py-2">Loan Amount</th>
-                                <th className="px-4 py-2"></th>
+                                <th className="px-4 py-2  ">Payroll id</th>
+                                <th className="px-4 py-2  ">Payroll Date</th>
+                                <th className="px-4 py-2  ">Work Days</th>
+                                <th className="px-4 py-2  ">Per Day Salary</th>
+                                <th className="px-4 py-2  ">BRA 2005</th>
+                                <th className="px-4 py-2  ">BRA 2016</th>
+                                <th className="px-4 py-2  ">Sundays</th>
+                                <th className="px-4 py-2  ">Sunday Allowance</th>
+                                <th className="px-4 py-2  ">Stat Days</th>
+                                <th className="px-4 py-2  ">Stat Allowance</th>
+                                <th className="px-4 py-2  ">Poya Days</th>
+                                <th className="px-4 py-2  ">Poya Allowance</th>
+                                <th className="px-4 py-2  ">Night Shifts</th>
+                                <th className="px-4 py-2  ">Normal OT</th>
+                                <th className="px-4 py-2  ">Normal OT Rate</th>
+                                <th className="px-4 py-2 ">Normal OT Allowance</th>
+                                <th className="px-4 py-2  ">Double OT</th>
+                                <th className="px-4 py-2  ">Double OT Rate</th>
+                                <th className="px-4 py-2 ">Double OT Allowance</th>
+                                <th className="px-4 py-2  ">Triple OT</th>
+                                <th className="px-4 py-2  ">Triple OT Rate</th>
+                                <th className="px-4 py-2  ">Triple OT Allowance</th>
+                                <th className="px-4 py-2  ">Advance</th>
+                                <th className="px-4 py-2  ">Festival Advance</th>
+                                <th className="px-4 py-2 ">Loan Amount</th>
+                                <th className="px-4 py-2  "></th>
                             </tr>
                         </thead>
                         <tbody>
                             {payrollData.map((record) => (
-                                <tr key={record.id} className={`text-center focus:bg-slate-100 cursor-pointer ${selectededrow === record.id ? 'bg-slate-200' : ""}`}
+                                <tr key={record.id} onDoubleClick={() => setviewascol(true)} className={`text-center focus:bg-slate-100 cursor-pointer ${selectededrow === record.id ? 'bg-slate-200' : ""}`}
                                     onClick={() => setselectedrow(record.id)}>
                                     {/* Employee Table Fields */}
                                     <td className="px-4 py-2">{record.employee?.Firstname || "-"}</td>
@@ -1214,7 +1718,8 @@ export default function PayrollManagement() {
                                     <td className="px-4 py-2">{record.employee?.Nic_Passport || "-"}</td>
 
                                     {/* Payroll Table Fields */}
-                                    <td className="px-4 py-2">{record.payroll_date || "-"}</td>
+                                    <td className="px-4 py-2">{record.id || "-"}</td>
+                                    <td className="px-4 py-2 whitespace-nowrap"  > {record.payroll_date.split('T')[0]}</td>
                                     <td className="px-4 py-2">{record.work_days || 0}</td>
                                     <td className="px-4 py-2">{record.per_day_salary || 0}</td>
                                     <td className="px-4 py-2">{record.bra_2005 || 0}</td>
@@ -1242,6 +1747,12 @@ export default function PayrollManagement() {
                                     <td className="px-4 py-2">
                                         <div className="flex">
                                             <button
+                                                onClick={() => handleviewascol(record)}
+                                                className="text-green-500 hover:text-green-700 mr-4"
+                                            >
+                                                <FontAwesomeIcon icon={faEye} />
+                                            </button>
+                                            <button
                                                 onClick={() => handleEdit(record)}
                                                 className="text-blue-500 hover:text-blue-700 mr-4"
                                             >
@@ -1249,10 +1760,11 @@ export default function PayrollManagement() {
                                             </button>
                                             <button
                                                 onClick={() => handleDelete(record.id)}
-                                                className="text-red-500 hover:text-red-700"
+                                                className="text-red-500 hover:text-red-700 mr-4"
                                             >
                                                 <FontAwesomeIcon icon={faTrash} />
                                             </button>
+
                                         </div>
 
                                     </td>

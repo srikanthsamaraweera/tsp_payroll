@@ -69,6 +69,9 @@ export default async function handler(req, res) {
                     include: {
                         employee: true, // Includes all employee fields
                     },
+                    orderBy: {
+                        payroll_date: 'desc', // Sorts by payroll_date in descending order
+                    },
                 }),
                 prisma.pay_roll.count({
                     where: filters,
