@@ -42,6 +42,8 @@ export default function PayrollManagement() {
     const [fulledit, setfulledit] = useState(false);
     const [viewascol, setviewascol] = useState(false)
 
+    const [searchingemployeemessage, setsearchingemployeemessage] = useState('');
+
 
     const [payrollFields, setPayrollFields] = useState({
         work_days: "",
@@ -103,10 +105,13 @@ export default function PayrollManagement() {
 
     // Fetch employees for search
     const fetchEmployees = async () => {
+
         try {
+            setsearchingemployeemessage('Loading employees...')
             const response = await fetch(`/api/payroll/employees?search=${employeeSearch}`);
             const data = await response.json();
             setEmployeeResults(data);
+            setsearchingemployeemessage('')
         } catch (error) {
             console.error("Error fetching employees:", error);
         }
@@ -400,6 +405,9 @@ export default function PayrollManagement() {
                                 placeholder="Search Employee by Name, NIC, etc."
                                 className="w-full px-4 py-2 border rounded-lg"
                             />
+                            {searchingemployeemessage && (
+                                <div className="bg-yellow-100 w-full">{searchingemployeemessage}</div>
+                            )}
                             {employeeSearch && employeeResults.length > 0 && (
                                 <ul className="absolute z-50 bg-white border rounded-lg shadow-md mt-2 max-h-48 overflow-y-auto w-full">
                                     {employeeResults.map((emp) => (
@@ -1707,7 +1715,7 @@ export default function PayrollManagement() {
                         </thead>
                         <tbody>
                             {payrollData.map((record) => (
-                                <tr key={record.id} onDoubleClick={() => setviewascol(true)} className={`text-center focus:bg-slate-100 cursor-pointer ${selectededrow === record.id ? 'bg-slate-200' : ""}`}
+                                <tr key={record.id} onDoubleClick={() => handleviewascol(record)} className={`text-center focus:bg-slate-100 cursor-pointer ${selectededrow === record.id ? 'bg-slate-200' : ""}`}
                                     onClick={() => setselectedrow(record.id)}>
                                     {/* Employee Table Fields */}
                                     <td className="px-4 py-2">{record.employee?.Firstname || "-"}</td>
