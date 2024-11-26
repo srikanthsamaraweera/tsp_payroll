@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faPlus, faTimes, faTrash, faEdit, faEye } from "@fortawesome/free-solid-svg-icons";
 import FormatDate from "@/functions/formatdate";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function PayrollManagement() {
     const [searchParams, setSearchParams] = useState({
@@ -43,6 +45,7 @@ export default function PayrollManagement() {
     const [viewascol, setviewascol] = useState(false)
 
     const [searchingemployeemessage, setsearchingemployeemessage] = useState('');
+    const { data: session, status } = useSession();
 
 
     const [payrollFields, setPayrollFields] = useState({
@@ -299,7 +302,10 @@ export default function PayrollManagement() {
         setviewascol(true);
     };
 
+    if (!session || session.user.account_type !== "admin") {
+        return <p className="text-red-500 font-bold">Only admins can enter payroll data.</p>;
 
+    }
 
     return (
         <div className="min-h-screen bg-gray-100 p-6">
