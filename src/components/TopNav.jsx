@@ -1,11 +1,13 @@
 "use client";
 
+import { faWarning } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 
 export default function TopNav() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [isFixed, setIsFixed] = useState(false);
@@ -135,13 +137,21 @@ export default function TopNav() {
           <Link href="/" className="hover:text-gray-300">
             Home
           </Link>
-          <Link href="/view-employees" className="hover:text-gray-300">
-            Employee View/Manage
-          </Link>
+
           <Link href="/admin-dashboard" className="hover:text-gray-300">
             Dashboard
           </Link>
         </div>
+        {status === "loading" ? (
+          <div className="bg-orange-200 text-orange-700 rounded-md opacity-70">
+            <p>
+              <FontAwesomeIcon icon={faWarning} width={20} />
+              Loading Session...
+            </p>
+          </div>
+        ) : (
+          ""
+        )}
 
         {/* Desktop Profile Info */}
         <div className="hidden lg:flex items-center space-x-4">
@@ -175,9 +185,7 @@ export default function TopNav() {
           <Link href="/" className="block hover:text-gray-300">
             Home
           </Link>
-          <Link href="/view-employees" className="block hover:text-gray-300">
-            View Employees
-          </Link>
+
           <Link href="/admin-dashboard" className="block hover:text-gray-300">
             Dashboard
           </Link>

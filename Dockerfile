@@ -24,3 +24,5 @@ EXPOSE 3000
 
 # Start the application
 CMD ["npm", "start"]
+
+ENV NODE_ENV=production
