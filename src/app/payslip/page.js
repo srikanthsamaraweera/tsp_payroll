@@ -9,6 +9,11 @@ import { useRouter } from "next/navigation";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import PaysliptoPDF from "@/functions/pdfgen/paysliptopdf";
+import PaysliptabletoPDF from "@/functions/pdfgen/paysliptabletopdf";
+import PaysliptotablePDF from "@/functions/pdfgen/paysliptabletopdf";
+import payrollSummaryTable from "@/functions/pdfgen/payrollsummary";
+import paysliptabletopdf from "@/functions/pdfgen/paysliptabletopdf";
+import CanvasGen from "@/functions/pdfgen/canvasgen";
 
 
 
@@ -133,7 +138,7 @@ export default function PayrollManagement() {
             const response = await fetch(`/api/payroll/getrates`);
             const data = await response.json();
             // setPayrates(data);
-            console.log('pay rates - ', JSON.stringify(data))
+            // console.log('pay rates - ', JSON.stringify(data))
             const targetRate = data.find(rate => rate.pay_code === paycode);
             console.log("Filtered Pay Rate:", targetRate.pay_rate);
             return targetRate?.pay_rate;
@@ -192,205 +197,6 @@ export default function PayrollManagement() {
         setshowsearchdrawer(false)
     };
 
-    //print function 2
-    const handlePrint2 = () => {
-        const doc = new jsPDF();
-        const pageHeight = doc.internal.pageSize.height;
-        const margin = 10;
-        const topMargin = 15; // Top margin for each page
-        let currentY = margin + topMargin; // Start Y position with top margin
-        const tableHeightEstimate = 100; // Approximate height of one table
-        const tableSpacing = 20; // Space between two tables on the same page
-
-        payrollData.forEach((record, index) => {
-            // Header for each payroll record
-            const header = `${record.employee?.Initials || "N/A"} ${record.employee?.Firstname || "N/A"} ${record.employee?.Surname || ""
-                }`;
-            // const details = [
-            //     ["NIC", record.employee?.Nic_Passport || "N/A"],
-            //     ["Employee No", record.employee?.EmpNo || "N/A"],
-            //     ["EPF No", record.employee?.EpfNo || "N/A"],
-            //     ["Payroll Date", record.payroll_date?.split("T")[0] || "N/A"],
-            // ];
-
-            const detailsText = `NIC: ${record.employee?.Nic_Passport || "N/A"} EPF No: ${record.employee?.EpfNo || "N/A"
-                } Employee No: ${record.employee?.EmpNo || "N/A"}`;
-
-            const salaryBreakdown = [
-                [`Per Day Salary (Basic Per Day + BRA_2005 + BRA_2016)= ${record.per_day_salary} + ${record.bra_2005} + ${record.bra_2016}`, (record.per_day_salary + record.bra_2005 + record.bra_2016).toFixed(2)],
-
-
-                ["Work Days", record.work_days.toFixed(2)],
-                [
-                    "Basic Salary",
-                    ((record.per_day_salary + record.bra_2005 + record.bra_2016) *
-                        record.work_days).toFixed(2),
-                ],
-                [`Normal OT Rate: Day Rate / 8 X 1.5 + Allowance = ${record.per_day_salary + record.bra_2005 + record.bra_2016} / 8 X 1.5 + ${record.normal_ot_allowance}`, (((record.per_day_salary + record.bra_2005 + record.bra_2016) / 8 * record.normal_ot_rate) + record.normal_ot_allowance).toFixed(2)],
-                [`Normal OT Hours`, record.normal_ot.toFixed(2)],
-                [`Normal OT Amount`, (record.normal_ot * (((record.per_day_salary + record.bra_2005 + record.bra_2016) / 8 * record.normal_ot_rate) + record.normal_ot_allowance)).toFixed(2)],
-
-
-
-            ];
-
-            // Estimate the height required for this record
-            const estimatedHeight =
-                10 + // Header height
-                detailsText.length * 10 + // Employee details
-                salaryBreakdown.length * 10 + // Salary breakdown table
-                10; // Spacing
-
-            // Add a new page if the content does not fit
-            // if (currentY + estimatedHeight > pageHeight) {
-            //     doc.addPage();
-            //     currentY = margin + topMargin; // Reset Y position with top margin
-            // }
-
-            // Estimate if the current Y position plus the table height exceeds page height
-            if (currentY + tableHeightEstimate > pageHeight) {
-                doc.addPage(); // Add a new page
-                currentY = margin + topMargin; // Reset Y position
-            }
-
-            // Add header
-            doc.setFontSize(14);
-            doc.text(header, margin, currentY);
-            currentY += 10;
-
-            // Add details
-            doc.setFontSize(12);
-            doc.text(detailsText, margin, currentY);
-
-            // Add bottom margin before the table
-            currentY += 5;
-
-            // Add salary breakdown as a table
-            doc.autoTable({
-                startY: currentY,
-                head: [["Description", "Value"]],
-                body: salaryBreakdown.map(([label, value]) => [label, value.toString()]),
-                theme: "grid",
-                margin: { left: margin },
-                styles: { fontSize: 10 },
-                columnStyles: {
-                    0: { cellWidth: (doc.internal.pageSize.width - margin * 2) * 0.7 },
-                    1: {
-                        cellWidth: (doc.internal.pageSize.width - margin * 2) * 0.3,
-                        halign: 'right',
-                    },
-                },
-                headStyles: {
-                    halign: 'center', // Default header alignment
-                },
-                columnStyles: {
-                    1: {
-                        halign: 'right', // Specifically align the header of column 1 to the right
-                    },
-                },
-                didParseCell: (data) => {
-                    if (data.row.raw[0] === "Basic Salary") {
-                        data.cell.styles.fillColor = [211, 211, 211]; // Light grey background (RGB)
-                    }
-                    if (data.row.raw[0] === "Normal OT Amount") {
-                        data.cell.styles.fillColor = [211, 211, 211]; // Light grey background (RGB)
-                    }
-                },
-            });
-
-            // currentY = doc.autoTable.previous.finalY + 10; // Update Y position
-            currentY = doc.autoTable.previous.finalY + tableSpacing; // Add space between tables
-
-            if (index % 2 === 1) {
-                doc.addPage(); // New page for every second table
-                currentY = margin + topMargin; // Reset Y position
-            }
-
-        });
-
-        doc.save("Payroll_Report.pdf");
-    };
-
-    // Updated Print Handler
-    const handlePrint = () => {
-        const doc = new jsPDF();
-        const pageHeight = doc.internal.pageSize.height;
-        const margin = 10;
-        let currentY = margin;
-
-        payrollData.forEach((record, index) => {
-            // Header for each payroll record
-            const header = `${record.employee?.Initials || "N/A"} ${record.employee?.Firstname || "N/A"} ${record.employee?.Surname || ""
-                }`;
-            const details = [
-                ["NIC", record.employee?.Nic_Passport || "N/A"],
-                ["Employee No", record.employee?.EmpNo || "N/A"],
-                ["EPF No", record.employee?.EpfNo || "N/A"],
-                ["Payroll Date", record.payroll_date?.split("T")[0] || "N/A"],
-            ];
-
-            const salaryBreakdown = [
-                ["Per Day Salary", record.per_day_salary],
-                ["BRA 2005", record.bra_2005],
-                ["BRA 2016", record.bra_2016],
-                [
-                    "Total Per Day",
-                    record.per_day_salary + record.bra_2005 + record.bra_2016,
-                ],
-                ["Work Days", record.work_days],
-                [
-                    "Basic Salary",
-                    (record.per_day_salary + record.bra_2005 + record.bra_2016) *
-                    record.work_days,
-                ],
-            ];
-
-            // Estimate the height required for this record
-            const estimatedHeight =
-                10 + // Header height
-                details.length * 10 + // Employee details
-                salaryBreakdown.length * 10 + // Salary breakdown table
-                10; // Spacing
-
-            // Add a new page if the content does not fit
-            if (currentY + estimatedHeight > pageHeight) {
-                doc.addPage();
-                currentY = margin;
-            }
-
-            // Add header
-            doc.setFontSize(14);
-            doc.text(header, margin, currentY);
-            currentY += 10;
-
-            // Add details
-            doc.setFontSize(12);
-            details.forEach(([label, value]) => {
-                doc.text(`${label}: ${value}`, margin, currentY);
-                currentY += 10;
-            });
-
-            // Add salary breakdown as a table
-            doc.autoTable({
-                startY: currentY,
-                head: [["Description", "Value"]],
-                body: salaryBreakdown.map(([label, value]) => [label, value.toString()]),
-                theme: "grid",
-                margin: { left: margin },
-                styles: { fontSize: 10 },
-            });
-
-            currentY = doc.autoTable.previous.finalY + 10; // Update Y position
-        });
-
-        doc.save("Payroll_Report.pdf");
-    };
-
-
-
-
-
-
 
     if (!session || session.user.account_type !== "admin") {
         return <p className="text-red-500 font-bold">Only admins can enter payroll data.</p>;
@@ -407,7 +213,7 @@ export default function PayrollManagement() {
 
 
             {/* Add Payroll Button */}
-            <div className="grid-cols-2 grid">
+            <div >
                 <div className="flex  mb-6 justify-start gap-5">
                     <button
                         onClick={() => {
@@ -456,8 +262,29 @@ export default function PayrollManagement() {
                         className="px-6 py-2 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none"
                     >
                         <FontAwesomeIcon icon={faPrint} className="mr-2" />
-                        Payslip
+                        Payslip Sheet
                     </button>
+                    <button
+                        onClick={() => payrollSummaryTable(payrollData)}
+                        className="px-6 py-2 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none"
+
+                    >
+                        <FontAwesomeIcon icon={faPrint} className="mr-2" />
+                        Payroll table
+                    </button>
+                    <button
+                        className="px-6 py-2 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none"
+
+                        onClick={
+
+                            () => {
+                                console.log("canvas gen press");
+                                CanvasGen("payrollwrapper")
+                            }
+                        }>
+                        <FontAwesomeIcon icon={faPrint} className="mr-2" />
+                        Canvas</button>
+
                 </div>
 
                 <div className="flex justify-end mb-6">
@@ -466,91 +293,93 @@ export default function PayrollManagement() {
             </div>
 
             {/* search drawer */}
-            {showsearchdrawer && (
-                <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+            {
+                showsearchdrawer && (
+                    <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
 
-                    <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl relative overflow-y-auto max-h-[90vh]">
-                        {/* Close Button */}
-                        <button
-                            onClick={() => {
-                                setshowsearchdrawer(false)
-                            }}
-                            className="absolute top-4 right-4 text-gray-600 hover:text-gray-800"
-                        >
-                            <FontAwesomeIcon icon={faTimes} />
-                        </button>
-                        <h3 className="text-xl font-semibold mb-4">Filter Payroll Data</h3>
-
-                        <form onSubmit={handleSearchSubmit} className="mb-6">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <input
-                                    type="date"
-                                    name="dateFrom"
-                                    value={searchParams.dateFrom}
-                                    onChange={handleSearchChange}
-                                    placeholder="From Date"
-                                    className="w-full px-4 py-2 border rounded-lg"
-                                />
-                                <input
-                                    type="date"
-                                    name="dateTo"
-                                    value={searchParams.dateTo}
-                                    onChange={handleSearchChange}
-                                    placeholder="To Date"
-                                    className="w-full px-4 py-2 border rounded-lg"
-                                />
-                                <input
-                                    type="text"
-                                    name="firstName"
-                                    value={searchParams.firstName}
-                                    onChange={handleSearchChange}
-                                    placeholder="First Name"
-                                    className="w-full px-4 py-2 border rounded-lg"
-                                />
-                                <input
-                                    type="text"
-                                    name="lastName"
-                                    value={searchParams.lastName}
-                                    onChange={handleSearchChange}
-                                    placeholder="Last Name"
-                                    className="w-full px-4 py-2 border rounded-lg"
-                                />
-                                <input
-                                    type="text"
-                                    name="empNo"
-                                    value={searchParams.empNo}
-                                    onChange={handleSearchChange}
-                                    placeholder="Employee No"
-                                    className="w-full px-4 py-2 border rounded-lg"
-                                />
-                                <input
-                                    type="text"
-                                    name="epfNo"
-                                    value={searchParams.epfNo}
-                                    onChange={handleSearchChange}
-                                    placeholder="EPF No"
-                                    className="w-full px-4 py-2 border rounded-lg"
-                                />
-                                <input
-                                    type="text"
-                                    name="nicPassport"
-                                    value={searchParams.nicPassport}
-                                    onChange={handleSearchChange}
-                                    placeholder="NIC / Passport No"
-                                    className="w-full px-4 py-2 border rounded-lg"
-                                />
-                            </div>
+                        <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl relative overflow-y-auto max-h-[90vh]">
+                            {/* Close Button */}
                             <button
-                                type="submit"
-                                className="mt-4 px-6 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none"
+                                onClick={() => {
+                                    setshowsearchdrawer(false)
+                                }}
+                                className="absolute top-4 right-4 text-gray-600 hover:text-gray-800"
                             >
-                                <FontAwesomeIcon icon={faSearch} className="mr-2" />
-                                Filter
+                                <FontAwesomeIcon icon={faTimes} />
                             </button>
-                        </form>
+                            <h3 className="text-xl font-semibold mb-4">Filter Payroll Data</h3>
+
+                            <form onSubmit={handleSearchSubmit} className="mb-6">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <input
+                                        type="date"
+                                        name="dateFrom"
+                                        value={searchParams.dateFrom}
+                                        onChange={handleSearchChange}
+                                        placeholder="From Date"
+                                        className="w-full px-4 py-2 border rounded-lg"
+                                    />
+                                    <input
+                                        type="date"
+                                        name="dateTo"
+                                        value={searchParams.dateTo}
+                                        onChange={handleSearchChange}
+                                        placeholder="To Date"
+                                        className="w-full px-4 py-2 border rounded-lg"
+                                    />
+                                    <input
+                                        type="text"
+                                        name="firstName"
+                                        value={searchParams.firstName}
+                                        onChange={handleSearchChange}
+                                        placeholder="First Name"
+                                        className="w-full px-4 py-2 border rounded-lg"
+                                    />
+                                    <input
+                                        type="text"
+                                        name="lastName"
+                                        value={searchParams.lastName}
+                                        onChange={handleSearchChange}
+                                        placeholder="Last Name"
+                                        className="w-full px-4 py-2 border rounded-lg"
+                                    />
+                                    <input
+                                        type="text"
+                                        name="empNo"
+                                        value={searchParams.empNo}
+                                        onChange={handleSearchChange}
+                                        placeholder="Employee No"
+                                        className="w-full px-4 py-2 border rounded-lg"
+                                    />
+                                    <input
+                                        type="text"
+                                        name="epfNo"
+                                        value={searchParams.epfNo}
+                                        onChange={handleSearchChange}
+                                        placeholder="EPF No"
+                                        className="w-full px-4 py-2 border rounded-lg"
+                                    />
+                                    <input
+                                        type="text"
+                                        name="nicPassport"
+                                        value={searchParams.nicPassport}
+                                        onChange={handleSearchChange}
+                                        placeholder="NIC / Passport No"
+                                        className="w-full px-4 py-2 border rounded-lg"
+                                    />
+                                </div>
+                                <button
+                                    type="submit"
+                                    className="mt-4 px-6 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none"
+                                >
+                                    <FontAwesomeIcon icon={faSearch} className="mr-2" />
+                                    Filter
+                                </button>
+                            </form>
+                        </div>
                     </div>
-                </div>
-            )}
+                )
+            }
 
 
 
@@ -631,6 +460,6 @@ export default function PayrollManagement() {
                     Next
                 </button>
             </div>
-        </div>
+        </div >
     );
 }

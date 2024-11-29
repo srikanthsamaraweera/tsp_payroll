@@ -34,6 +34,18 @@ export default function TopNav() {
     ? session.user.email[0].toUpperCase()
     : null;
 
+  // Render a loading state while the session is being fetched
+
+  if (status === "loading") {
+    return (
+      <nav className="bg-gray-800 text-white p-4">
+        <div className="container mx-auto">
+          <div className="text-center text-gray-400">Loading session...</div>
+        </div>
+      </nav>
+    );
+  }
+
   return (
     <nav
       ref={navRef}
@@ -78,7 +90,10 @@ export default function TopNav() {
             </button>
 
             {isProfileDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-gray-700 text-white rounded-lg shadow-lg py-2">
+              <div
+                key={isProfileDropdownOpen ? "open" : "closed"}
+                className="absolute right-0 mt-2 w-48 bg-gray-700 text-white rounded-lg shadow-lg py-2"
+              >
                 {session ? (
                   <>
                     <p className="px-4 py-2 text-sm truncate max-w-[200px]">
