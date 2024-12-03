@@ -1,105 +1,79 @@
 "use client";
 
+import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes, faEdit } from "@fortawesome/free-solid-svg-icons";
+import FormatDate from "@/functions/formatdate";
 
-export default function AddPayrollModal({
+export default function EditPayrollModal({
   isOpen,
   onClose,
-  payrollFields,
-  setPayrollFields,
-  selectedEmployee,
-  setSelectedEmployee,
-  employeeSearch,
-  setEmployeeSearch,
-  employeeResults,
-  setEmployeeResults,
+  editRecord,
+  setEditRecord,
+  handleEditRecordChange,
+  handleEditPayroll,
+  preventScroll,
   fulledit,
   setfulledit,
-  handlePayrollFieldChange,
-  handleDateFieldChange,
-  preventScroll,
-  searchingemployeemessage,
-  handleSavePayroll,
 }) {
-  if (!isOpen) return null;
+  if (!isOpen || !editRecord) return null;
 
   return (
-    <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl relative overflow-y-auto max-h-[90vh]">
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-gray-600 hover:text-gray-800"
-        >
-          <FontAwesomeIcon icon={faTimes} />
-        </button>
-        <h3 className="text-xl font-semibold mb-4">Add Payroll</h3>
-
-        {/* Selected Employee */}
-        {selectedEmployee ? (
+    <div>
+      <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl relative overflow-y-auto max-h-[90vh]">
+          {/* Close Button */}
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 text-gray-600 hover:text-gray-800"
+          >
+            <FontAwesomeIcon icon={faTimes} />
+          </button>
+          <h3 className="text-xl font-semibold mb-4">Edit Record</h3>
           <div className="mb-4 p-4 bg-blue-100 rounded-lg">
             <p className="text-gray-800">
               <strong>Selected Employee:</strong>
-              {selectedEmployee.id} {selectedEmployee.Firstname}{" "}
-              {selectedEmployee.Surname} (NIC: {selectedEmployee.Nic_Passport},
-              EmpNo: {selectedEmployee.EmpNo}, EPFNo: {selectedEmployee.EpfNo})
+              {editRecord.employee?.id} {editRecord.employee?.Firstname}{" "}
+              {editRecord.employee?.Surname} (NIC:{" "}
+              {editRecord.employee?.Nic_Passport}, EmpNo:{" "}
+              {editRecord.employee?.EmpNo}, EPFNo: {editRecord.employee?.EpfNo})
             </p>
           </div>
-        ) : (
-          <p className="mb-4 text-gray-500">No employee selected.</p>
-        )}
 
-        {/* Employee Search */}
-        <div className="mb-6 relative">
-          <input
-            type="text"
-            value={employeeSearch}
-            onChange={(e) => setEmployeeSearch(e.target.value)}
-            placeholder="Search Employee by Name, NIC, etc."
-            className="w-full px-4 py-2 border rounded-lg"
-          />
-          {searchingemployeemessage && (
-            <div className="bg-yellow-100 w-full">
-              {searchingemployeemessage}
-            </div>
-          )}
-          {employeeSearch && employeeResults.length > 0 && (
-            <ul className="absolute z-50 bg-white border rounded-lg shadow-md mt-2 max-h-48 overflow-y-auto w-full">
-              {employeeResults.map((emp) => (
-                <li
-                  key={emp.id}
-                  onClick={() => {
-                    setSelectedEmployee(emp);
-                    setEmployeeSearch("");
-                    setEmployeeResults([]);
-                  }}
-                  className="px-4 py-2 cursor-pointer hover:bg-gray-100"
-                >
-                  {emp.Firstname} {emp.Surname} (NIC: {emp.Nic_Passport}, EmpNo:{" "}
-                  {emp.EmpNo})
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-        <div className="text-right pr-1 pb-1">
-          <button
-            className={` p-1 pr-4 pl-4 ${
-              fulledit ? "bg-red-200" : "bg-slate-300"
-            }`}
-            onClick={() => setfulledit(!fulledit)}
-          >
-            Full Edit <FontAwesomeIcon icon={faEdit} />
-          </button>
-        </div>
-        {/* Payroll Fields */}
-        <div className="overflow-y-auto max-h-[50vh] ">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+          {/* Selected Employee */}
+
+          <div className="text-right pr-1 pb-1">
+            <button
+              className={` p-1 pr-4 pl-4 ${
+                fulledit ? "bg-red-200" : "bg-slate-300"
+              }`}
+              onClick={() => setfulledit(!fulledit)}
+            >
+              Full Edit <FontAwesomeIcon icon={faEdit} />
+            </button>
+          </div>
+          {/* Payroll Fields */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-h-[50vh] overflow-y-auto">
             <div className="form-group">
               <label
                 htmlFor="employee_id"
-                className="block text-gray-700 font-medium mb-2 text-sm"
+                className="block text-gray-700 font-medium mb-2"
+              >
+                Record ID
+              </label>
+              <input
+                type="number"
+                id="record_id"
+                name="record_id"
+                value={editRecord.id}
+                className="w-full px-4 py-2 border rounded-lg bg-gray-200"
+                readOnly
+              />
+            </div>
+            <div className="form-group">
+              <label
+                htmlFor="employee_id"
+                className="block text-gray-700 font-medium mb-2"
               >
                 Employee ID
               </label>
@@ -107,8 +81,7 @@ export default function AddPayrollModal({
                 type="number"
                 id="employee_id"
                 name="employee_id"
-                value={selectedEmployee ? selectedEmployee.id : ""}
-                onChange={handlePayrollFieldChange}
+                value={editRecord.employee.id}
                 className="w-full px-4 py-2 border rounded-lg bg-gray-200"
                 readOnly
               />
@@ -116,7 +89,7 @@ export default function AddPayrollModal({
             <div className="form-group">
               <label
                 htmlFor="payroll_date"
-                className="block text-gray-700 font-medium mb-2 text-sm"
+                className="block text-gray-700 font-medium mb-2"
               >
                 Payroll Date
               </label>
@@ -124,18 +97,23 @@ export default function AddPayrollModal({
                 type="date"
                 id="payroll_date"
                 name="payroll_date"
-                value={payrollFields.payroll_date}
-                onChange={handleDateFieldChange}
+                value={
+                  editRecord.payroll_date
+                    ? new Date(editRecord.payroll_date)
+                        .toISOString()
+                        .split("T")[0]
+                    : ""
+                }
+                onChange={handleEditRecordChange}
                 className="w-full px-4 py-2 border rounded-lg"
                 required
               />
             </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-5">
+
             <div className="form-group">
               <label
                 htmlFor="work_days"
-                className="block text-gray-700 font-medium mb-2 text-sm"
+                className="block text-gray-700 font-medium mb-2"
               >
                 Work Days
               </label>
@@ -143,8 +121,8 @@ export default function AddPayrollModal({
                 type="number"
                 id="work_days"
                 name="work_days"
-                value={payrollFields.work_days}
-                onChange={handlePayrollFieldChange}
+                value={editRecord.work_days || ""}
+                onChange={handleEditRecordChange}
                 className="w-full px-4 py-2 border rounded-lg"
                 onWheel={preventScroll}
                 required
@@ -153,7 +131,7 @@ export default function AddPayrollModal({
             <div className="form-group">
               <label
                 htmlFor="per_day_salary"
-                className="block text-gray-700 font-medium mb-2 text-sm"
+                className="block text-gray-700 font-medium mb-2"
               >
                 Per Day Salary - Code 2
               </label>
@@ -161,19 +139,19 @@ export default function AddPayrollModal({
                 type="number"
                 id="per_day_salary"
                 name="per_day_salary"
-                value={payrollFields.per_day_salary}
-                onChange={handlePayrollFieldChange}
+                value={editRecord.per_day_salary}
+                onWheel={preventScroll}
+                onChange={handleEditRecordChange}
                 className={`w-full px-4 py-2 border rounded-lg  ${
                   fulledit ? "" : "bg-gray-200"
                 }`}
                 readOnly={!fulledit}
-                onWheel={preventScroll}
               />
             </div>
             <div className="form-group">
               <label
                 htmlFor="bra_2005"
-                className="block text-gray-700 font-medium mb-2 text-sm"
+                className="block text-gray-700 font-medium mb-2"
               >
                 BRA 2005-Code 1
               </label>
@@ -181,19 +159,19 @@ export default function AddPayrollModal({
                 type="number"
                 id="bra_2005"
                 name="bra_2005"
-                value={payrollFields.bra_2005}
-                onChange={handlePayrollFieldChange}
+                value={editRecord.bra_2005}
+                onWheel={preventScroll}
+                onChange={handleEditRecordChange}
                 className={`w-full px-4 py-2 border rounded-lg  ${
                   fulledit ? "" : "bg-gray-200"
                 }`}
                 readOnly={!fulledit}
-                onWheel={preventScroll}
               />
             </div>
             <div className="form-group">
               <label
                 htmlFor="bra_2016"
-                className="block text-gray-700 font-medium mb-2 text-sm"
+                className="block text-gray-700 font-medium mb-2"
               >
                 BRA 2016-Code 4
               </label>
@@ -201,22 +179,20 @@ export default function AddPayrollModal({
                 type="number"
                 id="bra_2016"
                 name="bra_2016"
-                value={payrollFields.bra_2016}
-                onChange={handlePayrollFieldChange}
+                value={editRecord.bra_2016}
+                onWheel={preventScroll}
+                onChange={handleEditRecordChange}
                 className={`w-full px-4 py-2 border rounded-lg  ${
                   fulledit ? "" : "bg-gray-200"
                 }`}
                 readOnly={!fulledit}
-                onWheel={preventScroll}
               />
             </div>
-          </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-5">
             <div className="form-group">
               <label
                 htmlFor="sundays"
-                className="block text-gray-700 font-medium mb-2 text-sm"
+                className="block text-gray-700 font-medium mb-2"
               >
                 Sundays
               </label>
@@ -224,8 +200,8 @@ export default function AddPayrollModal({
                 type="number"
                 id="sundays"
                 name="sundays"
-                value={payrollFields.sundays}
-                onChange={handlePayrollFieldChange}
+                value={editRecord.sundays}
+                onChange={handleEditRecordChange}
                 className="w-full px-4 py-2 border rounded-lg"
                 onWheel={preventScroll}
                 required
@@ -242,8 +218,8 @@ export default function AddPayrollModal({
                 type="number"
                 id="sunday_rate"
                 name="sunday_rate"
-                value={payrollFields.sunday_rate}
-                onChange={handlePayrollFieldChange}
+                value={editRecord.sunday_rate}
+                onChange={handleEditRecordChange}
                 className={`w-full px-4 py-2 border rounded-lg  ${
                   fulledit ? "" : "bg-gray-200"
                 }`}
@@ -255,7 +231,7 @@ export default function AddPayrollModal({
             <div className="form-group">
               <label
                 htmlFor="sunday_allowance"
-                className="block text-gray-700 font-medium text-sm mb-2"
+                className="block text-gray-700 font-medium mb-2"
               >
                 Sunday Allowance-Code 12
               </label>
@@ -263,21 +239,20 @@ export default function AddPayrollModal({
                 type="number"
                 id="sunday_allowance"
                 name="sunday_allowance"
-                value={payrollFields.sunday_allowance}
-                onChange={handlePayrollFieldChange}
+                value={editRecord.sunday_allowance}
+                onWheel={preventScroll}
+                onChange={handleEditRecordChange}
                 className={`w-full px-4 py-2 border rounded-lg  ${
                   fulledit ? "" : "bg-gray-200"
                 }`}
                 readOnly={!fulledit}
-                onWheel={preventScroll}
               />
             </div>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-2 gap-4 mb-5">
+
             <div className="form-group">
               <label
                 htmlFor="stat_days"
-                className="block text-gray-700 font-medium mb-2 text-sm"
+                className="block text-gray-700 font-medium mb-2"
               >
                 Stat Days
               </label>
@@ -285,8 +260,8 @@ export default function AddPayrollModal({
                 type="number"
                 id="stat_days"
                 name="stat_days"
-                value={payrollFields.stat_days}
-                onChange={handlePayrollFieldChange}
+                value={editRecord.stat_days}
+                onChange={handleEditRecordChange}
                 className="w-full px-4 py-2 border rounded-lg"
                 onWheel={preventScroll}
                 required
@@ -295,7 +270,7 @@ export default function AddPayrollModal({
             <div className="form-group">
               <label
                 htmlFor="stat_allowance"
-                className="block text-gray-700 font-medium mb-2 text-sm"
+                className="block text-gray-700 font-medium mb-2"
               >
                 Stat Allowance-Code 3
               </label>
@@ -303,22 +278,20 @@ export default function AddPayrollModal({
                 type="number"
                 id="stat_allowance"
                 name="stat_allowance"
-                value={payrollFields.stat_allowance}
-                onChange={handlePayrollFieldChange}
+                value={editRecord.stat_allowance}
+                onWheel={preventScroll}
+                onChange={handleEditRecordChange}
                 className={`w-full px-4 py-2 border rounded-lg  ${
                   fulledit ? "" : "bg-gray-200"
                 }`}
                 readOnly={!fulledit}
-                onWheel={preventScroll}
               />
             </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 ">
+            <div className="form-group"></div>
             <div className="form-group">
               <label
                 htmlFor="poya_days"
-                className="block text-gray-700 font-medium mb-2 text-sm"
+                className="block text-gray-700 font-medium mb-2"
               >
                 Poya Days
               </label>
@@ -326,8 +299,8 @@ export default function AddPayrollModal({
                 type="number"
                 id="poya_days"
                 name="poya_days"
-                value={payrollFields.poya_days}
-                onChange={handlePayrollFieldChange}
+                value={editRecord.poya_days}
+                onChange={handleEditRecordChange}
                 className="w-full px-4 py-2 border rounded-lg"
                 onWheel={preventScroll}
                 required
@@ -336,27 +309,7 @@ export default function AddPayrollModal({
             <div className="form-group">
               <label
                 htmlFor="poya_allowance"
-                className="block text-gray-700 font-medium mb-2 text-sm"
-              >
-                Poya Rate
-              </label>
-              <input
-                type="number"
-                id="poya_rate"
-                name="poya_rate"
-                value={payrollFields.poya_rate}
-                onChange={handlePayrollFieldChange}
-                className={`w-full px-4 py-2 border rounded-lg  ${
-                  fulledit ? "" : "bg-gray-200"
-                }`}
-                readOnly={!fulledit}
-                onWheel={preventScroll}
-              />
-            </div>
-            <div className="form-group">
-              <label
-                htmlFor="poya_allowance"
-                className="block text-gray-700 font-medium mb-2 text-sm"
+                className="block text-gray-700 font-medium mb-2"
               >
                 Poya Allowance-Code 5
               </label>
@@ -364,19 +317,20 @@ export default function AddPayrollModal({
                 type="number"
                 id="poya_allowance"
                 name="poya_allowance"
-                value={payrollFields.poya_allowance}
-                onChange={handlePayrollFieldChange}
+                value={editRecord.poya_allowance}
+                onWheel={preventScroll}
+                onChange={handleEditRecordChange}
                 className={`w-full px-4 py-2 border rounded-lg  ${
                   fulledit ? "" : "bg-gray-200"
                 }`}
                 readOnly={!fulledit}
-                onWheel={preventScroll}
               />
             </div>
+
             <div className="form-group">
               <label
                 htmlFor="night_shifts"
-                className="block text-gray-700 font-medium mb-2 text-sm"
+                className="block text-gray-700 font-medium mb-2"
               >
                 Night Shifts
               </label>
@@ -384,17 +338,18 @@ export default function AddPayrollModal({
                 type="number"
                 id="night_shifts"
                 name="night_shifts"
-                value={payrollFields.night_shifts}
-                onChange={handlePayrollFieldChange}
+                value={editRecord.night_shifts}
+                onChange={handleEditRecordChange}
                 className="w-full px-4 py-2 border rounded-lg"
                 onWheel={preventScroll}
                 required
               />
             </div>
+
             <div className="form-group">
               <label
                 htmlFor="normal_ot"
-                className="block text-gray-700 font-medium mb-2 text-sm"
+                className="block text-gray-700 font-medium mb-2"
               >
                 Normal OT
               </label>
@@ -402,8 +357,8 @@ export default function AddPayrollModal({
                 type="number"
                 id="normal_ot"
                 name="normal_ot"
-                value={payrollFields.normal_ot}
-                onChange={handlePayrollFieldChange}
+                value={editRecord.normal_ot}
+                onChange={handleEditRecordChange}
                 className="w-full px-4 py-2 border rounded-lg"
                 onWheel={preventScroll}
                 required
@@ -412,7 +367,7 @@ export default function AddPayrollModal({
             <div className="form-group">
               <label
                 htmlFor="normal_ot_rate"
-                className="block text-gray-700 font-medium mb-2 text-sm"
+                className="block text-gray-700 font-medium mb-2"
               >
                 Normal OT Rate-Code 6
               </label>
@@ -420,19 +375,19 @@ export default function AddPayrollModal({
                 type="number"
                 id="normal_ot_rate"
                 name="normal_ot_rate"
-                value={payrollFields.normal_ot_rate}
-                onChange={handlePayrollFieldChange}
+                value={editRecord.normal_ot_rate}
+                onWheel={preventScroll}
+                onChange={handleEditRecordChange}
                 className={`w-full px-4 py-2 border rounded-lg  ${
                   fulledit ? "" : "bg-gray-200"
                 }`}
                 readOnly={!fulledit}
-                onWheel={preventScroll}
               />
             </div>
             <div className="form-group">
               <label
                 htmlFor="normal_ot_allowance"
-                className="block text-gray-700 font-medium mb-2 text-sm"
+                className="block text-gray-700 font-medium mb-2"
               >
                 Normal OT Allowance-Code 7
               </label>
@@ -440,19 +395,20 @@ export default function AddPayrollModal({
                 type="number"
                 id="normal_ot_allowance"
                 name="normal_ot_allowance"
-                value={payrollFields.normal_ot_allowance}
-                onChange={handlePayrollFieldChange}
+                value={editRecord.normal_ot_allowance}
+                onWheel={preventScroll}
+                onChange={handleEditRecordChange}
                 className={`w-full px-4 py-2 border rounded-lg  ${
                   fulledit ? "" : "bg-gray-200"
                 }`}
                 readOnly={!fulledit}
-                onWheel={preventScroll}
               />
             </div>
+
             <div className="form-group">
               <label
                 htmlFor="double_ot"
-                className="block text-gray-700 font-medium mb-2 text-sm"
+                className="block text-gray-700 font-medium mb-2"
               >
                 Double OT
               </label>
@@ -460,8 +416,8 @@ export default function AddPayrollModal({
                 type="number"
                 id="double_ot"
                 name="double_ot"
-                value={payrollFields.double_ot}
-                onChange={handlePayrollFieldChange}
+                value={editRecord.double_ot}
+                onChange={handleEditRecordChange}
                 className="w-full px-4 py-2 border rounded-lg"
                 onWheel={preventScroll}
                 required
@@ -470,7 +426,7 @@ export default function AddPayrollModal({
             <div className="form-group">
               <label
                 htmlFor="double_ot_rate"
-                className="block text-gray-700 font-medium mb-2 text-sm"
+                className="block text-gray-700 font-medium mb-2"
               >
                 Double OT Rate-Code 8
               </label>
@@ -478,19 +434,19 @@ export default function AddPayrollModal({
                 type="number"
                 id="double_ot_rate"
                 name="double_ot_rate"
-                value={payrollFields.double_ot_rate}
-                onChange={handlePayrollFieldChange}
+                value={editRecord.double_ot_rate}
+                onWheel={preventScroll}
+                onChange={handleEditRecordChange}
                 className={`w-full px-4 py-2 border rounded-lg  ${
                   fulledit ? "" : "bg-gray-200"
                 }`}
                 readOnly={!fulledit}
-                onWheel={preventScroll}
               />
             </div>
             <div className="form-group">
               <label
                 htmlFor="double_ot_allowance"
-                className="block text-gray-700 font-medium mb-2 text-sm"
+                className="block text-gray-700 font-medium mb-2"
               >
                 Double OT Allowance-Code 9
               </label>
@@ -498,19 +454,20 @@ export default function AddPayrollModal({
                 type="number"
                 id="double_ot_allowance"
                 name="double_ot_allowance"
-                value={payrollFields.double_ot_allowance}
-                onChange={handlePayrollFieldChange}
+                value={editRecord.double_ot_allowance}
+                onWheel={preventScroll}
+                onChange={handleEditRecordChange}
                 className={`w-full px-4 py-2 border rounded-lg  ${
                   fulledit ? "" : "bg-gray-200"
                 }`}
                 readOnly={!fulledit}
-                onWheel={preventScroll}
               />
             </div>
+
             <div className="form-group">
               <label
                 htmlFor="triple_ot"
-                className="block text-gray-700 font-medium mb-2 text-sm"
+                className="block text-gray-700 font-medium mb-2"
               >
                 Triple OT
               </label>
@@ -518,8 +475,8 @@ export default function AddPayrollModal({
                 type="number"
                 id="triple_ot"
                 name="triple_ot"
-                value={payrollFields.triple_ot}
-                onChange={handlePayrollFieldChange}
+                value={editRecord.triple_ot}
+                onChange={handleEditRecordChange}
                 className="w-full px-4 py-2 border rounded-lg"
                 onWheel={preventScroll}
                 required
@@ -528,7 +485,7 @@ export default function AddPayrollModal({
             <div className="form-group">
               <label
                 htmlFor="triple_ot_rate"
-                className="block text-gray-700 font-medium mb-2 text-sm"
+                className="block text-gray-700 font-medium mb-2"
               >
                 Triple OT Rate-Code 10
               </label>
@@ -536,19 +493,19 @@ export default function AddPayrollModal({
                 type="number"
                 id="triple_ot_rate"
                 name="triple_ot_rate"
-                value={payrollFields.triple_ot_rate}
-                onChange={handlePayrollFieldChange}
+                value={editRecord.triple_ot_rate}
+                onWheel={preventScroll}
+                onChange={handleEditRecordChange}
                 className={`w-full px-4 py-2 border rounded-lg  ${
                   fulledit ? "" : "bg-gray-200"
                 }`}
                 readOnly={!fulledit}
-                onWheel={preventScroll}
               />
             </div>
             <div className="form-group">
               <label
                 htmlFor="triple_ot_allowance"
-                className="block text-gray-700 font-medium mb-2 text-sm"
+                className="block text-gray-700 font-medium mb-2"
               >
                 Triple OT Allowance-Code 11
               </label>
@@ -556,19 +513,20 @@ export default function AddPayrollModal({
                 type="number"
                 id="triple_ot_allowance"
                 name="triple_ot_allowance"
-                value={payrollFields.triple_ot_allowance}
-                onChange={handlePayrollFieldChange}
+                value={editRecord.triple_ot_allowance}
+                onWheel={preventScroll}
+                onChange={handleEditRecordChange}
                 className={`w-full px-4 py-2 border rounded-lg  ${
                   fulledit ? "" : "bg-gray-200"
                 }`}
                 readOnly={!fulledit}
-                onWheel={preventScroll}
               />
             </div>
+
             <div className="form-group">
               <label
                 htmlFor="advance"
-                className="block text-gray-700 font-medium mb-2 text-sm"
+                className="block text-gray-700 font-medium mb-2"
               >
                 Advance
               </label>
@@ -576,8 +534,8 @@ export default function AddPayrollModal({
                 type="number"
                 id="advance"
                 name="advance"
-                value={payrollFields.advance || 0}
-                onChange={handlePayrollFieldChange}
+                value={editRecord.advance || 0}
+                onChange={handleEditRecordChange}
                 className="w-full px-4 py-2 border rounded-lg"
                 onWheel={preventScroll}
               />
@@ -585,7 +543,7 @@ export default function AddPayrollModal({
             <div className="form-group">
               <label
                 htmlFor="festival_advance"
-                className="block text-gray-700 font-medium mb-2 text-sm"
+                className="block text-gray-700 font-medium mb-2"
               >
                 Festival Advance
               </label>
@@ -593,8 +551,8 @@ export default function AddPayrollModal({
                 type="number"
                 id="festival_advance"
                 name="festival_advance"
-                value={payrollFields.festival_advance || 0}
-                onChange={handlePayrollFieldChange}
+                value={editRecord.festival_advance || 0}
+                onChange={handleEditRecordChange}
                 className="w-full px-4 py-2 border rounded-lg"
                 onWheel={preventScroll}
               />
@@ -602,7 +560,7 @@ export default function AddPayrollModal({
             <div className="form-group">
               <label
                 htmlFor="loan_amount"
-                className="block text-gray-700 font-medium mb-2 text-sm"
+                className="block text-gray-700 font-medium mb-2"
               >
                 Loan Amount
               </label>
@@ -610,22 +568,22 @@ export default function AddPayrollModal({
                 type="number"
                 id="loan_amount"
                 name="loan_amount"
-                value={payrollFields.loan_amount || 0}
-                onChange={handlePayrollFieldChange}
+                value={editRecord.loan_amount || 0}
+                onChange={handleEditRecordChange}
                 className="w-full px-4 py-2 border rounded-lg"
                 onWheel={preventScroll}
               />
             </div>
           </div>
-        </div>
 
-        {/* Save Button */}
-        <button
-          onClick={handleSavePayroll}
-          className="mt-4 px-6 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none"
-        >
-          Save Payroll
-        </button>
+          {/* Save Button */}
+          <button
+            onClick={handleEditPayroll}
+            className="mt-4 px-6 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none"
+          >
+            Save Edit
+          </button>
+        </div>
       </div>
     </div>
   );
