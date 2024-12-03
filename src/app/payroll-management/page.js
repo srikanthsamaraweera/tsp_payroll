@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch, faPlus, faTimes, faTrash, faEdit, faEye, faFilter, faSearchPlus, faRefresh, faSearchMinus, faDollar } from "@fortawesome/free-solid-svg-icons";
+import { faSearch, faPlus, faTimes, faTrash, faEdit, faEye, faFilter, faSearchPlus, faRefresh, faSearchMinus, faDollar, faFileExcel, faFileCsv } from "@fortawesome/free-solid-svg-icons";
 import FormatDate from "@/functions/formatdate";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import PayrollToCSV from "@/functions/pdfgen/payrolltable1";
 
 export default function PayrollManagement() {
     const router = useRouter()
@@ -30,8 +31,10 @@ export default function PayrollManagement() {
     const [bra2005, setbra2005] = useState("");
     const [bra2016, setbra2016] = useState("");
     const [sundayallowance, setsundayallowance] = useState("");
+    const [sundayrate, setsundayrate] = useState("");
     const [statallowance, setstatallowance] = useState("");
     const [poyaallowance, setpoyaallowance] = useState("");
+    const [poyarate, setpoyarate] = useState("");
     const [normalotrate, setnormalotrate] = useState("");
     const [normalotallowance, setnormalotallowance] = useState("");
     const [doubleotrate, setdoubleotrate] = useState("");
@@ -50,21 +53,7 @@ export default function PayrollManagement() {
     const [showsearchdrawer, setshowsearchdrawer] = useState(false)
 
 
-    const [payrollFields, setPayrollFields] = useState({
-        work_days: "",
-        per_day_salary: "",
-        payroll_date: "",
-        advance: "",
-        festival_advance: "",
-        loan_amount: "",
-        night_shifts: "",
-        normal_ot: "",
-        double_ot: "",
-        triple_ot: "",
-        sundays: "",
-        stat_days: "",
-        poya_days: "",
-    });
+
     const recordsPerPage = 50;
 
     const resetPayrollFields = () => {
@@ -145,6 +134,7 @@ export default function PayrollManagement() {
         const bra2016val = await fetchPayRates(4)
         const statallowanceval = await fetchPayRates(3)
         const poyaallowanceval = await fetchPayRates(5)
+        const poyarate = await fetchPayRates(14)
         const normalotrateval = await fetchPayRates(6)
         const normalotallowanceval = await fetchPayRates(7)
         const doubleotrateval = await fetchPayRates(8)
@@ -152,6 +142,7 @@ export default function PayrollManagement() {
         const tripleotrateval = await fetchPayRates(10)
         const tripleotallowanceval = await fetchPayRates(11)
         const sundayallowance = await fetchPayRates(12)
+        const sundayrate = await fetchPayRates(13)
 
         setDayrate(ratesetval)
         setbra2005(bra2005val)
@@ -165,7 +156,59 @@ export default function PayrollManagement() {
         settripleotrate(tripleotrateval)
         settripleotallowance(tripleotallowanceval)
         setsundayallowance(sundayallowance)
+        setsundayrate(sundayrate)
+        setpoyarate(poyarate)
+
+        setPayrollFields((prev) => ({
+            ...prev,
+            per_day_salary: ratesetval,
+            bra_2005: bra2005val,
+            bra_2016: bra2016val,
+            sunday_allowance: sundayallowance,
+            sunday_rate: sundayrate,
+            stat_allowance: statallowanceval,
+            poya_rate: poyarate,
+            poya_allowance: poyaallowanceval,
+            normal_ot_rate: normalotrateval,
+            normal_ot_allowance: normalotallowanceval,
+            double_ot_rate: doubleotrateval,
+            double_ot_allowance: doubleotallowanceval,
+            triple_ot_rate: tripleotrateval,
+            triple_ot_allowance: tripleotallowanceval,
+        }));
     }
+
+    const [payrollFields, setPayrollFields] = useState({
+        work_days: "",
+        per_day_salary: "",
+        payroll_date: "",
+        advance: "",
+        festival_advance: "",
+        loan_amount: "",
+        night_shifts: "",
+        normal_ot: "",
+        double_ot: "",
+        triple_ot: "",
+        sundays: "",
+        stat_days: "",
+        poya_days: "",
+        per_day_salary: "",
+        bra_2005: "",
+        bra_2016: "",
+        sunday_allowance: "",
+        sunday_rate: "",
+        stat_allowance: "",
+        poya_rate: "",
+        poya_allowance: "",
+        normal_ot_rate: "",
+        normal_ot_allowance: "",
+        double_ot_rate: "",
+        double_ot_allowance: "",
+        triple_ot_rate: "",
+        triple_ot_allowance: "",
+
+
+    });
 
     useEffect(() => {
         if (employeeSearch.length > 2) fetchEmployees();
@@ -238,18 +281,20 @@ export default function PayrollManagement() {
                 body: JSON.stringify({
                     emp_id: selectedEmployee.id,
                     ...payrollFields,
-                    per_day_salary: dayrate,
-                    bra_2005: bra2005,
-                    bra_2016: bra2016,
-                    sunday_allowance: sundayallowance,
-                    stat_allowance: statallowance,
-                    poya_allowance: poyaallowance,
-                    normal_ot_rate: normalotrate,
-                    normal_ot_allowance: normalotallowance,
-                    double_ot_rate: doubleotrate,
-                    double_ot_allowance: doubleotallowance,
-                    triple_ot_rate: tripleotrate,
-                    triple_ot_allowance: tripleotallowance,
+
+                    // bra_2005: bra2005,
+                    // bra_2016: bra2016,
+                    // sunday_allowance: sundayallowance,
+                    // sunday_rate: sundayrate,
+                    // stat_allowance: statallowance,
+                    // poya_rate: poyarate,
+                    // poya_allowance: poyaallowance,
+                    // normal_ot_rate: normalotrate,
+                    // normal_ot_allowance: normalotallowance,
+                    // double_ot_rate: doubleotrate,
+                    // double_ot_allowance: doubleotallowance,
+                    // triple_ot_rate: tripleotrate,
+                    // triple_ot_allowance: tripleotallowance,
                 }),
             });
 
@@ -304,6 +349,51 @@ export default function PayrollManagement() {
         setEditRecord(record);
         setviewascol(true);
     };
+
+    const [deleteModal, setDeleteModal] = useState({ isOpen: false, recordId: null, randomNumber: null });
+    const [deleteInput, setDeleteInput] = useState("");
+
+    const openDeleteModal = (id) => {
+        const randomNum = Math.floor(1000000 + Math.random() * 9000000); // Generate random number
+        setDeleteModal({ isOpen: true, recordId: id, randomNumber: randomNum });
+        setDeleteInput("");
+    };
+
+    const closeDeleteModal = () => {
+        setDeleteModal({ isOpen: false, recordId: null, randomNumber: null });
+        setDeleteInput("");
+    };
+
+    const confirmDelete = async () => {
+        if (parseInt(deleteInput) !== deleteModal.randomNumber) {
+            alert("Entered number does not match. Please try again.");
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/payroll/delete', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ id: deleteModal.recordId }),
+            });
+
+            if (!response.ok) {
+                throw new Error(await response.text());
+            }
+
+            alert("Payroll record deleted successfully!");
+            closeDeleteModal();
+            fetchPayrollData(); // Refresh data table
+        } catch (error) {
+            console.error("Error deleting payroll record:", error);
+            alert("Failed to delete payroll record. Please try again.");
+        }
+    };
+
+
+
 
     if (!session || session.user.account_type !== "admin") {
         return <p className="text-red-500 font-bold">Only admins can enter payroll data.</p>;
@@ -364,14 +454,25 @@ export default function PayrollManagement() {
                         <FontAwesomeIcon icon={faDollar} className="mr-2" />
                         Payslip
                     </button>
+                    <button
+                        onClick={() => {
+                            PayrollToCSV(payrollData)
+                        }}
+                        className="px-6 py-2 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none"
+                    >
+                        <FontAwesomeIcon icon={faFileCsv} className="mr-2" />
+                        Export CSV
+                    </button>
                 </div>
 
                 <div className="flex justify-end mb-6">
                     <button
-                        onClick={() => {
+                        onClick={async () => {
                             //fetchPayRates(1);
-                            //    payrateset();
+                            setfulledit(false)
                             resetPayrollFields();
+                            await payrateset();
+                            console.log("per_day_salary", payrollFields.per_day_salary)
                             setAddPayrollModalOpen(true);
                         }}
                         className="px-6 py-2 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600 focus:outline-none"
@@ -586,10 +687,11 @@ export default function PayrollManagement() {
                                         type="number"
                                         id="per_day_salary"
                                         name="per_day_salary"
-                                        value={dayrate}
+                                        value={payrollFields.per_day_salary}
                                         onChange={handlePayrollFieldChange}
                                         className={`w-full px-4 py-2 border rounded-lg  ${fulledit ? "" : "bg-gray-200"}`}
                                         readOnly={!fulledit}
+                                        onWheel={preventScroll}
                                     />
                                 </div>
                                 <div className="form-group">
@@ -600,10 +702,11 @@ export default function PayrollManagement() {
                                         type="number"
                                         id="bra_2005"
                                         name="bra_2005"
-                                        value={bra2005}
+                                        value={payrollFields.bra_2005}
                                         onChange={handlePayrollFieldChange}
                                         className={`w-full px-4 py-2 border rounded-lg  ${fulledit ? "" : "bg-gray-200"}`}
                                         readOnly={!fulledit}
+                                        onWheel={preventScroll}
                                     />
                                 </div>
                                 <div className="form-group">
@@ -614,15 +717,16 @@ export default function PayrollManagement() {
                                         type="number"
                                         id="bra_2016"
                                         name="bra_2016"
-                                        value={bra2016}
+                                        value={payrollFields.bra_2016}
                                         onChange={handlePayrollFieldChange}
                                         className={`w-full px-4 py-2 border rounded-lg  ${fulledit ? "" : "bg-gray-200"}`}
                                         readOnly={!fulledit}
+                                        onWheel={preventScroll}
                                     />
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-5">
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-5">
 
 
                                 <div className="form-group">
@@ -641,6 +745,22 @@ export default function PayrollManagement() {
                                     />
                                 </div>
                                 <div className="form-group">
+                                    <label htmlFor="sundays" className="block text-gray-700 font-medium mb-2 text-sm">
+                                        Sunday rate
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="sunday_rate"
+                                        name="sunday_rate"
+                                        value={payrollFields.sunday_rate}
+                                        onChange={handlePayrollFieldChange}
+                                        className={`w-full px-4 py-2 border rounded-lg  ${fulledit ? "" : "bg-gray-200"}`}
+                                        onWheel={preventScroll}
+                                        required
+                                        readOnly={!fulledit}
+                                    />
+                                </div>
+                                <div className="form-group">
                                     <label htmlFor="sunday_allowance" className="block text-gray-700 font-medium text-sm mb-2">
                                         Sunday Allowance-Code 12
                                     </label>
@@ -648,12 +768,15 @@ export default function PayrollManagement() {
                                         type="number"
                                         id="sunday_allowance"
                                         name="sunday_allowance"
-                                        value={sundayallowance}
+                                        value={payrollFields.sunday_allowance}
                                         onChange={handlePayrollFieldChange}
                                         className={`w-full px-4 py-2 border rounded-lg  ${fulledit ? "" : "bg-gray-200"}`}
                                         readOnly={!fulledit}
+                                        onWheel={preventScroll}
                                     />
                                 </div>
+                            </div>
+                            <div className="grid grid-cols-2 md:grid-cols-2 gap-4 mb-5">
                                 <div className="form-group">
                                     <label htmlFor="stat_days" className="block text-gray-700 font-medium mb-2 text-sm">
                                         Stat Days
@@ -677,10 +800,11 @@ export default function PayrollManagement() {
                                         type="number"
                                         id="stat_allowance"
                                         name="stat_allowance"
-                                        value={statallowance}
+                                        value={payrollFields.stat_allowance}
                                         onChange={handlePayrollFieldChange}
                                         className={`w-full px-4 py-2 border rounded-lg  ${fulledit ? "" : "bg-gray-200"}`}
                                         readOnly={!fulledit}
+                                        onWheel={preventScroll}
                                     />
                                 </div>
 
@@ -705,16 +829,32 @@ export default function PayrollManagement() {
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="poya_allowance" className="block text-gray-700 font-medium mb-2 text-sm">
+                                        Poya Rate
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="poya_rate"
+                                        name="poya_rate"
+                                        value={payrollFields.poya_rate}
+                                        onChange={handlePayrollFieldChange}
+                                        className={`w-full px-4 py-2 border rounded-lg  ${fulledit ? "" : "bg-gray-200"}`}
+                                        readOnly={!fulledit}
+                                        onWheel={preventScroll}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="poya_allowance" className="block text-gray-700 font-medium mb-2 text-sm">
                                         Poya Allowance-Code 5
                                     </label>
                                     <input
                                         type="number"
                                         id="poya_allowance"
                                         name="poya_allowance"
-                                        value={poyaallowance}
+                                        value={payrollFields.poya_allowance}
                                         onChange={handlePayrollFieldChange}
                                         className={`w-full px-4 py-2 border rounded-lg  ${fulledit ? "" : "bg-gray-200"}`}
                                         readOnly={!fulledit}
+                                        onWheel={preventScroll}
                                     />
                                 </div>
                                 <div className="form-group">
@@ -755,10 +895,11 @@ export default function PayrollManagement() {
                                         type="number"
                                         id="normal_ot_rate"
                                         name="normal_ot_rate"
-                                        value={normalotrate}
+                                        value={payrollFields.normal_ot_rate}
                                         onChange={handlePayrollFieldChange}
                                         className={`w-full px-4 py-2 border rounded-lg  ${fulledit ? "" : "bg-gray-200"}`}
                                         readOnly={!fulledit}
+                                        onWheel={preventScroll}
                                     />
                                 </div>
                                 <div className="form-group">
@@ -769,10 +910,11 @@ export default function PayrollManagement() {
                                         type="number"
                                         id="normal_ot_allowance"
                                         name="normal_ot_allowance"
-                                        value={normalotallowance}
+                                        value={payrollFields.normal_ot_allowance}
                                         onChange={handlePayrollFieldChange}
                                         className={`w-full px-4 py-2 border rounded-lg  ${fulledit ? "" : "bg-gray-200"}`}
                                         readOnly={!fulledit}
+                                        onWheel={preventScroll}
                                     />
                                 </div>
                                 <div className="form-group">
@@ -798,10 +940,11 @@ export default function PayrollManagement() {
                                         type="number"
                                         id="double_ot_rate"
                                         name="double_ot_rate"
-                                        value={doubleotrate}
+                                        value={payrollFields.double_ot_rate}
                                         onChange={handlePayrollFieldChange}
                                         className={`w-full px-4 py-2 border rounded-lg  ${fulledit ? "" : "bg-gray-200"}`}
                                         readOnly={!fulledit}
+                                        onWheel={preventScroll}
                                     />
                                 </div>
                                 <div className="form-group">
@@ -812,10 +955,11 @@ export default function PayrollManagement() {
                                         type="number"
                                         id="double_ot_allowance"
                                         name="double_ot_allowance"
-                                        value={doubleotallowance}
+                                        value={payrollFields.double_ot_allowance}
                                         onChange={handlePayrollFieldChange}
                                         className={`w-full px-4 py-2 border rounded-lg  ${fulledit ? "" : "bg-gray-200"}`}
                                         readOnly={!fulledit}
+                                        onWheel={preventScroll}
                                     />
                                 </div>
                                 <div className="form-group">
@@ -841,10 +985,11 @@ export default function PayrollManagement() {
                                         type="number"
                                         id="triple_ot_rate"
                                         name="triple_ot_rate"
-                                        value={tripleotrate}
+                                        value={payrollFields.triple_ot_rate}
                                         onChange={handlePayrollFieldChange}
                                         className={`w-full px-4 py-2 border rounded-lg  ${fulledit ? "" : "bg-gray-200"}`}
                                         readOnly={!fulledit}
+                                        onWheel={preventScroll}
                                     />
                                 </div>
                                 <div className="form-group">
@@ -855,10 +1000,11 @@ export default function PayrollManagement() {
                                         type="number"
                                         id="triple_ot_allowance"
                                         name="triple_ot_allowance"
-                                        value={tripleotallowance}
+                                        value={payrollFields.triple_ot_allowance}
                                         onChange={handlePayrollFieldChange}
                                         className={`w-full px-4 py-2 border rounded-lg  ${fulledit ? "" : "bg-gray-200"}`}
                                         readOnly={!fulledit}
+                                        onWheel={preventScroll}
                                     />
                                 </div>
                                 <div className="form-group">
@@ -1347,6 +1493,41 @@ export default function PayrollManagement() {
                 </div>
             )}
 
+            {deleteModal.isOpen && (
+                <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+                        <h3 className="text-xl font-semibold text-center mb-4">
+                            Confirm deletion of payroll record no {deleteModal.recordId}
+                        </h3>
+                        <p className="text-center mb-4">
+                            Enter the number <strong>{deleteModal.randomNumber}</strong> to confirm deletion.
+                        </p>
+                        <input
+                            type="number"
+                            value={deleteInput}
+                            onChange={(e) => setDeleteInput(e.target.value)}
+                            placeholder="Enter number"
+                            className="w-full mb-4 p-2 border rounded-md"
+                        />
+                        <div className="flex justify-between">
+                            <button
+                                onClick={confirmDelete}
+                                className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+                            >
+                                Delete
+                            </button>
+                            <button
+                                onClick={closeDeleteModal}
+                                className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+
             {viewascol && (
                 <div>
                     <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
@@ -1795,10 +1976,12 @@ export default function PayrollManagement() {
                                 <th className="px-4 py-2  ">BRA 2005</th>
                                 <th className="px-4 py-2  ">BRA 2016</th>
                                 <th className="px-4 py-2  ">Sundays</th>
+                                <th className="px-4 py-2  ">Sunday Rate</th>
                                 <th className="px-4 py-2  ">Sunday Allowance</th>
                                 <th className="px-4 py-2  ">Stat Days</th>
                                 <th className="px-4 py-2  ">Stat Allowance</th>
                                 <th className="px-4 py-2  ">Poya Days</th>
+                                <th className="px-4 py-2  ">Poya Rate</th>
                                 <th className="px-4 py-2  ">Poya Allowance</th>
                                 <th className="px-4 py-2  ">Night Shifts</th>
                                 <th className="px-4 py-2  ">Normal OT</th>
@@ -1836,10 +2019,12 @@ export default function PayrollManagement() {
                                     <td className="px-4 py-2">{record.bra_2005 || 0}</td>
                                     <td className="px-4 py-2">{record.bra_2016 || 0}</td>
                                     <td className="px-4 py-2">{record.sundays || 0}</td>
+                                    <td className="px-4 py-2">{record.sunday_rate || 0}</td>
                                     <td className="px-4 py-2">{record.sunday_allowance || 0}</td>
                                     <td className="px-4 py-2">{record.stat_days || 0}</td>
                                     <td className="px-4 py-2">{record.stat_allowance || 0}</td>
                                     <td className="px-4 py-2">{record.poya_days || 0}</td>
+                                    <td className="px-4 py-2">{record.poya_rate || 0}</td>
                                     <td className="px-4 py-2">{record.poya_allowance || 0}</td>
                                     <td className="px-4 py-2">{record.night_shifts || 0}</td>
                                     <td className="px-4 py-2">{record.normal_ot || 0}</td>
@@ -1870,11 +2055,12 @@ export default function PayrollManagement() {
                                                 <FontAwesomeIcon icon={faEdit} />
                                             </button>
                                             <button
-                                                onClick={() => handleDelete(record.id)}
+                                                onClick={() => openDeleteModal(record.id)}
                                                 className="text-red-500 hover:text-red-700 mr-4"
                                             >
                                                 <FontAwesomeIcon icon={faTrash} />
                                             </button>
+
 
                                         </div>
 
