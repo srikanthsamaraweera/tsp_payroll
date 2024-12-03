@@ -6,6 +6,7 @@ import { faTrashAlt, faEdit, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { generateRandomNumber } from "@/functions/randomno";
 
 export default function EmployeeList() {
     const { data: session, status } = useSession();
@@ -110,7 +111,7 @@ export default function EmployeeList() {
             setError('')
             setSuccessMessage('')
             setEmployeeToDelete(employee);
-            const random = Math.floor(Math.random() * 90000000) + 10000000; // Generates a random 4-digit number
+            const random = generateRandomNumber() // Generates a random 4-digit number
             setRandomNumber(random);
             setDeleteModalOpen(true);
             setLoading('')

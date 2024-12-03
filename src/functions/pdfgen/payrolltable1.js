@@ -1,6 +1,10 @@
 
 export default function PayrollToCSV(payrollData) {
 
+    if (typeof window === "undefined") {
+        console.error("This function must be called in a client-side environment.");
+        return;
+    }
 
 
     const csvHeaders = [

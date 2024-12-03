@@ -11,6 +11,7 @@ import EditPayrollModal from "@/components/payroll/editpayrecord";
 import PayrollFilter from "@/components/payroll/payrollfilter";
 import DeleteModal from "@/components/payroll/deletemodal";
 import ViewPayModal from "@/components/payroll/viewpayrecord";
+import { generateRandomNumber } from "@/functions/randomno";
 
 export default function PayrollManagement() {
     const router = useRouter()
@@ -398,7 +399,8 @@ export default function PayrollManagement() {
     const [deleteInput, setDeleteInput] = useState("");
 
     const openDeleteModal = (id) => {
-        const randomNum = Math.floor(1000000 + Math.random() * 9000000); // Generate random number
+        const randomNum = generateRandomNumber()// Generate random number
+        // const randomNum = Math.floor(1000000 + Math.random() * 9000000); // Generate random number
         setDeleteModal({ isOpen: true, recordId: id, randomNumber: randomNum });
         setDeleteInput("");
     };

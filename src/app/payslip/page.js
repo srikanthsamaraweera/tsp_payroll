@@ -20,19 +20,23 @@ import CanvasGen from "@/functions/pdfgen/canvasgen";
 export default function PayrollManagement() {
     const componentRef = useRef();
 
+    const [nowdate, setnowdate] = useState(new Date().toLocaleString())
+    useEffect(() => {
+        setnowdate(new Date().toLocaleString()); // Generate the date on the client side
+    }, []);
 
 
     const router = useRouter()
 
     const getPast30DaysDate = () => {
-        const date = new Date();
+        const date = new Date(nowdate);
         date.setDate(date.getDate() - 30);
         return date.toISOString().split("T")[0]; // Format to YYYY-MM-DD
     };
 
     // Utility function to get tomorrow's date in YYYY-MM-DD format
     const getTomorrowDate = () => {
-        const date = new Date();
+        const date = new Date(nowdate);
         date.setDate(date.getDate() + 1);
         return date.toISOString().split("T")[0]; // Format to YYYY-MM-DD
     };
@@ -279,7 +283,8 @@ export default function PayrollManagement() {
 
                             () => {
                                 console.log("canvas gen press");
-                                CanvasGen("payrollwrapper")
+                                const element = document.getElementById("payrollwrapper")
+                                CanvasGen(element, "payrollcanvas")
                             }
                         }>
                         <FontAwesomeIcon icon={faPrint} className="mr-2" />

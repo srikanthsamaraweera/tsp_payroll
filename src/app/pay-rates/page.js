@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashAlt, faEdit, faPlus, faSyncAlt, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { generateRandomNumber } from "@/functions/randomno";
 
 export default function PayRates() {
     const { data: session, status } = useSession();
@@ -189,7 +190,7 @@ export default function PayRates() {
                                     <button
                                         onClick={() => {
                                             setError('')
-                                            const random = Math.floor(Math.random() * 90000000) + 10000000;
+                                            const random = generateRandomNumber();
                                             setModal({ type: "delete", data: rate, isOpen: true });
                                             setRandomNumber(random);
                                         }}
