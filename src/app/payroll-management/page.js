@@ -2,13 +2,15 @@
 
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch, faPlus, faTimes, faTrash, faEdit, faEye, faFilter, faSearchPlus, faRefresh, faSearchMinus, faDollar, faFileExcel, faFileCsv } from "@fortawesome/free-solid-svg-icons";
-import FormatDate from "@/functions/formatdate";
+import { faPlus, faTrash, faEdit, faEye, faSearchPlus, faRefresh, faSearchMinus, faDollar, faFileCsv } from "@fortawesome/free-solid-svg-icons";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import PayrollToCSV from "@/functions/pdfgen/payrolltable1";
-import AddPayrollModal from "@/components/addpayrecord";
-import EditPayrollModal from "@/components/editpayrecord";
+import AddPayrollModal from "@/components/payroll/addpayrecord";
+import EditPayrollModal from "@/components/payroll/editpayrecord";
+import PayrollFilter from "@/components/payroll/payrollfilter";
+import DeleteModal from "@/components/payroll/deletemodal";
+import ViewPayModal from "@/components/payroll/viewpayrecord";
 
 export default function PayrollManagement() {
     const router = useRouter()
@@ -386,6 +388,8 @@ export default function PayrollManagement() {
     };
 
     const handleviewascol = (record) => {
+
+        setfulledit(false)
         setEditRecord(record);
         setviewascol(true);
     };
@@ -525,89 +529,13 @@ export default function PayrollManagement() {
 
             {/* search drawer */}
             {showsearchdrawer && (
-                <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+                <PayrollFilter
+                    setshowsearchdrawer={setshowsearchdrawer}
+                    handleSearchSubmit={handleSearchSubmit}
+                    handleSearchChange={handleSearchChange}
+                    searchParams={searchParams}
 
-                    <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl relative overflow-y-auto max-h-[90vh]">
-                        {/* Close Button */}
-                        <button
-                            onClick={() => {
-                                setshowsearchdrawer(false)
-                            }}
-                            className="absolute top-4 right-4 text-gray-600 hover:text-gray-800"
-                        >
-                            <FontAwesomeIcon icon={faTimes} />
-                        </button>
-                        <h3 className="text-xl font-semibold mb-4">Filter Payroll Data</h3>
-
-                        <form onSubmit={handleSearchSubmit} className="mb-6">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <input
-                                    type="date"
-                                    name="dateFrom"
-                                    value={searchParams.dateFrom}
-                                    onChange={handleSearchChange}
-                                    placeholder="From Date"
-                                    className="w-full px-4 py-2 border rounded-lg"
-                                />
-                                <input
-                                    type="date"
-                                    name="dateTo"
-                                    value={searchParams.dateTo}
-                                    onChange={handleSearchChange}
-                                    placeholder="To Date"
-                                    className="w-full px-4 py-2 border rounded-lg"
-                                />
-                                <input
-                                    type="text"
-                                    name="firstName"
-                                    value={searchParams.firstName}
-                                    onChange={handleSearchChange}
-                                    placeholder="First Name"
-                                    className="w-full px-4 py-2 border rounded-lg"
-                                />
-                                <input
-                                    type="text"
-                                    name="lastName"
-                                    value={searchParams.lastName}
-                                    onChange={handleSearchChange}
-                                    placeholder="Last Name"
-                                    className="w-full px-4 py-2 border rounded-lg"
-                                />
-                                <input
-                                    type="text"
-                                    name="empNo"
-                                    value={searchParams.empNo}
-                                    onChange={handleSearchChange}
-                                    placeholder="Employee No"
-                                    className="w-full px-4 py-2 border rounded-lg"
-                                />
-                                <input
-                                    type="text"
-                                    name="epfNo"
-                                    value={searchParams.epfNo}
-                                    onChange={handleSearchChange}
-                                    placeholder="EPF No"
-                                    className="w-full px-4 py-2 border rounded-lg"
-                                />
-                                <input
-                                    type="text"
-                                    name="nicPassport"
-                                    value={searchParams.nicPassport}
-                                    onChange={handleSearchChange}
-                                    placeholder="NIC / Passport No"
-                                    className="w-full px-4 py-2 border rounded-lg"
-                                />
-                            </div>
-                            <button
-                                type="submit"
-                                className="mt-4 px-6 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none"
-                            >
-                                <FontAwesomeIcon icon={faSearch} className="mr-2" />
-                                Filter
-                            </button>
-                        </form>
-                    </div>
-                </div>
+                />
             )}
 
             {/* Add Payroll Modal */}
@@ -656,461 +584,452 @@ export default function PayrollManagement() {
             )}
 
             {deleteModal.isOpen && (
-                <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-                        <h3 className="text-xl font-semibold text-center mb-4">
-                            Confirm deletion of payroll record no {deleteModal.recordId}
-                        </h3>
-                        <p className="text-center mb-4">
-                            Enter the number <strong>{deleteModal.randomNumber}</strong> to confirm deletion.
-                        </p>
-                        <input
-                            type="number"
-                            value={deleteInput}
-                            onChange={(e) => setDeleteInput(e.target.value)}
-                            placeholder="Enter number"
-                            className="w-full mb-4 p-2 border rounded-md"
-                        />
-                        <div className="flex justify-between">
-                            <button
-                                onClick={confirmDelete}
-                                className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
-                            >
-                                Delete
-                            </button>
-                            <button
-                                onClick={closeDeleteModal}
-                                className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
-                            >
-                                Cancel
-                            </button>
-                        </div>
-                    </div>
-                </div>
+
+                <DeleteModal
+                    deleteModal={deleteModal}
+                    deleteInput={deleteInput}
+                    confirmDelete={confirmDelete}
+                    closeDeleteModal={closeDeleteModal}
+                    setDeleteInput={setDeleteInput}
+                />
             )}
 
 
             {viewascol && (
-                <div>
-                    <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
-                        <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl relative overflow-y-auto max-h-[90vh]">
-                            {/* Close Button */}
-                            <button
-                                onClick={() => {
+                // <div>
+                //     <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+                //         <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl relative overflow-y-auto max-h-[90vh]">
+                //             {/* Close Button */}
+                //             <button
+                //                 onClick={() => {
 
-                                    setviewascol(false)
-                                }}
-                                className="absolute top-4 right-4 text-gray-600 hover:text-gray-800"
-                            >
-                                <FontAwesomeIcon icon={faTimes} />
-                            </button>
-                            <h3 className="text-xl font-semibold mb-4">View Record</h3>
-                            <div className="mb-4 p-4 bg-blue-100 rounded-lg">
-                                <p className="text-gray-800">
-                                    <strong>Selected Employee:</strong>{editRecord.employee?.id}{" "} {editRecord.employee?.Firstname}{" "}
-                                    {editRecord.employee?.Surname} (NIC: {editRecord.employee?.Nic_Passport},
-                                    EmpNo: {editRecord.employee?.EmpNo}, EPFNo: {editRecord.employee?.EpfNo})
-                                </p>
-                            </div>
+                //                     setviewascol(false)
+                //                 }}
+                //                 className="absolute top-4 right-4 text-gray-600 hover:text-gray-800"
+                //             >
+                //                 <FontAwesomeIcon icon={faTimes} />
+                //             </button>
+                //             <h3 className="text-xl font-semibold mb-4">View Record</h3>
+                //             <div className="mb-4 p-4 bg-blue-100 rounded-lg">
+                //                 <p className="text-gray-800">
+                //                     <strong>Selected Employee:</strong>{editRecord.employee?.id}{" "} {editRecord.employee?.Firstname}{" "}
+                //                     {editRecord.employee?.Surname} (NIC: {editRecord.employee?.Nic_Passport},
+                //                     EmpNo: {editRecord.employee?.EmpNo}, EPFNo: {editRecord.employee?.EpfNo})
+                //                 </p>
+                //             </div>
 
-                            {/* Selected Employee */}
-
-
-
-
-                            {/* Payroll Fields */}
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-h-[50vh] overflow-y-auto">
-                                <div className="form-group">
-                                    <label htmlFor="employee_id" className="block text-gray-700 font-medium mb-2">
-                                        Record ID
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="record_id"
-                                        name="record_id"
-                                        value={editRecord.id}
-
-                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
-                                        readOnly
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label htmlFor="employee_id" className="block text-gray-700 font-medium mb-2">
-                                        Employee ID
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="employee_id"
-                                        name="employee_id"
-                                        value={editRecord.employee.id}
-
-                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
-                                        readOnly
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label htmlFor="payroll_date" className="block text-gray-700 font-medium mb-2">
-                                        Payroll Date
-                                    </label>
-                                    <input
-                                        type="date"
-                                        id="payroll_date"
-                                        name="payroll_date"
-                                        value={FormatDate(editRecord.payroll_date)}
-
-                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
-                                        readOnly
-                                    />
-                                </div>
-
-                                <div className="form-group">
-                                    <label htmlFor="work_days" className="block text-gray-700 font-medium mb-2">
-                                        Work Days
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="work_days"
-                                        name="work_days"
-                                        value={editRecord.work_days || ""}
-
-                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
-                                        onWheel={preventScroll}
-                                        readOnly
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label htmlFor="per_day_salary" className="block text-gray-700 font-medium mb-2">
-                                        Per Day Salary - Code 2
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="per_day_salary"
-                                        name="per_day_salary"
-                                        value={dayrate}
-
-                                        className={`w-full px-4 py-2 border rounded-lg bg-gray-200`}
-                                        readOnly
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label htmlFor="bra_2005" className="block text-gray-700 font-medium mb-2">
-                                        BRA 2005-Code 1
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="bra_2005"
-                                        name="bra_2005"
-                                        value={bra2005}
-
-                                        className={`w-full px-4 py-2 border rounded-lg bg-gray-200`}
-                                        readOnly
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label htmlFor="bra_2016" className="block text-gray-700 font-medium mb-2">
-                                        BRA 2016-Code 4
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="bra_2016"
-                                        name="bra_2016"
-                                        value={bra2016}
-
-                                        className={`w-full px-4 py-2 border rounded-lg  bg-gray-200`}
-                                        readOnly
-                                    />
-                                </div>
-
-                                <div className="form-group">
-                                    <label htmlFor="sundays" className="block text-gray-700 font-medium mb-2">
-                                        Sundays
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="sundays"
-                                        name="sundays"
-                                        value={editRecord.sundays}
-
-                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
-                                        onWheel={preventScroll}
-                                        readOnly
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label htmlFor="sunday_allowance" className="block text-gray-700 font-medium mb-2">
-                                        Sunday Allowance-Code 12
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="sunday_allowance"
-                                        name="sunday_allowance"
-                                        value={sundayallowance}
-
-                                        className={`w-full px-4 py-2 border rounded-lg  bg-gray-200`}
-                                        readOnly
-                                    />
-                                </div>
-
-                                <div className="form-group">
-                                    <label htmlFor="stat_days" className="block text-gray-700 font-medium mb-2">
-                                        Stat Days
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="stat_days"
-                                        name="stat_days"
-                                        value={editRecord.stat_days}
-
-                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
-                                        onWheel={preventScroll}
-                                        readOnly
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label htmlFor="stat_allowance" className="block text-gray-700 font-medium mb-2">
-                                        Stat Allowance-Code 3
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="stat_allowance"
-                                        name="stat_allowance"
-                                        value={statallowance}
-
-                                        className={`w-full px-4 py-2 border rounded-lg  bg-gray-200`}
-                                        readOnly
-                                    />
-                                </div>
-                                <div className="form-group"></div>
-                                <div className="form-group">
-                                    <label htmlFor="poya_days" className="block text-gray-700 font-medium mb-2">
-                                        Poya Days
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="poya_days"
-                                        name="poya_days"
-                                        value={editRecord.poya_days}
-
-                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
-                                        onWheel={preventScroll}
-                                        readOnly
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label htmlFor="poya_allowance" className="block text-gray-700 font-medium mb-2">
-                                        Poya Allowance-Code 5
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="poya_allowance"
-                                        name="poya_allowance"
-                                        value={poyaallowance}
-
-                                        className={`w-full px-4 py-2 border rounded-lg  bg-gray-200`}
-                                        readOnly
-                                    />
-                                </div>
-
-                                <div className="form-group">
-                                    <label htmlFor="night_shifts" className="block text-gray-700 font-medium mb-2">
-                                        Night Shifts
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="night_shifts"
-                                        name="night_shifts"
-                                        value={editRecord.night_shifts}
-
-                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
-                                        onWheel={preventScroll}
-                                        readOnly
-                                    />
-                                </div>
-
-                                <div className="form-group">
-                                    <label htmlFor="normal_ot" className="block text-gray-700 font-medium mb-2">
-                                        Normal OT
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="normal_ot"
-                                        name="normal_ot"
-                                        value={editRecord.normal_ot}
-
-                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
-                                        onWheel={preventScroll}
-                                        readOnly
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label htmlFor="normal_ot_rate" className="block text-gray-700 font-medium mb-2">
-                                        Normal OT Rate-Code 6
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="normal_ot_rate"
-                                        name="normal_ot_rate"
-                                        value={normalotrate}
-
-                                        className={`w-full px-4 py-2 border rounded-lg  bg-gray-200`}
-                                        readOnly
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label htmlFor="normal_ot_allowance" className="block text-gray-700 font-medium mb-2">
-                                        Normal OT Allowance-Code 7
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="normal_ot_allowance"
-                                        name="normal_ot_allowance"
-                                        value={normalotallowance}
-
-                                        className={`w-full px-4 py-2 border rounded-lg  bg-gray-200`}
-                                        readOnly
-                                    />
-                                </div>
-
-                                <div className="form-group">
-                                    <label htmlFor="double_ot" className="block text-gray-700 font-medium mb-2">
-                                        Double OT
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="double_ot"
-                                        name="double_ot"
-                                        value={editRecord.double_ot}
-
-                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
-                                        onWheel={preventScroll}
-                                        readOnly
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label htmlFor="double_ot_rate" className="block text-gray-700 font-medium mb-2">
-                                        Double OT Rate-Code 8
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="double_ot_rate"
-                                        name="double_ot_rate"
-                                        value={doubleotrate}
-
-                                        className={`w-full px-4 py-2 border rounded-lg  bg-gray-200`}
-                                        readOnly
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label htmlFor="double_ot_allowance" className="block text-gray-700 font-medium mb-2">
-                                        Double OT Allowance-Code 9
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="double_ot_allowance"
-                                        name="double_ot_allowance"
-                                        value={doubleotallowance}
-
-                                        className={`w-full px-4 py-2 border rounded-lg  bg-gray-200`}
-                                        readOnly
-                                    />
-                                </div>
-
-                                <div className="form-group">
-                                    <label htmlFor="triple_ot" className="block text-gray-700 font-medium mb-2">
-                                        Triple OT
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="triple_ot"
-                                        name="triple_ot"
-                                        value={editRecord.triple_ot}
-
-                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
-                                        onWheel={preventScroll}
-                                        readOnly
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label htmlFor="triple_ot_rate" className="block text-gray-700 font-medium mb-2">
-                                        Triple OT Rate-Code 10
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="triple_ot_rate"
-                                        name="triple_ot_rate"
-                                        value={tripleotrate}
-
-                                        className={`w-full px-4 py-2 border rounded-lg  bg-gray-200`}
-                                        readOnly
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label htmlFor="triple_ot_allowance" className="block text-gray-700 font-medium mb-2">
-                                        Triple OT Allowance-Code 11
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="triple_ot_allowance"
-                                        name="triple_ot_allowance"
-                                        value={tripleotallowance}
-
-                                        className={`w-full px-4 py-2 border rounded-lg  bg-gray-200`}
-                                        readOnly
-                                    />
-                                </div>
-
-                                <div className="form-group">
-                                    <label htmlFor="advance" className="block text-gray-700 font-medium mb-2">
-                                        Advance
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="advance"
-                                        name="advance"
-                                        value={editRecord.advance || 0}
-
-                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
-                                        onWheel={preventScroll}
-                                        readOnly
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label htmlFor="festival_advance" className="block text-gray-700 font-medium mb-2">
-                                        Festival Advance
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="festival_advance"
-                                        name="festival_advance"
-                                        value={editRecord.festival_advance || 0}
-
-                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
-                                        onWheel={preventScroll}
-                                        readOnly
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label htmlFor="loan_amount" className="block text-gray-700 font-medium mb-2">
-                                        Loan Amount
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="loan_amount"
-                                        name="loan_amount"
-                                        value={editRecord.loan_amount || 0}
-
-                                        className="w-full px-4 py-2 border rounded-lg bg-gray-200"
-                                        onWheel={preventScroll}
-                                        readOnly
-                                    />
-                                </div>
-                            </div>
+                //             {/* Selected Employee */}
 
 
 
-                        </div>
-                    </div>
-                </div>
+
+                //             {/* Payroll Fields */}
+                //             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-h-[50vh] overflow-y-auto">
+                //                 <div className="form-group">
+                //                     <label htmlFor="employee_id" className="block text-gray-700 font-medium mb-2">
+                //                         Record ID
+                //                     </label>
+                //                     <input
+                //                         type="number"
+                //                         id="record_id"
+                //                         name="record_id"
+                //                         value={editRecord.id}
+
+                //                         className="w-full px-4 py-2 border rounded-lg bg-gray-200"
+                //                         readOnly
+                //                     />
+                //                 </div>
+                //                 <div className="form-group">
+                //                     <label htmlFor="employee_id" className="block text-gray-700 font-medium mb-2">
+                //                         Employee ID
+                //                     </label>
+                //                     <input
+                //                         type="number"
+                //                         id="employee_id"
+                //                         name="employee_id"
+                //                         value={editRecord.employee.id}
+
+                //                         className="w-full px-4 py-2 border rounded-lg bg-gray-200"
+                //                         readOnly
+                //                     />
+                //                 </div>
+                //                 <div className="form-group">
+                //                     <label htmlFor="payroll_date" className="block text-gray-700 font-medium mb-2">
+                //                         Payroll Date
+                //                     </label>
+                //                     <input
+                //                         type="date"
+                //                         id="payroll_date"
+                //                         name="payroll_date"
+                //                         value={FormatDate(editRecord.payroll_date)}
+
+                //                         className="w-full px-4 py-2 border rounded-lg bg-gray-200"
+                //                         readOnly
+                //                     />
+                //                 </div>
+
+                //                 <div className="form-group">
+                //                     <label htmlFor="work_days" className="block text-gray-700 font-medium mb-2">
+                //                         Work Days
+                //                     </label>
+                //                     <input
+                //                         type="number"
+                //                         id="work_days"
+                //                         name="work_days"
+                //                         value={editRecord.work_days || ""}
+
+                //                         className="w-full px-4 py-2 border rounded-lg bg-gray-200"
+                //                         onWheel={preventScroll}
+                //                         readOnly
+                //                     />
+                //                 </div>
+                //                 <div className="form-group">
+                //                     <label htmlFor="per_day_salary" className="block text-gray-700 font-medium mb-2">
+                //                         Per Day Salary - Code 2
+                //                     </label>
+                //                     <input
+                //                         type="number"
+                //                         id="per_day_salary"
+                //                         name="per_day_salary"
+                //                         value={dayrate}
+
+                //                         className={`w-full px-4 py-2 border rounded-lg bg-gray-200`}
+                //                         readOnly
+                //                     />
+                //                 </div>
+                //                 <div className="form-group">
+                //                     <label htmlFor="bra_2005" className="block text-gray-700 font-medium mb-2">
+                //                         BRA 2005-Code 1
+                //                     </label>
+                //                     <input
+                //                         type="number"
+                //                         id="bra_2005"
+                //                         name="bra_2005"
+                //                         value={bra2005}
+
+                //                         className={`w-full px-4 py-2 border rounded-lg bg-gray-200`}
+                //                         readOnly
+                //                     />
+                //                 </div>
+                //                 <div className="form-group">
+                //                     <label htmlFor="bra_2016" className="block text-gray-700 font-medium mb-2">
+                //                         BRA 2016-Code 4
+                //                     </label>
+                //                     <input
+                //                         type="number"
+                //                         id="bra_2016"
+                //                         name="bra_2016"
+                //                         value={bra2016}
+
+                //                         className={`w-full px-4 py-2 border rounded-lg  bg-gray-200`}
+                //                         readOnly
+                //                     />
+                //                 </div>
+
+                //                 <div className="form-group">
+                //                     <label htmlFor="sundays" className="block text-gray-700 font-medium mb-2">
+                //                         Sundays
+                //                     </label>
+                //                     <input
+                //                         type="number"
+                //                         id="sundays"
+                //                         name="sundays"
+                //                         value={editRecord.sundays}
+
+                //                         className="w-full px-4 py-2 border rounded-lg bg-gray-200"
+                //                         onWheel={preventScroll}
+                //                         readOnly
+                //                     />
+                //                 </div>
+                //                 <div className="form-group">
+                //                     <label htmlFor="sunday_allowance" className="block text-gray-700 font-medium mb-2">
+                //                         Sunday Allowance-Code 12
+                //                     </label>
+                //                     <input
+                //                         type="number"
+                //                         id="sunday_allowance"
+                //                         name="sunday_allowance"
+                //                         value={sundayallowance}
+
+                //                         className={`w-full px-4 py-2 border rounded-lg  bg-gray-200`}
+                //                         readOnly
+                //                     />
+                //                 </div>
+
+                //                 <div className="form-group">
+                //                     <label htmlFor="stat_days" className="block text-gray-700 font-medium mb-2">
+                //                         Stat Days
+                //                     </label>
+                //                     <input
+                //                         type="number"
+                //                         id="stat_days"
+                //                         name="stat_days"
+                //                         value={editRecord.stat_days}
+
+                //                         className="w-full px-4 py-2 border rounded-lg bg-gray-200"
+                //                         onWheel={preventScroll}
+                //                         readOnly
+                //                     />
+                //                 </div>
+                //                 <div className="form-group">
+                //                     <label htmlFor="stat_allowance" className="block text-gray-700 font-medium mb-2">
+                //                         Stat Allowance-Code 3
+                //                     </label>
+                //                     <input
+                //                         type="number"
+                //                         id="stat_allowance"
+                //                         name="stat_allowance"
+                //                         value={statallowance}
+
+                //                         className={`w-full px-4 py-2 border rounded-lg  bg-gray-200`}
+                //                         readOnly
+                //                     />
+                //                 </div>
+                //                 <div className="form-group"></div>
+                //                 <div className="form-group">
+                //                     <label htmlFor="poya_days" className="block text-gray-700 font-medium mb-2">
+                //                         Poya Days
+                //                     </label>
+                //                     <input
+                //                         type="number"
+                //                         id="poya_days"
+                //                         name="poya_days"
+                //                         value={editRecord.poya_days}
+
+                //                         className="w-full px-4 py-2 border rounded-lg bg-gray-200"
+                //                         onWheel={preventScroll}
+                //                         readOnly
+                //                     />
+                //                 </div>
+                //                 <div className="form-group">
+                //                     <label htmlFor="poya_allowance" className="block text-gray-700 font-medium mb-2">
+                //                         Poya Allowance-Code 5
+                //                     </label>
+                //                     <input
+                //                         type="number"
+                //                         id="poya_allowance"
+                //                         name="poya_allowance"
+                //                         value={poyaallowance}
+
+                //                         className={`w-full px-4 py-2 border rounded-lg  bg-gray-200`}
+                //                         readOnly
+                //                     />
+                //                 </div>
+
+                //                 <div className="form-group">
+                //                     <label htmlFor="night_shifts" className="block text-gray-700 font-medium mb-2">
+                //                         Night Shifts
+                //                     </label>
+                //                     <input
+                //                         type="number"
+                //                         id="night_shifts"
+                //                         name="night_shifts"
+                //                         value={editRecord.night_shifts}
+
+                //                         className="w-full px-4 py-2 border rounded-lg bg-gray-200"
+                //                         onWheel={preventScroll}
+                //                         readOnly
+                //                     />
+                //                 </div>
+
+                //                 <div className="form-group">
+                //                     <label htmlFor="normal_ot" className="block text-gray-700 font-medium mb-2">
+                //                         Normal OT
+                //                     </label>
+                //                     <input
+                //                         type="number"
+                //                         id="normal_ot"
+                //                         name="normal_ot"
+                //                         value={editRecord.normal_ot}
+
+                //                         className="w-full px-4 py-2 border rounded-lg bg-gray-200"
+                //                         onWheel={preventScroll}
+                //                         readOnly
+                //                     />
+                //                 </div>
+                //                 <div className="form-group">
+                //                     <label htmlFor="normal_ot_rate" className="block text-gray-700 font-medium mb-2">
+                //                         Normal OT Rate-Code 6
+                //                     </label>
+                //                     <input
+                //                         type="number"
+                //                         id="normal_ot_rate"
+                //                         name="normal_ot_rate"
+                //                         value={normalotrate}
+
+                //                         className={`w-full px-4 py-2 border rounded-lg  bg-gray-200`}
+                //                         readOnly
+                //                     />
+                //                 </div>
+                //                 <div className="form-group">
+                //                     <label htmlFor="normal_ot_allowance" className="block text-gray-700 font-medium mb-2">
+                //                         Normal OT Allowance-Code 7
+                //                     </label>
+                //                     <input
+                //                         type="number"
+                //                         id="normal_ot_allowance"
+                //                         name="normal_ot_allowance"
+                //                         value={normalotallowance}
+
+                //                         className={`w-full px-4 py-2 border rounded-lg  bg-gray-200`}
+                //                         readOnly
+                //                     />
+                //                 </div>
+
+                //                 <div className="form-group">
+                //                     <label htmlFor="double_ot" className="block text-gray-700 font-medium mb-2">
+                //                         Double OT
+                //                     </label>
+                //                     <input
+                //                         type="number"
+                //                         id="double_ot"
+                //                         name="double_ot"
+                //                         value={editRecord.double_ot}
+
+                //                         className="w-full px-4 py-2 border rounded-lg bg-gray-200"
+                //                         onWheel={preventScroll}
+                //                         readOnly
+                //                     />
+                //                 </div>
+                //                 <div className="form-group">
+                //                     <label htmlFor="double_ot_rate" className="block text-gray-700 font-medium mb-2">
+                //                         Double OT Rate-Code 8
+                //                     </label>
+                //                     <input
+                //                         type="number"
+                //                         id="double_ot_rate"
+                //                         name="double_ot_rate"
+                //                         value={doubleotrate}
+
+                //                         className={`w-full px-4 py-2 border rounded-lg  bg-gray-200`}
+                //                         readOnly
+                //                     />
+                //                 </div>
+                //                 <div className="form-group">
+                //                     <label htmlFor="double_ot_allowance" className="block text-gray-700 font-medium mb-2">
+                //                         Double OT Allowance-Code 9
+                //                     </label>
+                //                     <input
+                //                         type="number"
+                //                         id="double_ot_allowance"
+                //                         name="double_ot_allowance"
+                //                         value={doubleotallowance}
+
+                //                         className={`w-full px-4 py-2 border rounded-lg  bg-gray-200`}
+                //                         readOnly
+                //                     />
+                //                 </div>
+
+                //                 <div className="form-group">
+                //                     <label htmlFor="triple_ot" className="block text-gray-700 font-medium mb-2">
+                //                         Triple OT
+                //                     </label>
+                //                     <input
+                //                         type="number"
+                //                         id="triple_ot"
+                //                         name="triple_ot"
+                //                         value={editRecord.triple_ot}
+
+                //                         className="w-full px-4 py-2 border rounded-lg bg-gray-200"
+                //                         onWheel={preventScroll}
+                //                         readOnly
+                //                     />
+                //                 </div>
+                //                 <div className="form-group">
+                //                     <label htmlFor="triple_ot_rate" className="block text-gray-700 font-medium mb-2">
+                //                         Triple OT Rate-Code 10
+                //                     </label>
+                //                     <input
+                //                         type="number"
+                //                         id="triple_ot_rate"
+                //                         name="triple_ot_rate"
+                //                         value={tripleotrate}
+
+                //                         className={`w-full px-4 py-2 border rounded-lg  bg-gray-200`}
+                //                         readOnly
+                //                     />
+                //                 </div>
+                //                 <div className="form-group">
+                //                     <label htmlFor="triple_ot_allowance" className="block text-gray-700 font-medium mb-2">
+                //                         Triple OT Allowance-Code 11
+                //                     </label>
+                //                     <input
+                //                         type="number"
+                //                         id="triple_ot_allowance"
+                //                         name="triple_ot_allowance"
+                //                         value={tripleotallowance}
+
+                //                         className={`w-full px-4 py-2 border rounded-lg  bg-gray-200`}
+                //                         readOnly
+                //                     />
+                //                 </div>
+
+                //                 <div className="form-group">
+                //                     <label htmlFor="advance" className="block text-gray-700 font-medium mb-2">
+                //                         Advance
+                //                     </label>
+                //                     <input
+                //                         type="number"
+                //                         id="advance"
+                //                         name="advance"
+                //                         value={editRecord.advance || 0}
+
+                //                         className="w-full px-4 py-2 border rounded-lg bg-gray-200"
+                //                         onWheel={preventScroll}
+                //                         readOnly
+                //                     />
+                //                 </div>
+                //                 <div className="form-group">
+                //                     <label htmlFor="festival_advance" className="block text-gray-700 font-medium mb-2">
+                //                         Festival Advance
+                //                     </label>
+                //                     <input
+                //                         type="number"
+                //                         id="festival_advance"
+                //                         name="festival_advance"
+                //                         value={editRecord.festival_advance || 0}
+
+                //                         className="w-full px-4 py-2 border rounded-lg bg-gray-200"
+                //                         onWheel={preventScroll}
+                //                         readOnly
+                //                     />
+                //                 </div>
+                //                 <div className="form-group">
+                //                     <label htmlFor="loan_amount" className="block text-gray-700 font-medium mb-2">
+                //                         Loan Amount
+                //                     </label>
+                //                     <input
+                //                         type="number"
+                //                         id="loan_amount"
+                //                         name="loan_amount"
+                //                         value={editRecord.loan_amount || 0}
+
+                //                         className="w-full px-4 py-2 border rounded-lg bg-gray-200"
+                //                         onWheel={preventScroll}
+                //                         readOnly
+                //                     />
+                //                 </div>
+                //             </div>
+
+
+
+                //         </div>
+                //     </div>
+                // </div>
+
+                <ViewPayModal
+                    isOpen={viewascol}
+                    onClose={() => setviewascol(false)}
+                    editRecord={editRecord}
+                    setEditRecord={setEditRecord}
+                    handleEditRecordChange={handleEditRecordChange}
+                    handleEditPayroll={handleEditPayroll}
+                    preventScroll={preventScroll}
+                    fulledit={fulledit}
+                    setfulledit={setfulledit}
+
+                />
+
             )}
 
 
@@ -1205,7 +1124,12 @@ export default function PayrollManagement() {
                                     <td className="px-4 py-2">
                                         <div className="flex">
                                             <button
-                                                onClick={() => handleviewascol(record)}
+                                                onClick={async () => {
+                                                    setfulledit(false)
+                                                    resetPayrollFields();
+                                                    await payrateset();
+                                                    handleviewascol(record)
+                                                }}
                                                 className="text-green-500 hover:text-green-700 mr-4"
                                             >
                                                 <FontAwesomeIcon icon={faEye} />
