@@ -338,7 +338,7 @@ export default function AddPayrollModal({
                 htmlFor="poya_allowance"
                 className="block text-gray-700 font-medium mb-2 text-sm"
               >
-                Poya Rate
+                Poya Rate - Code 14
               </label>
               <input
                 type="number"

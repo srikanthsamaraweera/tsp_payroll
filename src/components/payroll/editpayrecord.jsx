@@ -308,6 +308,26 @@ export default function EditPayrollModal({
             </div>
             <div className="form-group">
               <label
+                htmlFor="poya_rate"
+                className="block text-gray-700 font-medium mb-2"
+              >
+                Poya rate - code 14
+              </label>
+              <input
+                type="number"
+                id="poya_rate"
+                name="poya_rate"
+                value={editRecord.poya_rate}
+                onWheel={preventScroll}
+                onChange={handleEditRecordChange}
+                className={`w-full px-4 py-2 border rounded-lg  ${
+                  fulledit ? "" : "bg-gray-200"
+                }`}
+                readOnly={!fulledit}
+              />
+            </div>
+            <div className="form-group">
+              <label
                 htmlFor="poya_allowance"
                 className="block text-gray-700 font-medium mb-2"
               >

@@ -43,11 +43,13 @@ model pay_roll {
   sunday_rate         Float     @default(1.5)
   sunday_allowance    Float     @default(990)
   stat_days           Float     @default(0)
-  stat_allowance      Float     @default(660)
+  stat_rate           Float?    @default(2)
+  stat_allowance      Float     @default(2)
   poya_days           Float     @default(0)
   poya_rate           Float     @default(1.5)
   poya_allowance      Float     @default(330)
   night_shifts        Float     @default(0)
+  night_shift_rate    Float     @default(2)
   normal_ot           Float     @default(0)
   normal_ot_rate      Float     @default(1.5)
   normal_ot_allowance Float     @default(123.75)
@@ -61,8 +63,8 @@ model pay_roll {
   festival_advance    Float     @default(0)
   loan_amount         Float     @default(0)
   payroll_date        DateTime? @db.Date
-  emp_id              Int?
-  employee            employee? @relation(fields: [emp_id], references: [id], onDelete: Restrict, onUpdate: NoAction, map: "emp_key")
+  emp_id              Int
+  employee            employee  @relation(fields: [emp_id], references: [id], onUpdate: NoAction, map: "emp_key")
 
   @@index([emp_id], map: "FK")
 }
