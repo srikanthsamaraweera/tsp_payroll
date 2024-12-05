@@ -18,24 +18,27 @@ export default async function handler(req, res) {
             payroll_date,
             work_days,
             per_day_salary,
-            bra_2005,
-            bra_2016,
+
             sundays,
-            sunday_allowance,
+            sunday_rate,
+
             stat_days,
-            stat_allowance,
+            stat_rate,
+
             poya_days,
-            poya_allowance,
+            poya_rate,
+
             night_shifts,
+            night_shift_rate,
             normal_ot,
             normal_ot_rate,
-            normal_ot_allowance,
+
             double_ot,
             double_ot_rate,
-            double_ot_allowance,
+
             triple_ot,
             triple_ot_rate,
-            triple_ot_allowance,
+
             advance,
             festival_advance,
             loan_amount,
@@ -54,24 +57,26 @@ export default async function handler(req, res) {
                 payroll_date: payroll_date ? new Date(payroll_date) : null,
                 work_days: parseFloat(work_days) || 0,
                 per_day_salary: parseFloat(per_day_salary) || 700,
-                bra_2005: parseFloat(bra_2005) || 100,
-                bra_2016: parseFloat(bra_2016) || 40,
+
                 sundays: parseFloat(sundays) || 0,
-                sunday_allowance: parseFloat(sunday_allowance) || 990,
+                sunday_rate: parseFloat(sunday_rate) || 0,
                 stat_days: parseFloat(stat_days) || 0,
-                stat_allowance: parseFloat(stat_allowance) || 660,
+                stat_rate: parseFloat(stat_rate) || 0,
+
                 poya_days: parseFloat(poya_days) || 0,
-                poya_allowance: parseFloat(poya_allowance) || 330,
+                poya_rate: parseFloat(poya_rate) || 0,
+
                 night_shifts: parseFloat(night_shifts) || 0,
+                night_shift_rate: parseFloat(night_shift_rate) || 0,
                 normal_ot: parseFloat(normal_ot) || 0,
                 normal_ot_rate: parseFloat(normal_ot_rate) || 1.5,
-                normal_ot_allowance: parseFloat(normal_ot_allowance) || 123.75,
+
                 double_ot: parseFloat(double_ot) || 0,
                 double_ot_rate: parseFloat(double_ot_rate) || 2,
-                double_ot_allowance: parseFloat(double_ot_allowance) || 165,
+
                 triple_ot: parseFloat(triple_ot) || 0,
                 triple_ot_rate: parseFloat(triple_ot_rate) || 3,
-                triple_ot_allowance: parseFloat(triple_ot_allowance) || 247.5,
+
                 advance: parseFloat(advance) || 0,
                 festival_advance: parseFloat(festival_advance) || 0,
                 loan_amount: parseFloat(loan_amount) || 0,

@@ -148,46 +148,6 @@ export default function EditPayrollModal({
                 readOnly={!fulledit}
               />
             </div>
-            <div className="form-group">
-              <label
-                htmlFor="bra_2005"
-                className="block text-gray-700 font-medium mb-2"
-              >
-                BRA 2005-Code 1
-              </label>
-              <input
-                type="number"
-                id="bra_2005"
-                name="bra_2005"
-                value={editRecord.bra_2005}
-                onWheel={preventScroll}
-                onChange={handleEditRecordChange}
-                className={`w-full px-4 py-2 border rounded-lg  ${
-                  fulledit ? "" : "bg-gray-200"
-                }`}
-                readOnly={!fulledit}
-              />
-            </div>
-            <div className="form-group">
-              <label
-                htmlFor="bra_2016"
-                className="block text-gray-700 font-medium mb-2"
-              >
-                BRA 2016-Code 4
-              </label>
-              <input
-                type="number"
-                id="bra_2016"
-                name="bra_2016"
-                value={editRecord.bra_2016}
-                onWheel={preventScroll}
-                onChange={handleEditRecordChange}
-                className={`w-full px-4 py-2 border rounded-lg  ${
-                  fulledit ? "" : "bg-gray-200"
-                }`}
-                readOnly={!fulledit}
-              />
-            </div>
 
             <div className="form-group">
               <label
@@ -228,26 +188,6 @@ export default function EditPayrollModal({
                 readOnly={!fulledit}
               />
             </div>
-            <div className="form-group">
-              <label
-                htmlFor="sunday_allowance"
-                className="block text-gray-700 font-medium mb-2"
-              >
-                Sunday Allowance-Code 12
-              </label>
-              <input
-                type="number"
-                id="sunday_allowance"
-                name="sunday_allowance"
-                value={editRecord.sunday_allowance}
-                onWheel={preventScroll}
-                onChange={handleEditRecordChange}
-                className={`w-full px-4 py-2 border rounded-lg  ${
-                  fulledit ? "" : "bg-gray-200"
-                }`}
-                readOnly={!fulledit}
-              />
-            </div>
 
             <div className="form-group">
               <label
@@ -272,13 +212,13 @@ export default function EditPayrollModal({
                 htmlFor="stat_allowance"
                 className="block text-gray-700 font-medium mb-2"
               >
-                Stat Allowance-Code 3
+                Stat Rate-Code 16
               </label>
               <input
                 type="number"
-                id="stat_allowance"
-                name="stat_allowance"
-                value={editRecord.stat_allowance}
+                id="stat_rate"
+                name="stat_rate"
+                value={editRecord.stat_rate}
                 onWheel={preventScroll}
                 onChange={handleEditRecordChange}
                 className={`w-full px-4 py-2 border rounded-lg  ${
@@ -326,26 +266,6 @@ export default function EditPayrollModal({
                 readOnly={!fulledit}
               />
             </div>
-            <div className="form-group">
-              <label
-                htmlFor="poya_allowance"
-                className="block text-gray-700 font-medium mb-2"
-              >
-                Poya Allowance-Code 5
-              </label>
-              <input
-                type="number"
-                id="poya_allowance"
-                name="poya_allowance"
-                value={editRecord.poya_allowance}
-                onWheel={preventScroll}
-                onChange={handleEditRecordChange}
-                className={`w-full px-4 py-2 border rounded-lg  ${
-                  fulledit ? "" : "bg-gray-200"
-                }`}
-                readOnly={!fulledit}
-              />
-            </div>
 
             <div className="form-group">
               <label
@@ -365,7 +285,26 @@ export default function EditPayrollModal({
                 required
               />
             </div>
-
+            <div className="form-group">
+              <label
+                htmlFor="normal_ot_rate"
+                className="block text-gray-700 font-medium mb-2 text-sm"
+              >
+                Night Shift Rate-Code 15
+              </label>
+              <input
+                type="number"
+                id="night_shift_rate"
+                name="night_shift_rate"
+                value={editRecord.night_shift_rate}
+                onChange={handleEditRecordChange}
+                className={`w-full px-4 py-2 border rounded-lg  ${
+                  fulledit ? "" : "bg-gray-200"
+                }`}
+                readOnly={!fulledit}
+                onWheel={preventScroll}
+              />
+            </div>
             <div className="form-group">
               <label
                 htmlFor="normal_ot"
@@ -396,26 +335,6 @@ export default function EditPayrollModal({
                 id="normal_ot_rate"
                 name="normal_ot_rate"
                 value={editRecord.normal_ot_rate}
-                onWheel={preventScroll}
-                onChange={handleEditRecordChange}
-                className={`w-full px-4 py-2 border rounded-lg  ${
-                  fulledit ? "" : "bg-gray-200"
-                }`}
-                readOnly={!fulledit}
-              />
-            </div>
-            <div className="form-group">
-              <label
-                htmlFor="normal_ot_allowance"
-                className="block text-gray-700 font-medium mb-2"
-              >
-                Normal OT Allowance-Code 7
-              </label>
-              <input
-                type="number"
-                id="normal_ot_allowance"
-                name="normal_ot_allowance"
-                value={editRecord.normal_ot_allowance}
                 onWheel={preventScroll}
                 onChange={handleEditRecordChange}
                 className={`w-full px-4 py-2 border rounded-lg  ${
@@ -463,26 +382,6 @@ export default function EditPayrollModal({
                 readOnly={!fulledit}
               />
             </div>
-            <div className="form-group">
-              <label
-                htmlFor="double_ot_allowance"
-                className="block text-gray-700 font-medium mb-2"
-              >
-                Double OT Allowance-Code 9
-              </label>
-              <input
-                type="number"
-                id="double_ot_allowance"
-                name="double_ot_allowance"
-                value={editRecord.double_ot_allowance}
-                onWheel={preventScroll}
-                onChange={handleEditRecordChange}
-                className={`w-full px-4 py-2 border rounded-lg  ${
-                  fulledit ? "" : "bg-gray-200"
-                }`}
-                readOnly={!fulledit}
-              />
-            </div>
 
             <div className="form-group">
               <label
@@ -514,26 +413,6 @@ export default function EditPayrollModal({
                 id="triple_ot_rate"
                 name="triple_ot_rate"
                 value={editRecord.triple_ot_rate}
-                onWheel={preventScroll}
-                onChange={handleEditRecordChange}
-                className={`w-full px-4 py-2 border rounded-lg  ${
-                  fulledit ? "" : "bg-gray-200"
-                }`}
-                readOnly={!fulledit}
-              />
-            </div>
-            <div className="form-group">
-              <label
-                htmlFor="triple_ot_allowance"
-                className="block text-gray-700 font-medium mb-2"
-              >
-                Triple OT Allowance-Code 11
-              </label>
-              <input
-                type="number"
-                id="triple_ot_allowance"
-                name="triple_ot_allowance"
-                value={editRecord.triple_ot_allowance}
                 onWheel={preventScroll}
                 onChange={handleEditRecordChange}
                 className={`w-full px-4 py-2 border rounded-lg  ${

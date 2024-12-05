@@ -30,6 +30,7 @@ export default async function handler(req, res) {
             festival_advance: Number(body.festival_advance),
             loan_amount: Number(body.loan_amount),
             night_shifts: Number(body.night_shifts),
+            night_shift_rate: Number(body.night_shift_rate),
             normal_ot: Number(body.normal_ot),
             double_ot: Number(body.double_ot),
             triple_ot: Number(body.triple_ot),
@@ -38,17 +39,17 @@ export default async function handler(req, res) {
             stat_days: Number(body.stat_days),
             poya_days: Number(body.poya_days),
             poya_rate: Number(body.poya_rate),
-            bra_2005: Number(body.bra_2005),
-            bra_2016: Number(body.bra_2016),
-            sunday_allowance: Number(body.sunday_allowance),
-            stat_allowance: Number(body.stat_allowance),
-            poya_allowance: Number(body.poya_allowance),
+
+
+
+            stat_rate: Number(body.stat_rate),
+
             normal_ot_rate: Number(body.normal_ot_rate),
-            normal_ot_allowance: Number(body.normal_ot_allowance),
+
             double_ot_rate: Number(body.double_ot_rate),
-            double_ot_allowance: Number(body.double_ot_allowance),
+
             triple_ot_rate: Number(body.triple_ot_rate),
-            triple_ot_allowance: Number(body.triple_ot_allowance),
+
         };
         // Create the new payroll entry
         const newPayroll = await prisma.pay_roll.create({

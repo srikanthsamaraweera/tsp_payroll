@@ -33,8 +33,7 @@ export default function PayrollManagement() {
     const [employeeResults, setEmployeeResults] = useState([]);
     const [selectedEmployee, setSelectedEmployee] = useState(null);
     const [dayrate, setDayrate] = useState("");
-    const [bra2005, setbra2005] = useState("");
-    const [bra2016, setbra2016] = useState("");
+
     const [sundayallowance, setsundayallowance] = useState("");
     const [sundayrate, setsundayrate] = useState("");
     const [statallowance, setstatallowance] = useState("");
@@ -46,6 +45,9 @@ export default function PayrollManagement() {
     const [doubleotallowance, setdoubleotallowance] = useState("");
     const [tripleotrate, settripleotrate] = useState("");
     const [tripleotallowance, settripleotallowance] = useState("");
+    const [nightshiftrate, setnightshiftrate] = useState("");
+    const [statrate, setstatrate] = useState("");
+
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [editRecord, setEditRecord] = useState(null);
     const [selectededrow, setselectedrow] = useState('');
@@ -54,7 +56,7 @@ export default function PayrollManagement() {
     const [viewascol, setviewascol] = useState(false)
 
     const [searchingemployeemessage, setsearchingemployeemessage] = useState('');
-    const { data: session, status } = useSession();
+    const { data: session } = useSession();
     const [showsearchdrawer, setshowsearchdrawer] = useState(false)
 
 
@@ -76,6 +78,7 @@ export default function PayrollManagement() {
             sundays: "",
             stat_days: "",
             poya_days: "",
+
         });
     };
 
@@ -135,69 +138,70 @@ export default function PayrollManagement() {
 
     const payrateset = async () => {
         const ratesetval = await fetchPayRates(2)
-        const bra2005val = await fetchPayRates(1)
-        const bra2016val = await fetchPayRates(4)
-        const statallowanceval = await fetchPayRates(3)
-        const poyaallowanceval = await fetchPayRates(5)
+
         const poyarate = await fetchPayRates(14)
         const normalotrateval = await fetchPayRates(6)
-        const normalotallowanceval = await fetchPayRates(7)
+
         const doubleotrateval = await fetchPayRates(8)
-        const doubleotallowanceval = await fetchPayRates(9)
+
         const tripleotrateval = await fetchPayRates(10)
-        const tripleotallowanceval = await fetchPayRates(11)
-        const sundayallowance = await fetchPayRates(12)
+
+
         const sundayrate = await fetchPayRates(13)
+        const night_shift_rate = await fetchPayRates(15)
+        const stat_rate = await fetchPayRates(16)
 
         setDayrate(ratesetval)
-        setbra2005(bra2005val)
-        setbra2016(bra2016val)
-        setstatallowance(statallowanceval)
-        setpoyaallowance(poyaallowanceval)
+
+
         setnormalotrate(normalotrateval)
-        setnormalotallowance(normalotallowanceval)
+
         setdoubleotrate(doubleotrateval)
-        setdoubleotallowance(doubleotallowanceval)
+
         settripleotrate(tripleotrateval)
-        settripleotallowance(tripleotallowanceval)
-        setsundayallowance(sundayallowance)
+
+
         setsundayrate(sundayrate)
         setpoyarate(poyarate)
+        setnightshiftrate(night_shift_rate)
+        setstatrate(stat_rate)
+
 
         setPayrollFields((prev) => ({
             ...prev,
             per_day_salary: ratesetval,
-            bra_2005: bra2005val,
-            bra_2016: bra2016val,
-            sunday_allowance: sundayallowance,
+
+
             sunday_rate: sundayrate,
-            stat_allowance: statallowanceval,
+
             poya_rate: poyarate,
-            poya_allowance: poyaallowanceval,
+
             normal_ot_rate: normalotrateval,
-            normal_ot_allowance: normalotallowanceval,
+
             double_ot_rate: doubleotrateval,
-            double_ot_allowance: doubleotallowanceval,
+
             triple_ot_rate: tripleotrateval,
-            triple_ot_allowance: tripleotallowanceval,
+
+            night_shift_rate: nightshiftrate,
+            stat_rate: statrate,
         }));
 
         seteditPayrollFields((prev) => ({
             ...prev,
             per_day_salary: ratesetval,
-            bra_2005: bra2005val,
-            bra_2016: bra2016val,
-            sunday_allowance: sundayallowance,
+
             sunday_rate: sundayrate,
-            stat_allowance: statallowanceval,
+
             poya_rate: poyarate,
-            poya_allowance: poyaallowanceval,
+
             normal_ot_rate: normalotrateval,
-            normal_ot_allowance: normalotallowanceval,
+
             double_ot_rate: doubleotrateval,
-            double_ot_allowance: doubleotallowanceval,
+
             triple_ot_rate: tripleotrateval,
-            triple_ot_allowance: tripleotallowanceval,
+
+            night_shift_rate: nightshiftrate,
+            stat_rate: statrate,
         }));
     }
 
@@ -216,19 +220,19 @@ export default function PayrollManagement() {
         stat_days: "",
         poya_days: "",
         per_day_salary: "",
-        bra_2005: "",
-        bra_2016: "",
-        sunday_allowance: "",
+
         sunday_rate: "",
-        stat_allowance: "",
+
         poya_rate: "",
-        poya_allowance: "",
+
         normal_ot_rate: "",
-        normal_ot_allowance: "",
+
         double_ot_rate: "",
-        double_ot_allowance: "",
+
         triple_ot_rate: "",
-        triple_ot_allowance: "",
+
+        night_shift_rate: "",
+        stat_rate: "",
 
 
     });
@@ -248,19 +252,19 @@ export default function PayrollManagement() {
         stat_days: "",
         poya_days: "",
         per_day_salary: "",
-        bra_2005: "",
-        bra_2016: "",
-        sunday_allowance: "",
+
         sunday_rate: "",
-        stat_allowance: "",
+
         poya_rate: "",
-        poya_allowance: "",
+
         normal_ot_rate: "",
-        normal_ot_allowance: "",
+
         double_ot_rate: "",
-        double_ot_allowance: "",
+
         triple_ot_rate: "",
-        triple_ot_allowance: "",
+
+        night_shift_rate: "",
+        stat_rate: "",
 
 
     });
