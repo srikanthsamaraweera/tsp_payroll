@@ -58,6 +58,7 @@ export default function PayrollManagement() {
     const [searchingemployeemessage, setsearchingemployeemessage] = useState('');
     const { data: session } = useSession();
     const [showsearchdrawer, setshowsearchdrawer] = useState(false)
+    const [saving, setsaving] = useState(false)
 
 
 
@@ -319,6 +320,7 @@ export default function PayrollManagement() {
     };
 
     const handleSavePayroll = async () => {
+        setsaving(true)
         if (!selectedEmployee) {
             alert("Please select an employee.");
             return;
@@ -358,9 +360,11 @@ export default function PayrollManagement() {
             console.error("Error saving payroll record:", error);
             alert("An error occurred while saving payroll.");
         }
+        setsaving(false)
     };
 
     const handleEditPayroll = async () => {
+        setsaving(true)
         try {
             const response = await fetch("/api/payroll/editpayroll", {
                 method: "PUT",
@@ -383,6 +387,7 @@ export default function PayrollManagement() {
             console.error("Error updating payroll record:", error);
             alert("An error occurred while updating payroll.");
         }
+        setsaving(false)
     };
 
 
@@ -568,6 +573,8 @@ export default function PayrollManagement() {
                     preventScroll={preventScroll}
                     searchingemployeemessage={searchingemployeemessage}
                     handleSavePayroll={handleSavePayroll}
+                    setsaving={setsaving}
+                    saving={saving}
                 />
 
             )}
@@ -584,6 +591,8 @@ export default function PayrollManagement() {
                     preventScroll={preventScroll}
                     fulledit={fulledit}
                     setfulledit={setfulledit}
+                    setsaving={setsaving}
+                    saving={saving}
 
                 />
 

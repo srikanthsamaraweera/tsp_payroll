@@ -21,6 +21,8 @@ export default function AddPayrollModal({
   preventScroll,
   searchingemployeemessage,
   handleSavePayroll,
+  saving,
+  setsaving,
 }) {
   if (!isOpen) return null;
 
@@ -170,9 +172,6 @@ export default function AddPayrollModal({
                 onWheel={preventScroll}
               />
             </div>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-5">
             <div className="form-group">
               <label
                 htmlFor="sundays"
@@ -213,7 +212,8 @@ export default function AddPayrollModal({
               />
             </div>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-2 gap-4 mb-5">
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
             <div className="form-group">
               <label
                 htmlFor="stat_days"
@@ -232,30 +232,27 @@ export default function AddPayrollModal({
                 required
               />
             </div>
-          </div>
-          <div className="form-group">
-            <label
-              htmlFor="sundays"
-              className="block text-gray-700 font-medium mb-2 text-sm"
-            >
-              Stat rate - Code 16
-            </label>
-            <input
-              type="number"
-              id="stat_rate"
-              name="stat_rate"
-              value={payrollFields.stat_rate}
-              onChange={handlePayrollFieldChange}
-              className={`w-full px-4 py-2 border rounded-lg  ${
-                fulledit ? "" : "bg-gray-200"
-              }`}
-              onWheel={preventScroll}
-              required
-              readOnly={!fulledit}
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 ">
+            <div className="form-group">
+              <label
+                htmlFor="sundays"
+                className="block text-gray-700 font-medium mb-2 text-sm"
+              >
+                Stat rate - Code 16
+              </label>
+              <input
+                type="number"
+                id="stat_rate"
+                name="stat_rate"
+                value={payrollFields.stat_rate}
+                onChange={handlePayrollFieldChange}
+                className={`w-full px-4 py-2 border rounded-lg  ${
+                  fulledit ? "" : "bg-gray-200"
+                }`}
+                onWheel={preventScroll}
+                required
+                readOnly={!fulledit}
+              />
+            </div>
             <div className="form-group">
               <label
                 htmlFor="poya_days"
@@ -294,7 +291,9 @@ export default function AddPayrollModal({
                 onWheel={preventScroll}
               />
             </div>
+          </div>
 
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 ">
             <div className="form-group">
               <label
                 htmlFor="night_shifts"
@@ -502,15 +501,18 @@ export default function AddPayrollModal({
               />
             </div>
           </div>
+          {/* Save Button */}
+          {saving ? (
+            <p className="bg-orange-100 text-orange-700">Saving...</p>
+          ) : (
+            <button
+              onClick={handleSavePayroll}
+              className="mt-4 px-6 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none"
+            >
+              Save Payroll
+            </button>
+          )}
         </div>
-
-        {/* Save Button */}
-        <button
-          onClick={handleSavePayroll}
-          className="mt-4 px-6 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none"
-        >
-          Save Payroll
-        </button>
       </div>
     </div>
   );
