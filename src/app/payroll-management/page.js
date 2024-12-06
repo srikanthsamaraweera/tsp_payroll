@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faTrash, faEdit, faEye, faSearchPlus, faRefresh, faSearchMinus, faDollar, faFileCsv } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faTrash, faEdit, faEye, faSearchPlus, faRefresh, faSearchMinus, faDollar, faFileCsv, faBinoculars } from "@fortawesome/free-solid-svg-icons";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import PayrollToCSV from "@/functions/pdfgen/payrolltable1";
@@ -506,8 +506,8 @@ export default function PayrollManagement() {
                         }}
                         className="px-6 py-2 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none"
                     >
-                        <FontAwesomeIcon icon={faDollar} className="mr-2" />
-                        Payslip
+                        <FontAwesomeIcon icon={faBinoculars} className="mr-2" />
+                        Reports
                     </button>
                     <button
                         onClick={() => {
@@ -735,7 +735,7 @@ export default function PayrollManagement() {
                                         <td className="px-2 py-2 border border-gray-300">{record.poya_days * record.poya_rate * record.per_day_salary}</td>
                                         <td className="px-2 py-2 border border-gray-300">{record.night_shifts || 0}</td>
                                         <td className="px-2 py-2 border border-gray-300">{record.night_shift_rate || 0}</td>
-                                        <td className="px-2 py-2 border border-gray-300">{record.night_shifts * record.night_shift_rate * record.per_day_salary}</td>
+                                        <td className="px-2 py-2 border border-gray-300">{record.night_shifts / record.night_shift_rate * record.per_day_salary}</td>
                                         <td className="px-2 py-2 border border-gray-300">{earningForEPF}</td>
                                         <td className="px-2 py-2 border border-gray-300">{earningForEPF * 8 / 100}</td>
                                         <td className="px-2 py-2 border border-gray-300">{record.normal_ot || 0}</td>

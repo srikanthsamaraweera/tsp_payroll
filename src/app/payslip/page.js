@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch, faPlus, faTimes, faTrash, faEdit, faEye, faFilter, faSearchPlus, faRefresh, faSearchMinus, faDollar, faMoneyBill1Wave, faPrint } from "@fortawesome/free-solid-svg-icons";
+import { faSearch, faPlus, faTimes, faTrash, faEdit, faEye, faFilter, faSearchPlus, faRefresh, faSearchMinus, faDollar, faMoneyBill1Wave, faPrint, faFileCsv } from "@fortawesome/free-solid-svg-icons";
 import FormatDate from "@/functions/formatdate";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -14,6 +14,7 @@ import PaysliptotablePDF from "@/functions/pdfgen/paysliptabletopdf";
 import payrollSummaryTable from "@/functions/pdfgen/payrollsummary";
 import paysliptabletopdf from "@/functions/pdfgen/paysliptabletopdf";
 import CanvasGen from "@/functions/pdfgen/canvasgen";
+import PayrollToCSV from "@/functions/pdfgen/payrolltable1";
 
 
 
@@ -79,6 +80,10 @@ export default function PayrollManagement() {
     const [searchingemployeemessage, setsearchingemployeemessage] = useState('');
     const { data: session } = useSession();
     const [showsearchdrawer, setshowsearchdrawer] = useState(false)
+    const [sundayrate, setsundayrate] = useState("");
+    const [poyarate, setpoyarate] = useState("");
+    const [nightshiftrate, setnightshiftrate] = useState("");
+    const [statrate, setstatrate] = useState("");
 
 
     const [payrollFields, setPayrollFields] = useState({
@@ -155,30 +160,33 @@ export default function PayrollManagement() {
 
     const payrateset = async () => {
         const ratesetval = await fetchPayRates(2)
-        const bra2005val = await fetchPayRates(1)
-        const bra2016val = await fetchPayRates(4)
-        const statallowanceval = await fetchPayRates(3)
-        const poyaallowanceval = await fetchPayRates(5)
+
+        const poyarate = await fetchPayRates(14)
         const normalotrateval = await fetchPayRates(6)
-        const normalotallowanceval = await fetchPayRates(7)
+
         const doubleotrateval = await fetchPayRates(8)
-        const doubleotallowanceval = await fetchPayRates(9)
+
         const tripleotrateval = await fetchPayRates(10)
-        const tripleotallowanceval = await fetchPayRates(11)
-        const sundayallowance = await fetchPayRates(12)
+
+
+        const sundayrate = await fetchPayRates(13)
+        const night_shift_rate = await fetchPayRates(15)
+        const stat_rate = await fetchPayRates(16)
 
         setDayrate(ratesetval)
-        setbra2005(bra2005val)
-        setbra2016(bra2016val)
-        setstatallowance(statallowanceval)
-        setpoyaallowance(poyaallowanceval)
+
+
         setnormalotrate(normalotrateval)
-        setnormalotallowance(normalotallowanceval)
+
         setdoubleotrate(doubleotrateval)
-        setdoubleotallowance(doubleotallowanceval)
+
         settripleotrate(tripleotrateval)
-        settripleotallowance(tripleotallowanceval)
-        setsundayallowance(sundayallowance)
+
+
+        setsundayrate(sundayrate)
+        setpoyarate(poyarate)
+        setnightshiftrate(night_shift_rate)
+        setstatrate(stat_rate)
     }
 
     useEffect(() => {
@@ -276,6 +284,7 @@ export default function PayrollManagement() {
                         <FontAwesomeIcon icon={faPrint} className="mr-2" />
                         Payroll table
                     </button>
+
                     <button
                         className="px-6 py-2 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none"
 
@@ -289,6 +298,16 @@ export default function PayrollManagement() {
                         }>
                         <FontAwesomeIcon icon={faPrint} className="mr-2" />
                         Canvas</button>
+
+                    <button
+                        onClick={() => {
+                            PayrollToCSV(payrollData)
+                        }}
+                        className="px-6 py-2 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none"
+                    >
+                        <FontAwesomeIcon icon={faFileCsv} className="mr-2" />
+                        Export CSV
+                    </button>
 
                 </div>
 
