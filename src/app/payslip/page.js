@@ -418,44 +418,145 @@ export default function PayrollManagement() {
                     <p className="text-center text-gray-500">Loading...</p>
                 ) : (
 
-
-                    payrollData.map((record) => (
-                        <div
-                            key={record.id}
-                            className="border rounded-lg shadow-md bg-white p-6 space-y-6"
-                        >
-                            {/* Full Name */}
-                            <div className="grid grid-cols-2">
-                                <div>
-                                    <h3 className="text-2xl font-bold text-center mb-4">
-                                        {`${record.employee?.Initials || ""}, ${record.employee?.Firstname || ""} ${record.employee?.Surname || ""}`}
-                                    </h3>
-                                </div>
-                                {/* Payroll Date */}
-                                <div>
-                                    <h3 className="text-lg font-semibold">Payroll Date: {record.payroll_date?.split("T")[0] || "-"}</h3>
-
-                                </div>
-
-                            </div>
-
-                            {/* Employee Details in 3 Columns */}
-                            <div className="grid grid-cols-3 gap-4 text-sm">
-                                <p><strong>NIC/Passport:</strong> {record.employee?.Nic_Passport || "-"}</p>
-                                <p><strong>Employee No:</strong> {record.employee?.EmpNo || "-"}</p>
-                                <p><strong>EPF No:</strong> {record.employee?.EpfNo || "-"}</p>
-                            </div>
+                    <div className="overflow-auto ">
+                        <table className="w-full table-auto bg-white text-xs border border-gray-300 ">
+                            <thead className="bg-gray-100 text-gray-600 sticky top-0 z-10">
+                                <tr className="border border-gray-300">
+                                    {/* Employee Table Fields */}
+                                    <th className="px-2 py-2   text-xs border border-gray-300">ID No</th>
+                                    <th className="px-2 py-2  text-xs whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300">Name</th>
+                                    <th className="px-2 py-2  text-xs border border-gray-300">Initials</th>
+                                    <th className="px-2 py-2  text-xs border border-gray-300">Employee No</th>
+                                    <th className="px-2 py-2  text-xs border border-gray-300">EPF No</th>
 
 
+                                    {/* Payroll Table Fields */}
+                                    <th className="px-2 py-2  text-xs border border-gray-300">Payroll id</th>
+                                    <th className="px-2 py-2  text-xs border border-gray-300">Payroll Date</th>
+                                    <th className="px-2 py-2  text-xs border border-gray-300">Work Days</th>
+                                    <th className="px-2 py-2  text-xs border border-gray-300">Per Day Salary</th>
+                                    <th className="px-2 py-2  text-xs border border-gray-300">Total Basic</th>
 
-                            {/* Salary Calculation */}
-                            <div>
-                                <h3 className="text-lg font-semibold">Press the Print Payslip button for salary details</h3>
+                                    <th className="px-2 py-2  text-xs border border-gray-300">Sundays</th>
+                                    <th className="px-2 py-2  text-xs border border-gray-300">Sunday Rate</th>
+                                    <th className="px-2 py-2  text-xs border border-gray-300">Sunday Pay: EPF/ETF</th>
+                                    <th className="px-2 py-2  text-xs border border-gray-300">Sunday L/L Pay</th>
+                                    <th className="px-2 py-2  text-xs border border-gray-300">Stat Days</th>
+                                    <th className="px-2 py-2  text-xs border border-gray-300">Stat Rate</th>
+                                    <th className="px-2 py-2  text-xs border border-gray-300">Stat Pay</th>
+                                    <th className="px-2 py-2  text-xs border border-gray-300">Poya Days</th>
+                                    <th className="px-2 py-2  text-xs border border-gray-300">Poya Rate</th>
+                                    <th className="px-2 py-2  text-xs border border-gray-300">Poya Pay EPF</th>
+                                    <th className="px-2 py-2  text-xs border border-gray-300">Night Shifts</th>
+                                    <th className="px-2 py-2  text-xs border border-gray-300">Night Rate</th>
+                                    <th className="px-2 py-2  text-xs border border-gray-300">Night Pay</th>
+                                    <th className="px-2 py-2  text-xs border border-gray-300">Earning for EPF</th>
+                                    <th className="px-2 py-2  text-xs border border-gray-300">EPF 8%</th>
+                                    <th className="px-2 py-2  text-xs border border-gray-300">Normal OT</th>
+                                    <th className="px-2 py-2  text-xs border border-gray-300">Normal OT Rate</th>
+                                    <th className="px-2 py-2 text-xs border border-gray-300">Normal OT hour pay</th>
+                                    <th className="px-2 py-2 text-xs border border-gray-300">Normal OT amount</th>
+                                    <th className="px-2 py-2  text-xs border border-gray-300">Double OT</th>
+                                    <th className="px-2 py-2  text-xs border border-gray-300">Double OT Rate</th>
+                                    <th className="px-2 py-2 text-xs border border-gray-300">Double OT hour pay</th>
+                                    <th className="px-2 py-2 text-xs border border-gray-300">Double OT amount</th>
+                                    <th className="px-2 py-2  text-xs border border-gray-300">Triple OT</th>
+                                    <th className="px-2 py-2  text-xs border border-gray-300">Triple OT Rate</th>
+                                    <th className="px-2 py-2 text-xs border border-gray-300">Triple OT hour pay</th>
+                                    <th className="px-2 py-2  text-xs border border-gray-300">Triple OT amount</th>
+                                    <th className="px-2 py-2  text-xs border border-gray-300">Total OT amount</th>
+                                    <th className="px-2 py-2  text-xs border border-gray-300">Gross Salary</th>
+                                    <th className="px-2 py-2  text-xs border border-gray-300">Advance</th>
+                                    <th className="px-2 py-2  text-xs border border-gray-300">Festival Advance</th>
+                                    <th className="px-2 py-2 text-xs border border-gray-300">Loan Amount</th>
+                                    <th className="px-2 py-2 text-xs border border-gray-300">Net Salary (Gross-EPF 8%)</th>
+                                    <th className="px-2 py-2 text-xs border border-gray-300">EPF 12%</th>
+                                    <th className="px-2 py-2 text-xs border border-gray-300">EPF 3%</th>
+                                    <th className="px-2 py-2 text-xs border border-gray-300">20%</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {payrollData.map((record) => {
+                                    const earningForEPF =
+                                        (record.work_days * record.per_day_salary) +
+                                        (record.sundays * record.sunday_rate * record.per_day_salary) +
+                                        (record.sundays * record.per_day_salary) +
+                                        (record.stat_days * record.stat_rate * record.per_day_salary) +
+                                        (record.poya_days * record.poya_rate * record.per_day_salary) +
+                                        (record.night_shifts / record.night_shift_rate * record.per_day_salary)
+
+                                    const normalOTAmount = record.normal_ot_rate * record.per_day_salary / 8 * record.normal_ot;
+                                    const doubleOTAmount = record.double_ot_rate / 8 * record.per_day_salary * record.double_ot;
+                                    const tripleOTAmount = record.triple_ot_rate / 8 * record.per_day_salary * record.triple_ot;
+                                    const epfeightpercent = earningForEPF * 8 / 100;
+                                    const epftwelvepercent = earningForEPF * 12 / 100;
+                                    const etfthreepercent = earningForEPF * 3 / 100;
+                                    return (
+                                        <tr key={record.id} onDoubleClick={() => handleviewascol(record)} className={`text-center focus:bg-slate-100 cursor-pointer ${selectededrow === record.id ? 'bg-slate-200' : ""} border border-gray-300`}
+                                            onClick={() => setselectedrow(record.id)}>
+                                            {/* Employee Table Fields */}
+                                            <td className="px-2 py-2 border border-gray-300">{record.employee?.Nic_Passport || "-"}</td>
+                                            <td className="px-2 py-2 whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300">{record.employee?.Firstname + " " + record.employee?.Surname || "-"}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{record.employee?.Initials || "-"}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{record.employee?.EmpNo || "-"}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{record.employee?.EpfNo || "-"}</td>
 
 
-                            </div>
-                        </div>
-                    ))
+                                            {/* Payroll Table Fields */}
+                                            <td className="px-2 py-2 border border-gray-300">{record.id || "-"}</td>
+                                            <td className="px-2 py-2 border border-gray-300 whitespace-nowrap"  > {record.payroll_date.split('T')[0]}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{record.work_days || 0}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{record.per_day_salary || 0}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{record.work_days * record.per_day_salary}</td>
+
+                                            <td className="px-2 py-2 border border-gray-300">{record.sundays || 0}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{record.sunday_rate || 0}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{record.sundays * record.sunday_rate * record.per_day_salary}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{record.sundays * record.per_day_salary}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{record.stat_days || 0}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{record.stat_rate || 0}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{record.stat_days * record.stat_rate * record.per_day_salary}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{record.poya_days || 0}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{record.poya_rate || 0}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{record.poya_days * record.poya_rate * record.per_day_salary}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{record.night_shifts || 0}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{record.night_shift_rate || 0}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{record.night_shifts / record.night_shift_rate * record.per_day_salary}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{earningForEPF}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{earningForEPF * 8 / 100}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{record.normal_ot || 0}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{record.normal_ot_rate || 0}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{record.normal_ot_rate * record.per_day_salary / 8}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{normalOTAmount}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{record.double_ot || 0}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{record.double_ot_rate || 0}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{record.double_ot_rate / 8 * record.per_day_salary}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{doubleOTAmount}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{record.triple_ot || 0}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{record.triple_ot_rate || 0}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{record.triple_ot_rate / 8 * record.per_day_salary}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{tripleOTAmount}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{tripleOTAmount + doubleOTAmount + normalOTAmount}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{tripleOTAmount + doubleOTAmount + normalOTAmount + earningForEPF}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{record.advance || 0}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{record.festival_advance || 0}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{record.loan_amount || 0}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{tripleOTAmount + doubleOTAmount + normalOTAmount + earningForEPF - epfeightpercent - record.advance - record.festival_advance - record.loan_amount}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{epftwelvepercent}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{etfthreepercent}</td>
+                                            <td className="px-2 py-2 border border-gray-300">{epfeightpercent + epftwelvepercent}</td>
+
+
+                                        </tr>
+                                    );
+
+
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
+
 
 
 

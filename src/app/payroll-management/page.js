@@ -691,13 +691,24 @@ export default function PayrollManagement() {
                         </thead>
                         <tbody>
                             {payrollData.map((record) => {
+                                const totalbasic = (record.work_days * record.per_day_salary)
+                                const sundaypayepf = (record.sundays * record.sunday_rate * record.per_day_salary)
+                                const sundayLLpay = (record.sundays * record.per_day_salary)
+                                const statpay = (record.stat_days * record.stat_rate * record.per_day_salary)
+                                const poyapay = (record.poya_days * record.poya_rate * record.per_day_salary)
+                                const nightpay = (record.night_shifts / record.night_shift_rate * record.per_day_salary)
                                 const earningForEPF =
-                                    (record.work_days * record.per_day_salary) +
-                                    (record.sundays * record.sunday_rate * record.per_day_salary) +
-                                    (record.sundays * record.per_day_salary) +
-                                    (record.stat_days * record.stat_rate * record.per_day_salary) +
-                                    (record.poya_days * record.poya_rate * record.per_day_salary) +
-                                    (record.night_shifts * record.night_shift_rate * record.per_day_salary)
+                                    totalbasic
+                                    +
+                                    sundaypayepf
+                                    +
+                                    sundayLLpay
+                                    +
+                                    statpay
+                                    +
+                                    poyapay
+                                    +
+                                    nightpay
 
                                 const normalOTAmount = record.normal_ot_rate * record.per_day_salary / 8 * record.normal_ot;
                                 const doubleOTAmount = record.double_ot_rate / 8 * record.per_day_salary * record.double_ot;
@@ -721,21 +732,21 @@ export default function PayrollManagement() {
                                         <td className="px-2 py-2 border border-gray-300 whitespace-nowrap"  > {record.payroll_date.split('T')[0]}</td>
                                         <td className="px-2 py-2 border border-gray-300">{record.work_days || 0}</td>
                                         <td className="px-2 py-2 border border-gray-300">{record.per_day_salary || 0}</td>
-                                        <td className="px-2 py-2 border border-gray-300">{record.work_days * record.per_day_salary}</td>
+                                        <td className="px-2 py-2 border border-gray-300">{totalbasic}</td>
 
                                         <td className="px-2 py-2 border border-gray-300">{record.sundays || 0}</td>
                                         <td className="px-2 py-2 border border-gray-300">{record.sunday_rate || 0}</td>
-                                        <td className="px-2 py-2 border border-gray-300">{record.sundays * record.sunday_rate * record.per_day_salary}</td>
-                                        <td className="px-2 py-2 border border-gray-300">{record.sundays * record.per_day_salary}</td>
+                                        <td className="px-2 py-2 border border-gray-300">{sundaypayepf}</td>
+                                        <td className="px-2 py-2 border border-gray-300">{sundayLLpay}</td>
                                         <td className="px-2 py-2 border border-gray-300">{record.stat_days || 0}</td>
                                         <td className="px-2 py-2 border border-gray-300">{record.stat_rate || 0}</td>
-                                        <td className="px-2 py-2 border border-gray-300">{record.stat_days * record.stat_rate * record.per_day_salary}</td>
+                                        <td className="px-2 py-2 border border-gray-300">{statpay}</td>
                                         <td className="px-2 py-2 border border-gray-300">{record.poya_days || 0}</td>
                                         <td className="px-2 py-2 border border-gray-300">{record.poya_rate || 0}</td>
-                                        <td className="px-2 py-2 border border-gray-300">{record.poya_days * record.poya_rate * record.per_day_salary}</td>
+                                        <td className="px-2 py-2 border border-gray-300">{poyapay}</td>
                                         <td className="px-2 py-2 border border-gray-300">{record.night_shifts || 0}</td>
                                         <td className="px-2 py-2 border border-gray-300">{record.night_shift_rate || 0}</td>
-                                        <td className="px-2 py-2 border border-gray-300">{record.night_shifts / record.night_shift_rate * record.per_day_salary}</td>
+                                        <td className="px-2 py-2 border border-gray-300">{nightpay}</td>
                                         <td className="px-2 py-2 border border-gray-300">{earningForEPF}</td>
                                         <td className="px-2 py-2 border border-gray-300">{earningForEPF * 8 / 100}</td>
                                         <td className="px-2 py-2 border border-gray-300">{record.normal_ot || 0}</td>
@@ -755,7 +766,7 @@ export default function PayrollManagement() {
                                         <td className="px-2 py-2 border border-gray-300">{record.advance || 0}</td>
                                         <td className="px-2 py-2 border border-gray-300">{record.festival_advance || 0}</td>
                                         <td className="px-2 py-2 border border-gray-300">{record.loan_amount || 0}</td>
-                                        <td className="px-2 py-2 border border-gray-300">{tripleOTAmount + doubleOTAmount + normalOTAmount + earningForEPF - epfeightpercent}</td>
+                                        <td className="px-2 py-2 border border-gray-300">{tripleOTAmount + doubleOTAmount + normalOTAmount + earningForEPF - epfeightpercent - record.advance - record.festival_advance - record.loan_amount}</td>
                                         <td className="px-2 py-2 border border-gray-300">{epftwelvepercent}</td>
                                         <td className="px-2 py-2 border border-gray-300">{etfthreepercent}</td>
                                         <td className="px-2 py-2 border border-gray-300">{epfeightpercent + epftwelvepercent}</td>
