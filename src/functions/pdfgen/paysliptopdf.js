@@ -1,11 +1,15 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
-export default function PaysliptoPDF(payrollData) {
+
+export default async function PaysliptoPDF(payrollData) {
+
+
     const doc = new jsPDF({
         format: "a4", // Set page size to A4
         unit: "mm", // Use millimeters for consistency
     });
+
     const margin = 15;
     const topMargin = 15;
 
@@ -39,6 +43,7 @@ export default function PaysliptoPDF(payrollData) {
                 doc.setFontSize(14);
                 doc.text(header, margin, currentY);
                 currentY += 10;
+
 
                 doc.setFontSize(12);
                 doc.text(detailsText, margin, currentY);

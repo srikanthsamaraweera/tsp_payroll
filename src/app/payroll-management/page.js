@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faTrash, faEdit, faEye, faSearchPlus, faRefresh, faSearchMinus, faDollar, faFileCsv, faBinoculars } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faTrash, faEdit, faEye, faSearchPlus, faRefresh, faSearchMinus, faDollar, faFileCsv, faBinoculars, faNewspaper } from "@fortawesome/free-solid-svg-icons";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import PayrollToCSV from "@/functions/pdfgen/payrolltable1";
@@ -517,6 +517,15 @@ export default function PayrollManagement() {
                     >
                         <FontAwesomeIcon icon={faFileCsv} className="mr-2" />
                         Export CSV
+                    </button>
+                    <button
+                        onClick={() => {
+                            router.push('/sinhala-payslip')
+                        }}
+                        className="px-6 py-2 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none"
+                    >
+                        <FontAwesomeIcon icon={faNewspaper} className="mr-2" />
+                        Sinhala PaySlip
                     </button>
                 </div>
 

@@ -8,7 +8,7 @@ export default async function CanvasGen(element, savefilename) {
     const pageHeight = 297; // A4 height in mm
 
     const canvas = await html2canvas(element, {
-        scale: 3, // Improves quality
+        scale: 2, // Improves quality
     });
 
     const imgData = canvas.toDataURL("image/png");

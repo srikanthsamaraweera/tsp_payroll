@@ -38,7 +38,7 @@ export default function TopNav() {
 
   if (status === "loading") {
     return (
-      <nav className="bg-gray-800 text-white p-4">
+      <nav className="bg-gray-800 text-white p-4 print:hidden">
         <div className="container mx-auto">
           <div className="text-center text-gray-400">Loading session...</div>
         </div>
@@ -49,7 +49,7 @@ export default function TopNav() {
   return (
     <nav
       ref={navRef}
-      className={`bg-gray-800 text-white p-4 ${
+      className={`print:hidden bg-gray-800 text-white p-4 ${
         isFixed ? "fixed top-0 w-full shadow-md z-50" : ""
       }`}
     >

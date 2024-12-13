@@ -1,0 +1,23 @@
+@media print {
+  body {
+    margin: 0;
+    padding: 0;
+    width: 210mm;
+    height: 297mm;
+  }
+
+  #payrollwrapper {
+    display: block;
+    width: 100%;
+    height: auto;
+    page-break-inside: avoid;
+  }
+
+  .record {
+    display: block;
+    width: 100%;
+    min-height: calc(297mm / 2); /* Half A4 height for two records per page */
+    box-sizing: border-box;
+    page-break-inside: avoid;
+  }
+}
