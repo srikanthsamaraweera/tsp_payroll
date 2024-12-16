@@ -11,6 +11,7 @@
     width: 100%;
     height: auto;
     page-break-inside: avoid;
+    margin: 0 auto;
   }
 
   .record {

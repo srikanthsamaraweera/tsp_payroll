@@ -227,7 +227,7 @@ export default function PayrollManagement() {
 
             {/* Add Payroll Button */}
             <div className="print:hidden" >
-                <div className="flex  mb-6 justify-start gap-5">
+                <div className="flex  mb-6 gap-5 justify-center">
                     <button
                         onClick={() => {
                             setshowsearchdrawer(!showsearchdrawer);
@@ -271,34 +271,22 @@ export default function PayrollManagement() {
                         Payroll Management
                     </button>
                     <button
-                        onClick={() => PaysliptoPDF(payrollData)}
+                        onClick={() => window.print()}
                         className="px-6 py-1 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none"
                     >
                         <FontAwesomeIcon icon={faPrint} className="mr-2" />
-                        Payslip Sheet
+                        Print
                     </button>
-                    <button
+                    {/* <button
                         onClick={() => payrollSummaryTable(payrollData)}
                         className="px-6 py-1 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none"
 
                     >
                         <FontAwesomeIcon icon={faPrint} className="mr-2" />
                         Payroll table
-                    </button>
+                    </button> */}
 
-                    <button
-                        className="px-6 py-1 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none"
 
-                        onClick={
-
-                            () => {
-                                console.log("canvas gen press");
-                                const element = document.getElementById("payrollwrapper")
-                                CanvasGen(element, "payrollcanvas")
-                            }
-                        }>
-                        <FontAwesomeIcon icon={faPrint} className="mr-2" />
-                        Canvas</button>
 
                     <button
                         onClick={() => {
@@ -414,7 +402,7 @@ export default function PayrollManagement() {
 
 
             {/* Data Table */}
-            <div id="payrollwrapper" ref={componentRef} className="p-6 bg-white  border rounded-lg shadow-md w-full max-w-[210mm]">
+            <div id="payrollwrapper" ref={componentRef} className="p-6 mx-auto bg-white  border rounded-lg shadow-md w-full max-w-[210mm]">
                 {loading ? (
                     <p className="text-center text-gray-500">Loading...</p>
                 ) : (
@@ -428,7 +416,7 @@ export default function PayrollManagement() {
                             const sundayLLpay = (record.sundays * record.per_day_salary)
                             const statpay = (record.stat_days * record.stat_rate * record.per_day_salary)
                             const poyapay = (record.poya_days * record.poya_rate * record.per_day_salary)
-                            const nightpay = (record.night_shifts / record.night_shift_rate * record.per_day_salary)
+                            const nightpay = (record.night_shifts * record.night_shift_rate * record.per_day_salary)
                             const earningForEPF =
                                 totalbasic
                                 +
@@ -449,9 +437,10 @@ export default function PayrollManagement() {
                             const epftwelvepercent = earningForEPF * 12 / 100;
                             const etfthreepercent = earningForEPF * 3 / 100;
                             return (
-                                <div className="record bg-white min-h-[148.5mm] border border-b-black border-dotted  pt-[4mm]" key={record.id + "a1"}>
-                                    <div className="text-center w-full pb-2">
 
+                                <div className="record  bg-white min-h-[148.5mm] border border-b-black border-dotted  pt-[4mm]" key={record.id + "a1"}>
+                                    <div className="text-center w-full pb-2 pt-2">
+                                        <h1>T.S.P. Manpower Pay Slip</h1>
                                         <h2 className="font-bold text-sm">Date දිනය: {record.payroll_date.split('T')[0]} | NIC ජා.හැ.අංකය: {record.employee?.Nic_Passport || "-"} | EPF# අංකය: {record.employee?.EpfNo || "-"} | Name නම: {record.employee?.Initials} {record.employee?.Firstname} {record.employee?.Surname}</h2>
 
 
@@ -466,10 +455,10 @@ export default function PayrollManagement() {
 
 
                                                 {/* Payroll Table Fields */}
-                                                <th className="px-2 py-1  text-xs border border-gray-300">Description විස්තරය</th>
-                                                <th className="px-2 py-1  text-xs border border-gray-300">Days දින, Qty ප්‍රමාණය</th>
-                                                <th className="px-2 py-1  text-xs border border-gray-300">Rate අනුපාතය</th>
-                                                <th className="px-2 py-1  text-xs border border-gray-300 text-right">Value අගය</th>
+                                                <th className="px-2   text-xs border border-gray-300">Description විස්තරය</th>
+                                                <th className="px-2   text-xs border border-gray-300">Days දින, Qty ප්‍රමාණය</th>
+                                                <th className="px-2   text-xs border border-gray-300">Rate අනුපාතය</th>
+                                                <th className="px-2   text-xs border border-gray-300 text-right">Value අගය</th>
 
 
                                             </tr>
@@ -478,50 +467,50 @@ export default function PayrollManagement() {
                                             <tr key={record.id} onDoubleClick={() => handleviewascol(record)} className={`text-center focus:bg-slate-100 cursor-pointer ${selectededrow === record.id ? 'bg-slate-200' : ""} border border-gray-300`}
                                                 onClick={() => setselectedrow(record.id)}>
                                                 {/* Employee Table Fields */}
-                                                <td className="px-2 py-1 border border-gray-300">Normal Days සමාන්‍ය දින</td>
-                                                <td className="px-2 py-1 whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300">{record.work_days || 0}</td>
-                                                <td className="px-2 py-1 border border-gray-300">{record.per_day_salary || 0}</td>
-                                                <td className="px-2 py-1 border border-gray-300 text-right">{totalbasic}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300">Normal Days සමාන්‍ය දින</td>
+                                                <td className="px-2 py-[0.5mm] whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300">{record.work_days || 0}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300">{record.per_day_salary || 0}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300 text-right">{totalbasic}</td>
 
 
                                             </tr>
                                             <tr key={"2" - record.id} onDoubleClick={() => handleviewascol(record)} className={`text-center focus:bg-slate-100 cursor-pointer ${selectededrow === record.id ? 'bg-slate-200' : ""} border border-gray-300`}
                                                 onClick={() => setselectedrow(record.id)}>
                                                 {/* Employee Table Fields */}
-                                                <td className="px-2 py-1 border border-gray-300">Sunday LL Pay ඉරිදා සාමන්‍ය ගෙවීම</td>
-                                                <td className="px-2 py-1 whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300">{record.sundays || 0}</td>
-                                                <td className="px-2 py-1 border border-gray-300">{record.per_day_salary || 0}</td>
-                                                <td className="px-2 py-1 border border-gray-300 text-right">{sundayLLpay || 0}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300">Sunday LL Pay ඉරිදා සාමන්‍ය ගෙවීම</td>
+                                                <td className="px-2 py-[0.5mm] whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300">{record.sundays || 0}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300">{record.per_day_salary || 0}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300 text-right">{sundayLLpay || 0}</td>
 
 
                                             </tr>
                                             <tr key={"3" - record.id} onDoubleClick={() => handleviewascol(record)} className={`text-center focus:bg-slate-100 cursor-pointer ${selectededrow === record.id ? 'bg-slate-200' : ""} border border-gray-300`}
                                                 onClick={() => setselectedrow(record.id)}>
                                                 {/* Employee Table Fields */}
-                                                <td className="px-2 py-1 border border-gray-300">Sunday Pay(EPF) ඉරිදා ගෙවීම(EPF)</td>
-                                                <td className="px-2 py-1 whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300">{record.sundays || 0}</td>
-                                                <td className="px-2 py-1 border border-gray-300">{record.sunday_rate * record.per_day_salary || 0}</td>
-                                                <td className="px-2 py-1 border border-gray-300 text-right">{sundaypayepf || 0}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300">Sunday Pay(EPF) ඉරිදා ගෙවීම(EPF)</td>
+                                                <td className="px-2 py-[0.5mm] whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300">{record.sundays || 0}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300">{record.sunday_rate * record.per_day_salary || 0}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300 text-right">{sundaypayepf || 0}</td>
 
 
                                             </tr>
                                             <tr key={"4" - record.id} onDoubleClick={() => handleviewascol(record)} className={`text-center focus:bg-slate-100 cursor-pointer ${selectededrow === record.id ? 'bg-slate-200' : ""} border border-gray-300`}
                                                 onClick={() => setselectedrow(record.id)}>
                                                 {/* Employee Table Fields */}
-                                                <td className="px-2 py-1 border border-gray-300">Poya Pay පොහොය දින ගෙවීම</td>
-                                                <td className="px-2 py-1 whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300">{record.poya_days || 0}</td>
-                                                <td className="px-2 py-1 border border-gray-300">{record.poya_rate * record.per_day_salary || 0}</td>
-                                                <td className="px-2 py-1 border border-gray-300 text-right">{poyapay || 0}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300">Poya Pay පොහොය දින ගෙවීම</td>
+                                                <td className="px-2 py-[0.5mm] whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300">{record.poya_days || 0}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300">{record.poya_rate * record.per_day_salary || 0}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300 text-right">{poyapay || 0}</td>
 
 
                                             </tr>
                                             <tr key={"5" - record.id} onDoubleClick={() => handleviewascol(record)} className={`text-center focus:bg-slate-100 cursor-pointer ${selectededrow === record.id ? 'bg-slate-200' : ""} border border-gray-300`}
                                                 onClick={() => setselectedrow(record.id)}>
                                                 {/* Employee Table Fields */}
-                                                <td className="px-2 py-1 border border-gray-300">Night Pay රාත්‍රී ගෙවීම</td>
-                                                <td className="px-2 py-1 whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300">{record.night_shifts || 0}</td>
-                                                <td className="px-2 py-1 border border-gray-300">{record.per_day_salary / record.night_shift_rate || 0}</td>
-                                                <td className="px-2 py-1 border border-gray-300 text-right">{nightpay || 0}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300">Night Pay රාත්‍රී ගෙවීම</td>
+                                                <td className="px-2 py-[0.5mm] whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300">{record.night_shifts || 0}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300">{record.per_day_salary * record.night_shift_rate || 0}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300 text-right">{nightpay || 0}</td>
 
 
                                             </tr>
@@ -529,10 +518,10 @@ export default function PayrollManagement() {
                                             <tr key={"6" - record.id} onDoubleClick={() => handleviewascol(record)} className={`text-center focus:bg-slate-100 cursor-pointer bg-slate-200  border border-gray-300`}
                                                 onClick={() => setselectedrow(record.id)}>
                                                 {/* Employee Table Fields */}
-                                                <td className="px-2 py-1 border border-gray-300">(Earning For EPF) EPF සඳහා ඉපයීම</td>
-                                                <td className="px-2 py-1 whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300"></td>
-                                                <td className="px-2 py-1 border border-gray-300"></td>
-                                                <td className="px-2 py-1 border border-gray-300 text-right">{earningForEPF}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300">(Earning For EPF) EPF සඳහා ඉපයීම</td>
+                                                <td className="px-2 py-[0.5mm] whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300"></td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300"></td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300 text-right">{earningForEPF}</td>
 
 
                                             </tr>
@@ -542,20 +531,20 @@ export default function PayrollManagement() {
                                             <tr key={"8" - record.id} onDoubleClick={() => handleviewascol(record)} className={`text-center focus:bg-slate-100 cursor-pointer   border border-gray-300`}
                                                 onClick={() => setselectedrow(record.id)}>
                                                 {/* Employee Table Fields */}
-                                                <td className="px-2 py-1 border border-gray-300">Normal OT සමාන්‍ය අතිකාල පැය</td>
-                                                <td className="px-2 py-1 whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300">{record.normal_ot || 0}</td>
-                                                <td className="px-2 py-1 border border-gray-300">{record.normal_ot_rate * record.per_day_salary / 8 || 0}</td>
-                                                <td className="px-2 py-1 border border-gray-300 text-right">{normalOTAmount}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300">Normal OT සමාන්‍ය අතිකාල පැය</td>
+                                                <td className="px-2 py-[0.5mm] whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300">{record.normal_ot || 0}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300">{record.normal_ot_rate * record.per_day_salary / 8 || 0}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300 text-right">{normalOTAmount}</td>
 
 
                                             </tr>
                                             <tr key={"9" - record.id} onDoubleClick={() => handleviewascol(record)} className={`text-center focus:bg-slate-100 cursor-pointer   border border-gray-300`}
                                                 onClick={() => setselectedrow(record.id)}>
                                                 {/* Employee Table Fields */}
-                                                <td className="px-2 py-1 border border-gray-300">Double OT දෙගුණයක්වූ අතිකාල පැය</td>
-                                                <td className="px-2 py-1 whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300">{record.double_ot || 0}</td>
-                                                <td className="px-2 py-1 border border-gray-300">{record.double_ot_rate * record.per_day_salary / 8 || 0}</td>
-                                                <td className="px-2 py-1 border border-gray-300 text-right">{doubleOTAmount}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300">Double OT දෙගුණයක්වූ අතිකාල පැය</td>
+                                                <td className="px-2 py-[0.5mm] whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300">{record.double_ot || 0}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300">{record.double_ot_rate * record.per_day_salary / 8 || 0}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300 text-right">{doubleOTAmount}</td>
 
 
                                             </tr>
@@ -563,10 +552,10 @@ export default function PayrollManagement() {
                                             <tr key={"10" - record.id} onDoubleClick={() => handleviewascol(record)} className={`text-center focus:bg-slate-100 cursor-pointer   border border-gray-300`}
                                                 onClick={() => setselectedrow(record.id)}>
                                                 {/* Employee Table Fields */}
-                                                <td className="px-2 py-1 border border-gray-300">Triple OT තෙගුණයක්වූ අතිකාල පැය</td>
-                                                <td className="px-2 py-1 whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300">{record.triple_ot || 0}</td>
-                                                <td className="px-2 py-1 border border-gray-300">{record.triple_ot_rate * record.per_day_salary / 8 || 0}</td>
-                                                <td className="px-2 py-1 border border-gray-300 text-right">{tripleOTAmount}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300">Triple OT තෙගුණයක්වූ අතිකාල පැය</td>
+                                                <td className="px-2 py-[0.5mm] whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300">{record.triple_ot || 0}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300">{record.triple_ot_rate * record.per_day_salary / 8 || 0}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300 text-right">{tripleOTAmount}</td>
 
 
                                             </tr>
@@ -575,20 +564,20 @@ export default function PayrollManagement() {
                                             <tr key={"11" - record.id} onDoubleClick={() => handleviewascol(record)} className={`text-center focus:bg-slate-100 cursor-pointer   border border-gray-300 bg-slate-200`}
                                                 onClick={() => setselectedrow(record.id)}>
                                                 {/* Employee Table Fields */}
-                                                <td className="px-2 py-1 border border-gray-300">Total OT සම්පූර්ණ අතිකාල පැය</td>
-                                                <td className="px-2 py-1 whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300"></td>
-                                                <td className="px-2 py-1 border border-gray-300"></td>
-                                                <td className="px-2 py-1 border border-gray-300 text-right">{tripleOTAmount + doubleOTAmount + normalOTAmount}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300">Total OT සම්පූර්ණ අතිකාල පැය</td>
+                                                <td className="px-2 py-[0.5mm] whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300"></td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300"></td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300 text-right">{tripleOTAmount + doubleOTAmount + normalOTAmount}</td>
 
 
                                             </tr>
                                             <tr key={"12" - record.id} onDoubleClick={() => handleviewascol(record)} className={`text-center focus:bg-slate-100 cursor-pointer   border border-gray-300 bg-slate-200`}
                                                 onClick={() => setselectedrow(record.id)}>
                                                 {/* Employee Table Fields */}
-                                                <td className="px-2 py-1 border border-gray-300">Gross Salary සම්පූර්ණ ඉපයීම</td>
-                                                <td className="px-2 py-1 whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300"></td>
-                                                <td className="px-2 py-1 border border-gray-300"></td>
-                                                <td className="px-2 py-1 border border-gray-300 text-right">{earningForEPF + tripleOTAmount + doubleOTAmount + normalOTAmount}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300">Gross Salary සම්පූර්ණ ඉපයීම</td>
+                                                <td className="px-2 py-[0.5mm] whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300"></td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300"></td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300 text-right">{earningForEPF + tripleOTAmount + doubleOTAmount + normalOTAmount}</td>
 
 
                                             </tr>
@@ -602,20 +591,20 @@ export default function PayrollManagement() {
                                     <table className="border border-gray-100 w-full text-xs font-bold mt-2">
                                         <thead className="bg-gray-100">
                                             <tr >
-                                                <th className="text-right border border-gray-300 px-2 py-1">Advance<br /> අත්තිකාරම්</th>
-                                                <th className="text-right border border-gray-300  px-2 py-1">Festival Advance<br />උත්සව අත්තිකාරම්</th>
-                                                <th className="text-right border border-gray-300 px-2 py-1">Loan<br />ණය</th>
-                                                <th className="text-right border border-gray-300 px-2 py-1">EPF 8%</th>
-                                                <th className="text-right border border-gray-300 px-2 py-1">Total Deductions<br /> සම්පූර්ණ අඩුකිරීම්</th>
+                                                <th className="text-right border border-gray-300 px-2 ">Advance<br /> අත්තිකාරම්</th>
+                                                <th className="text-right border border-gray-300  px-2 ">Festival Advance<br />උත්සව අත්තිකාරම්</th>
+                                                <th className="text-right border border-gray-300 px-2 ">Loan<br />ණය</th>
+                                                <th className="text-right border border-gray-300 px-2 ">EPF 8%</th>
+                                                <th className="text-right border border-gray-300 px-2 ">Total Deductions<br /> සම්පූර්ණ අඩුකිරීම්</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr className="text-right ">
-                                                <td className="text-right border border-gray-300 px-2 py-1">-{record.advance}</td>
-                                                <td className="text-right border border-gray-300 px-2 py-1">-{record.festival_advance}</td>
-                                                <td className="text-right border border-gray-300 px-2 py-1">-{record.loan_amount}</td>
-                                                <td className="text-right border border-gray-300 px-2 py-1">-{epfeightpercent}</td>
-                                                <td className="text-right border border-gray-300 px-2 py-1">-{epfeightpercent + record.loan_amount + record.festival_advance + record.advance}</td>
+                                                <td className="text-right border border-gray-300 px-2 ">-{record.advance}</td>
+                                                <td className="text-right border border-gray-300 px-2 ">-{record.festival_advance}</td>
+                                                <td className="text-right border border-gray-300 px-2 ">-{record.loan_amount}</td>
+                                                <td className="text-right border border-gray-300 px-2 ">-{epfeightpercent}</td>
+                                                <td className="text-right border border-gray-300 px-2 ">-{epfeightpercent + record.loan_amount + record.festival_advance + record.advance}</td>
                                             </tr>
                                         </tbody>
 
@@ -625,23 +614,23 @@ export default function PayrollManagement() {
                                     <table className="border border-gray-100 w-full text-xs font-bold">
                                         <thead className="bg-gray-100">
                                             <tr >
-                                                <th className="text-right border border-gray-300 px-2 py-1">Gross Salary<br /> සම්පූර්ණ ඉපයීම</th>
-                                                <th className="text-right border border-gray-300  px-2 py-1">Total Deductions<br /> සම්පූර්ණ අඩුකිරීම්</th>
-                                                <th className="text-right border border-gray-300 px-2 py-1 "> Net Salary ශුද්ධ වැටුප</th>
-                                                <th className="text-right border border-gray-300 px-2 py-1">EPF 8%</th>
-                                                <th className="text-right border border-gray-300  px-2 py-1">EPF 12%</th>
-                                                <th className="text-right border border-gray-300 px-2 py-1 "> EPF 20%</th>
+                                                <th className="text-right border border-gray-300 px-2 ">Gross Salary<br /> සම්පූර්ණ ඉපයීම</th>
+                                                <th className="text-right border border-gray-300  px-2 ">Total Deductions<br /> සම්පූර්ණ අඩුකිරීම්</th>
+                                                <th className="text-right border border-gray-300 px-2  "> Net Salary ශුද්ධ වැටුප</th>
+                                                <th className="text-right border border-gray-300 px-2 ">EPF 8%</th>
+                                                <th className="text-right border border-gray-300  px-2 ">EPF 12%</th>
+                                                <th className="text-right border border-gray-300 px-2  "> EPF 20%</th>
 
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr className="text-right ">
-                                                <td className="text-right border border-gray-300 px-2 py-1">{earningForEPF + tripleOTAmount + doubleOTAmount + normalOTAmount}</td>
-                                                <td className="text-right border border-gray-300 px-2 py-1">-{epfeightpercent + record.loan_amount + record.festival_advance + record.advance}</td>
-                                                <td className="text-right border border-gray-300 px-2 py-1 underline decoration-double">{(earningForEPF + tripleOTAmount + doubleOTAmount + normalOTAmount) - (epfeightpercent + record.loan_amount + record.festival_advance + record.advance)}</td>
-                                                <td className="text-right border border-gray-300 px-2 py-1">{epfeightpercent}</td>
-                                                <td className="text-right border border-gray-300 px-2 py-1">{epftwelvepercent}</td>
-                                                <td className="text-right border border-gray-300 px-2 py-1  ">{(epfeightpercent + epftwelvepercent).toFixed(2)}</td>
+                                                <td className="text-right border border-gray-300 px-2 ">{earningForEPF + tripleOTAmount + doubleOTAmount + normalOTAmount}</td>
+                                                <td className="text-right border border-gray-300 px-2 ">-{epfeightpercent + record.loan_amount + record.festival_advance + record.advance}</td>
+                                                <td className="text-right border border-gray-300 px-2  underline decoration-double">{(earningForEPF + tripleOTAmount + doubleOTAmount + normalOTAmount) - (epfeightpercent + record.loan_amount + record.festival_advance + record.advance)}</td>
+                                                <td className="text-right border border-gray-300 px-2 ">{epfeightpercent}</td>
+                                                <td className="text-right border border-gray-300 px-2 ">{epftwelvepercent}</td>
+                                                <td className="text-right border border-gray-300 px-2  ">{(epfeightpercent + epftwelvepercent).toFixed(2)}</td>
 
                                             </tr>
                                         </tbody>
