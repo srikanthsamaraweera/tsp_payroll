@@ -705,7 +705,7 @@ export default function PayrollManagement() {
                                 const sundayLLpay = (record.sundays * record.per_day_salary)
                                 const statpay = (record.stat_days * record.stat_rate * record.per_day_salary)
                                 const poyapay = (record.poya_days * record.poya_rate * record.per_day_salary)
-                                const nightpay = (record.night_shifts / record.night_shift_rate * record.per_day_salary)
+                                const nightpay = (record.night_shifts * record.night_shift_rate * record.per_day_salary)
                                 const earningForEPF =
                                     totalbasic
                                     +

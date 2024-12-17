@@ -63,7 +63,7 @@ export default function PayrollToCSV(payrollData) {
         const poyadays = row.poya_days;
         const poyapay = row.poya_days * row.poya_rate * perDaySalary;
         const nightdays = row.night_shifts;
-        const nightpay = perDaySalary / row.night_shift_rate * nightdays;
+        const nightpay = perDaySalary * row.night_shift_rate * nightdays;
         const totepfearn = TotlBasicSalary + sundaysalary + statpay + poyapay;
         const epf8percent = totepfearn * 8 / 100;
 
