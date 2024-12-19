@@ -500,7 +500,7 @@ export default function PayrollManagement() {
 
                     </button>
 
-                    <button
+                    {/* <button
                         onClick={() => {
                             router.push('/payslip')
                         }}
@@ -508,8 +508,8 @@ export default function PayrollManagement() {
                     >
                         <FontAwesomeIcon icon={faBinoculars} className="mr-2" />
                         Reports
-                    </button>
-                    <button
+                    </button> */}
+                    {/* <button
                         onClick={() => {
                             PayrollToCSV(payrollData)
                         }}
@@ -517,7 +517,7 @@ export default function PayrollManagement() {
                     >
                         <FontAwesomeIcon icon={faFileCsv} className="mr-2" />
                         Export CSV
-                    </button>
+                    </button> */}
                     <button
                         onClick={() => {
                             router.push('/sinhala-payslip')

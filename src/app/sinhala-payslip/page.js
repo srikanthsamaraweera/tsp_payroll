@@ -464,7 +464,7 @@ export default function PayrollManagement() {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr key={record.id} onDoubleClick={() => handleviewascol(record)} className={`text-center focus:bg-slate-100 cursor-pointer ${selectededrow === record.id ? 'bg-slate-200' : ""} border border-gray-300`}
+                                            <tr key={record.id} className={`text-center focus:bg-slate-100 cursor-pointer  border border-gray-300`}
                                                 onClick={() => setselectedrow(record.id)}>
                                                 {/* Employee Table Fields */}
                                                 <td className="px-2 py-[0.5mm] border border-gray-300">Normal Days සමාන්‍ය දින</td>
@@ -474,7 +474,7 @@ export default function PayrollManagement() {
 
 
                                             </tr>
-                                            <tr key={"2" - record.id} onDoubleClick={() => handleviewascol(record)} className={`text-center focus:bg-slate-100 cursor-pointer ${selectededrow === record.id ? 'bg-slate-200' : ""} border border-gray-300`}
+                                            <tr key={"2" - record.id} className={`text-center focus:bg-slate-100 cursor-pointer  border border-gray-300`}
                                                 onClick={() => setselectedrow(record.id)}>
                                                 {/* Employee Table Fields */}
                                                 <td className="px-2 py-[0.5mm] border border-gray-300">Sunday LL Pay ඉරිදා සාමන්‍ය ගෙවීම</td>
@@ -484,7 +484,7 @@ export default function PayrollManagement() {
 
 
                                             </tr>
-                                            <tr key={"3" - record.id} onDoubleClick={() => handleviewascol(record)} className={`text-center focus:bg-slate-100 cursor-pointer ${selectededrow === record.id ? 'bg-slate-200' : ""} border border-gray-300`}
+                                            <tr key={"3" - record.id} className={`text-center focus:bg-slate-100 cursor-pointer  border border-gray-300`}
                                                 onClick={() => setselectedrow(record.id)}>
                                                 {/* Employee Table Fields */}
                                                 <td className="px-2 py-[0.5mm] border border-gray-300">Sunday Pay(EPF) ඉරිදා ගෙවීම(EPF)</td>
@@ -494,7 +494,7 @@ export default function PayrollManagement() {
 
 
                                             </tr>
-                                            <tr key={"4" - record.id} onDoubleClick={() => handleviewascol(record)} className={`text-center focus:bg-slate-100 cursor-pointer ${selectededrow === record.id ? 'bg-slate-200' : ""} border border-gray-300`}
+                                            <tr key={"4" - record.id} className={`text-center focus:bg-slate-100 cursor-pointer  border border-gray-300`}
                                                 onClick={() => setselectedrow(record.id)}>
                                                 {/* Employee Table Fields */}
                                                 <td className="px-2 py-[0.5mm] border border-gray-300">Poya Pay පොහොය දින ගෙවීම</td>
@@ -504,7 +504,7 @@ export default function PayrollManagement() {
 
 
                                             </tr>
-                                            <tr key={"5" - record.id} onDoubleClick={() => handleviewascol(record)} className={`text-center focus:bg-slate-100 cursor-pointer ${selectededrow === record.id ? 'bg-slate-200' : ""} border border-gray-300`}
+                                            <tr key={"5" - record.id} className={`text-center focus:bg-slate-100 cursor-pointer  border border-gray-300`}
                                                 onClick={() => setselectedrow(record.id)}>
                                                 {/* Employee Table Fields */}
                                                 <td className="px-2 py-[0.5mm] border border-gray-300">Night Pay රාත්‍රී ගෙවීම</td>
@@ -515,7 +515,7 @@ export default function PayrollManagement() {
 
                                             </tr>
 
-                                            <tr key={"6" - record.id} onDoubleClick={() => handleviewascol(record)} className={`text-center focus:bg-slate-100 cursor-pointer bg-slate-200  border border-gray-300`}
+                                            <tr key={"6" - record.id} className={`text-center focus:bg-slate-100 cursor-pointer bg-slate-200  border border-gray-300`}
                                                 onClick={() => setselectedrow(record.id)}>
                                                 {/* Employee Table Fields */}
                                                 <td className="px-2 py-[0.5mm] border border-gray-300">(Earning For EPF) EPF සඳහා ඉපයීම</td>
@@ -528,7 +528,7 @@ export default function PayrollManagement() {
 
 
 
-                                            <tr key={"8" - record.id} onDoubleClick={() => handleviewascol(record)} className={`text-center focus:bg-slate-100 cursor-pointer   border border-gray-300`}
+                                            <tr key={"8" - record.id} className={`text-center focus:bg-slate-100 cursor-pointer   border border-gray-300`}
                                                 onClick={() => setselectedrow(record.id)}>
                                                 {/* Employee Table Fields */}
                                                 <td className="px-2 py-[0.5mm] border border-gray-300">Normal OT සමාන්‍ය අතිකාල පැය</td>
@@ -538,7 +538,7 @@ export default function PayrollManagement() {
 
 
                                             </tr>
-                                            <tr key={"9" - record.id} onDoubleClick={() => handleviewascol(record)} className={`text-center focus:bg-slate-100 cursor-pointer   border border-gray-300`}
+                                            <tr key={"9" - record.id} className={`text-center focus:bg-slate-100 cursor-pointer   border border-gray-300`}
                                                 onClick={() => setselectedrow(record.id)}>
                                                 {/* Employee Table Fields */}
                                                 <td className="px-2 py-[0.5mm] border border-gray-300">Double OT දෙගුණයක්වූ අතිකාල පැය</td>
@@ -549,7 +549,7 @@ export default function PayrollManagement() {
 
                                             </tr>
 
-                                            <tr key={"10" - record.id} onDoubleClick={() => handleviewascol(record)} className={`text-center focus:bg-slate-100 cursor-pointer   border border-gray-300`}
+                                            <tr key={"10" - record.id} className={`text-center focus:bg-slate-100 cursor-pointer   border border-gray-300`}
                                                 onClick={() => setselectedrow(record.id)}>
                                                 {/* Employee Table Fields */}
                                                 <td className="px-2 py-[0.5mm] border border-gray-300">Triple OT තෙගුණයක්වූ අතිකාල පැය</td>
@@ -561,7 +561,7 @@ export default function PayrollManagement() {
                                             </tr>
 
 
-                                            <tr key={"11" - record.id} onDoubleClick={() => handleviewascol(record)} className={`text-center focus:bg-slate-100 cursor-pointer   border border-gray-300 bg-slate-200`}
+                                            <tr key={"11" - record.id} className={`text-center focus:bg-slate-100 cursor-pointer   border border-gray-300 bg-slate-200`}
                                                 onClick={() => setselectedrow(record.id)}>
                                                 {/* Employee Table Fields */}
                                                 <td className="px-2 py-[0.5mm] border border-gray-300">Total OT සම්පූර්ණ අතිකාල පැය</td>
@@ -571,7 +571,7 @@ export default function PayrollManagement() {
 
 
                                             </tr>
-                                            <tr key={"12" - record.id} onDoubleClick={() => handleviewascol(record)} className={`text-center focus:bg-slate-100 cursor-pointer   border border-gray-300 bg-slate-200`}
+                                            <tr key={"12" - record.id} className={`text-center focus:bg-slate-100 cursor-pointer   border border-gray-300 bg-slate-200`}
                                                 onClick={() => setselectedrow(record.id)}>
                                                 {/* Employee Table Fields */}
                                                 <td className="px-2 py-[0.5mm] border border-gray-300">Gross Salary සම්පූර්ණ ඉපයීම</td>
