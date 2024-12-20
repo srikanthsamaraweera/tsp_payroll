@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "SET NODE_ENV=development & node server.js",
+    "start": "cross-env NODE_ENV=production node server.js",
     "lint": "next lint"
   },
   "dependencies": {
@@ -16,6 +16,7 @@
     "@prisma/client": "^5.22.0",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
+    "cross-env": "^7.0.3",
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.2",
     "jspdf-autotable": "^3.8.4",
