@@ -455,10 +455,10 @@ export default function PayrollManagement() {
 
 
                                                 {/* Payroll Table Fields */}
-                                                <th className="px-2   text-xs border border-gray-300">Description විස්තරය</th>
-                                                <th className="px-2   text-xs border border-gray-300">Days දින, Qty ප්‍රමාණය</th>
-                                                <th className="px-2   text-xs border border-gray-300">Rate අනුපාතය</th>
-                                                <th className="px-2   text-xs border border-gray-300 text-right">Value අගය</th>
+                                                <th className="px-2   text-xs border border-gray-300 w-[40%]">Description විස්තරය</th>
+                                                <th className="px-1   text-xs border border-gray-300 w-[20%]">Days දින/Hrs පැය/Qty ප්‍රමාණය</th>
+                                                <th className="px-2   text-xs border border-gray-300 w-[20%]">Rate අනුපාතය</th>
+                                                <th className="px-2   text-xs border border-gray-300 w-[20%] text-right">Value අගය</th>
 
 
                                             </tr>
@@ -468,29 +468,29 @@ export default function PayrollManagement() {
                                                 onClick={() => setselectedrow(record.id)}>
                                                 {/* Employee Table Fields */}
                                                 <td className="px-2 py-[0.5mm] border border-gray-300">Normal Days සමාන්‍ය දින</td>
-                                                <td className="px-2 py-[0.5mm] whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300">{record.work_days || 0}</td>
+                                                <td className="px-1 py-[0.5mm] whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300">{record.work_days || 0}</td>
                                                 <td className="px-2 py-[0.5mm] border border-gray-300">{record.per_day_salary || 0}</td>
-                                                <td className="px-2 py-[0.5mm] border border-gray-300 text-right">{totalbasic}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300 text-right">{totalbasic.toFixed(2)}</td>
 
 
                                             </tr>
                                             <tr key={"2" - record.id} className={`text-center focus:bg-slate-100 cursor-pointer  border border-gray-300`}
                                                 onClick={() => setselectedrow(record.id)}>
                                                 {/* Employee Table Fields */}
-                                                <td className="px-2 py-[0.5mm] border border-gray-300">Sunday LL Pay ඉරිදා සාමන්‍ය ගෙවීම</td>
-                                                <td className="px-2 py-[0.5mm] whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300">{record.sundays || 0}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300">Sunday LL Pay ඉරිදා හිලව් නිවාඩු මුදල</td>
+                                                <td className="px-1 py-[0.5mm] whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300">{record.sundays || 0}</td>
                                                 <td className="px-2 py-[0.5mm] border border-gray-300">{record.per_day_salary || 0}</td>
-                                                <td className="px-2 py-[0.5mm] border border-gray-300 text-right">{sundayLLpay || 0}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300 text-right">{sundayLLpay.toFixed(2) || 0}</td>
 
 
                                             </tr>
                                             <tr key={"3" - record.id} className={`text-center focus:bg-slate-100 cursor-pointer  border border-gray-300`}
                                                 onClick={() => setselectedrow(record.id)}>
                                                 {/* Employee Table Fields */}
-                                                <td className="px-2 py-[0.5mm] border border-gray-300">Sunday Pay(EPF) ඉරිදා ගෙවීම(EPF)</td>
-                                                <td className="px-2 py-[0.5mm] whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300">{record.sundays || 0}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300">Sunday Pay ඉරිදා මුදල</td>
+                                                <td className="px-1 py-[0.5mm] whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300">{record.sundays || 0}</td>
                                                 <td className="px-2 py-[0.5mm] border border-gray-300">{record.sunday_rate * record.per_day_salary || 0}</td>
-                                                <td className="px-2 py-[0.5mm] border border-gray-300 text-right">{sundaypayepf || 0}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300 text-right">{sundaypayepf.toFixed(2) || 0}</td>
 
 
                                             </tr>
@@ -498,19 +498,29 @@ export default function PayrollManagement() {
                                                 onClick={() => setselectedrow(record.id)}>
                                                 {/* Employee Table Fields */}
                                                 <td className="px-2 py-[0.5mm] border border-gray-300">Poya Pay පොහොය දින ගෙවීම</td>
-                                                <td className="px-2 py-[0.5mm] whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300">{record.poya_days || 0}</td>
+                                                <td className="px-1 py-[0.5mm] whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300">{record.poya_days || 0}</td>
                                                 <td className="px-2 py-[0.5mm] border border-gray-300">{record.poya_rate * record.per_day_salary || 0}</td>
-                                                <td className="px-2 py-[0.5mm] border border-gray-300 text-right">{poyapay || 0}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300 text-right">{poyapay.toFixed(2) || 0}</td>
 
 
                                             </tr>
                                             <tr key={"5" - record.id} className={`text-center focus:bg-slate-100 cursor-pointer  border border-gray-300`}
                                                 onClick={() => setselectedrow(record.id)}>
                                                 {/* Employee Table Fields */}
-                                                <td className="px-2 py-[0.5mm] border border-gray-300">Night Pay රාත්‍රී ගෙවීම</td>
-                                                <td className="px-2 py-[0.5mm] whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300">{record.night_shifts || 0}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300">Night Pay රාත්‍රි වැඩ මුර සඳහා ගෙවීම</td>
+                                                <td className="px-1 py-[0.5mm] whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300">{record.night_shifts || 0}</td>
                                                 <td className="px-2 py-[0.5mm] border border-gray-300">{record.per_day_salary * record.night_shift_rate || 0}</td>
-                                                <td className="px-2 py-[0.5mm] border border-gray-300 text-right">{nightpay || 0}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300 text-right">{nightpay.toFixed(2) || 0}</td>
+
+
+                                            </tr>
+                                            <tr key={"5.5" - record.id} className={`text-center focus:bg-slate-100 cursor-pointer  border border-gray-300`}
+                                                onClick={() => setselectedrow(record.id)}>
+                                                {/* Employee Table Fields */}
+                                                <td className="px-2 py-[0.5mm] border border-gray-300">Stat Pay වැඩ කල රජයේ නිවාඩු(S/H)දින සඳහා ගෙවීම</td>
+                                                <td className="px-1 py-[0.5mm] whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300">{record.stat_days || 0}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300">{record.stat_rate * record.per_day_salary || 0}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300 text-right">{statpay.toFixed(2) || 0}</td>
 
 
                                             </tr>
@@ -518,10 +528,10 @@ export default function PayrollManagement() {
                                             <tr key={"6" - record.id} className={`text-center focus:bg-slate-100 cursor-pointer bg-slate-200  border border-gray-300`}
                                                 onClick={() => setselectedrow(record.id)}>
                                                 {/* Employee Table Fields */}
-                                                <td className="px-2 py-[0.5mm] border border-gray-300">(Earning For EPF) EPF සඳහා ඉපයීම</td>
-                                                <td className="px-2 py-[0.5mm] whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300"></td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300">(Earning before OT)ඒකාබද්ධ මූලික වැටුප</td>
+                                                <td className="px-1 py-[0.5mm] whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300"></td>
                                                 <td className="px-2 py-[0.5mm] border border-gray-300"></td>
-                                                <td className="px-2 py-[0.5mm] border border-gray-300 text-right">{earningForEPF}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300 text-right">{earningForEPF.toFixed(2)}</td>
 
 
                                             </tr>
@@ -531,20 +541,20 @@ export default function PayrollManagement() {
                                             <tr key={"8" - record.id} className={`text-center focus:bg-slate-100 cursor-pointer   border border-gray-300`}
                                                 onClick={() => setselectedrow(record.id)}>
                                                 {/* Employee Table Fields */}
-                                                <td className="px-2 py-[0.5mm] border border-gray-300">Normal OT සමාන්‍ය අතිකාල පැය</td>
-                                                <td className="px-2 py-[0.5mm] whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300">{record.normal_ot || 0}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300">Normal OT සමාන්‍ය අතිකාල</td>
+                                                <td className="px-1 py-[0.5mm] whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300">{record.normal_ot || 0}</td>
                                                 <td className="px-2 py-[0.5mm] border border-gray-300">{record.normal_ot_rate * record.per_day_salary / 8 || 0}</td>
-                                                <td className="px-2 py-[0.5mm] border border-gray-300 text-right">{normalOTAmount}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300 text-right">{normalOTAmount.toFixed(2)}</td>
 
 
                                             </tr>
                                             <tr key={"9" - record.id} className={`text-center focus:bg-slate-100 cursor-pointer   border border-gray-300`}
                                                 onClick={() => setselectedrow(record.id)}>
                                                 {/* Employee Table Fields */}
-                                                <td className="px-2 py-[0.5mm] border border-gray-300">Double OT දෙගුණයක්වූ අතිකාල පැය</td>
-                                                <td className="px-2 py-[0.5mm] whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300">{record.double_ot || 0}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300">Double OT ද්විත්ව අතිකාල</td>
+                                                <td className="px-1 py-[0.5mm] whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300">{record.double_ot || 0}</td>
                                                 <td className="px-2 py-[0.5mm] border border-gray-300">{record.double_ot_rate * record.per_day_salary / 8 || 0}</td>
-                                                <td className="px-2 py-[0.5mm] border border-gray-300 text-right">{doubleOTAmount}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300 text-right">{doubleOTAmount.toFixed(2)}</td>
 
 
                                             </tr>
@@ -552,10 +562,10 @@ export default function PayrollManagement() {
                                             <tr key={"10" - record.id} className={`text-center focus:bg-slate-100 cursor-pointer   border border-gray-300`}
                                                 onClick={() => setselectedrow(record.id)}>
                                                 {/* Employee Table Fields */}
-                                                <td className="px-2 py-[0.5mm] border border-gray-300">Triple OT තෙගුණයක්වූ අතිකාල පැය</td>
-                                                <td className="px-2 py-[0.5mm] whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300">{record.triple_ot || 0}</td>
-                                                <td className="px-2 py-[0.5mm] border border-gray-300">{record.triple_ot_rate * record.per_day_salary / 8 || 0}</td>
-                                                <td className="px-2 py-[0.5mm] border border-gray-300 text-right">{tripleOTAmount}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300">Triple OT ත්‍රිත්ව අතිකාල</td>
+                                                <td className="px-1 py-[0.5mm] whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300">{record.triple_ot || 0}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300">{(record.triple_ot_rate * record.per_day_salary / 8).toFixed(2) || 0}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300 text-right">{tripleOTAmount.toFixed(2)}</td>
 
 
                                             </tr>
@@ -564,20 +574,20 @@ export default function PayrollManagement() {
                                             <tr key={"11" - record.id} className={`text-center focus:bg-slate-100 cursor-pointer   border border-gray-300 bg-slate-200`}
                                                 onClick={() => setselectedrow(record.id)}>
                                                 {/* Employee Table Fields */}
-                                                <td className="px-2 py-[0.5mm] border border-gray-300">Total OT සම්පූර්ණ අතිකාල පැය</td>
-                                                <td className="px-2 py-[0.5mm] whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300"></td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300">Total OT සම්පූර්ණ අතිකාල පැය සඳහා ඉපයීම</td>
+                                                <td className="px-1 py-[0.5mm] whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300"></td>
                                                 <td className="px-2 py-[0.5mm] border border-gray-300"></td>
-                                                <td className="px-2 py-[0.5mm] border border-gray-300 text-right">{tripleOTAmount + doubleOTAmount + normalOTAmount}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300 text-right">{(tripleOTAmount + doubleOTAmount + normalOTAmount).toFixed(2)}</td>
 
 
                                             </tr>
                                             <tr key={"12" - record.id} className={`text-center focus:bg-slate-100 cursor-pointer   border border-gray-300 bg-slate-200`}
                                                 onClick={() => setselectedrow(record.id)}>
                                                 {/* Employee Table Fields */}
-                                                <td className="px-2 py-[0.5mm] border border-gray-300">Gross Salary සම්පූර්ණ ඉපයීම</td>
-                                                <td className="px-2 py-[0.5mm] whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300"></td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300">Gross Salary මුළු එකතුව</td>
+                                                <td className="px-1 py-[0.5mm] whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300"></td>
                                                 <td className="px-2 py-[0.5mm] border border-gray-300"></td>
-                                                <td className="px-2 py-[0.5mm] border border-gray-300 text-right">{earningForEPF + tripleOTAmount + doubleOTAmount + normalOTAmount}</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300 text-right">{(earningForEPF + tripleOTAmount + doubleOTAmount + normalOTAmount).toFixed(2)}</td>
 
 
                                             </tr>
@@ -591,10 +601,10 @@ export default function PayrollManagement() {
                                     <table className="border border-gray-100 w-full text-xs font-bold mt-2">
                                         <thead className="bg-gray-100">
                                             <tr >
-                                                <th className="text-right border border-gray-300 px-2 ">Advance<br /> අත්තිකාරම්</th>
-                                                <th className="text-right border border-gray-300  px-2 ">Festival Advance<br />උත්සව අත්තිකාරම්</th>
-                                                <th className="text-right border border-gray-300 px-2 ">Loan<br />ණය</th>
-                                                <th className="text-right border border-gray-300 px-2 ">EPF 8%</th>
+                                                <th className="text-right border border-gray-300 px-2 ">Advance<br />අත්තිකාරම් මුදල</th>
+                                                <th className="text-right border border-gray-300  px-2 ">Festival Advance<br />උත්සව අත්තිකාරම් මුදල</th>
+                                                <th className="text-right border border-gray-300 px-2 ">Loan<br />ණය මුදල</th>
+                                                <th className="text-right border border-gray-300 px-2 ">EPF සේ.අ.අ. 8%</th>
                                                 <th className="text-right border border-gray-300 px-2 ">Total Deductions<br /> සම්පූර්ණ අඩුකිරීම්</th>
                                             </tr>
                                         </thead>
@@ -603,8 +613,8 @@ export default function PayrollManagement() {
                                                 <td className="text-right border border-gray-300 px-2 ">-{record.advance}</td>
                                                 <td className="text-right border border-gray-300 px-2 ">-{record.festival_advance}</td>
                                                 <td className="text-right border border-gray-300 px-2 ">-{record.loan_amount}</td>
-                                                <td className="text-right border border-gray-300 px-2 ">-{epfeightpercent}</td>
-                                                <td className="text-right border border-gray-300 px-2 ">-{epfeightpercent + record.loan_amount + record.festival_advance + record.advance}</td>
+                                                <td className="text-right border border-gray-300 px-2 ">-{epfeightpercent.toFixed(2)}</td>
+                                                <td className="text-right border border-gray-300 px-2 ">-{(epfeightpercent + record.loan_amount + record.festival_advance + record.advance).toFixed(2)}</td>
                                             </tr>
                                         </tbody>
 
@@ -614,22 +624,24 @@ export default function PayrollManagement() {
                                     <table className="border border-gray-100 w-full text-xs font-bold">
                                         <thead className="bg-gray-100">
                                             <tr >
-                                                <th className="text-right border border-gray-300 px-2 ">Gross Salary<br /> සම්පූර්ණ ඉපයීම</th>
-                                                <th className="text-right border border-gray-300  px-2 ">Total Deductions<br /> සම්පූර්ණ අඩුකිරීම්</th>
-                                                <th className="text-right border border-gray-300 px-2  "> Net Salary ශුද්ධ වැටුප</th>
-                                                <th className="text-right border border-gray-300 px-2 ">EPF 8%</th>
-                                                <th className="text-right border border-gray-300  px-2 ">EPF 12%</th>
-                                                <th className="text-right border border-gray-300 px-2  "> EPF 20%</th>
+                                                <th className="text-right border border-gray-300 px-2 ">Gross Salary<br />සම්පූර්ණ වැටුප/මුළු එකතුව</th>
+                                                <th className="text-right border border-gray-300  px-2 ">Total Deductions<br />අඩුකිරීම්</th>
+                                                <th className="text-right border border-gray-300 px-2  ">Net Salary<br />ශුද්ධ වැටුප</th>
+                                                <th className="text-right border border-gray-300 px-2 ">ETF/සේ.අ.අ.<br />3%</th>
+                                                <th className="text-right border border-gray-300 px-2 ">EPF/සේ.අ.අ.<br />8%</th>
+                                                <th className="text-right border border-gray-300  px-2 ">EPF/සේ.අ.අ.<br />12%</th>
+                                                <th className="text-right border border-gray-300 px-2  ">EPF/සේ.අ.අ.<br />20%</th>
 
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr className="text-right ">
-                                                <td className="text-right border border-gray-300 px-2 ">{earningForEPF + tripleOTAmount + doubleOTAmount + normalOTAmount}</td>
-                                                <td className="text-right border border-gray-300 px-2 ">-{epfeightpercent + record.loan_amount + record.festival_advance + record.advance}</td>
-                                                <td className="text-right border border-gray-300 px-2  underline decoration-double">{(earningForEPF + tripleOTAmount + doubleOTAmount + normalOTAmount) - (epfeightpercent + record.loan_amount + record.festival_advance + record.advance)}</td>
-                                                <td className="text-right border border-gray-300 px-2 ">{epfeightpercent}</td>
-                                                <td className="text-right border border-gray-300 px-2 ">{epftwelvepercent}</td>
+                                                <td className="text-right border border-gray-300 px-2 ">{(earningForEPF + tripleOTAmount + doubleOTAmount + normalOTAmount).toFixed(2)}</td>
+                                                <td className="text-right border border-gray-300 px-2 ">-{(epfeightpercent + record.loan_amount + record.festival_advance + record.advance).toFixed(2)}</td>
+                                                <td className="text-right border border-gray-300 px-2  underline decoration-double">{((earningForEPF + tripleOTAmount + doubleOTAmount + normalOTAmount) - (epfeightpercent + record.loan_amount + record.festival_advance + record.advance)).toFixed(2)}</td>
+                                                <td className="text-right border border-gray-300 px-2 ">{etfthreepercent.toFixed(2)}</td>
+                                                <td className="text-right border border-gray-300 px-2 ">{epfeightpercent.toFixed(2)}</td>
+                                                <td className="text-right border border-gray-300 px-2 ">{epftwelvepercent.toFixed(2)}</td>
                                                 <td className="text-right border border-gray-300 px-2  ">{(epfeightpercent + epftwelvepercent).toFixed(2)}</td>
 
                                             </tr>
