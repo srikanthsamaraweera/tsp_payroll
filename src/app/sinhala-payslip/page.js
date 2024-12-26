@@ -455,9 +455,9 @@ export default function PayrollManagement() {
 
 
                                                 {/* Payroll Table Fields */}
-                                                <th className="px-2   text-xs border border-gray-300 w-[40%]">Description විස්තරය</th>
+                                                <th className="px-2   text-xs border border-gray-300 w-[42%]">Description විස්තරය</th>
                                                 <th className="px-1   text-xs border border-gray-300 w-[20%]">Days දින/Hrs පැය/Qty ප්‍රමාණය</th>
-                                                <th className="px-2   text-xs border border-gray-300 w-[20%]">Rate අනුපාතය</th>
+                                                <th className="px-2   text-xs border border-gray-300 w-[18%]">Rate අනුපාතය</th>
                                                 <th className="px-2   text-xs border border-gray-300 w-[20%] text-right">Value අගය</th>
 
 
@@ -477,7 +477,7 @@ export default function PayrollManagement() {
                                             <tr key={"2" - record.id} className={`text-center focus:bg-slate-100 cursor-pointer  border border-gray-300`}
                                                 onClick={() => setselectedrow(record.id)}>
                                                 {/* Employee Table Fields */}
-                                                <td className="px-2 py-[0.5mm] border border-gray-300">Sunday LL Pay ඉරිදා හිලව් නිවාඩු මුදල</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300">Sunday/7th day LL හිලව් නිවාඩු මුදල</td>
                                                 <td className="px-1 py-[0.5mm] whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300">{record.sundays || 0}</td>
                                                 <td className="px-2 py-[0.5mm] border border-gray-300">{record.per_day_salary || 0}</td>
                                                 <td className="px-2 py-[0.5mm] border border-gray-300 text-right">{sundayLLpay.toFixed(2) || 0}</td>
@@ -487,7 +487,7 @@ export default function PayrollManagement() {
                                             <tr key={"3" - record.id} className={`text-center focus:bg-slate-100 cursor-pointer  border border-gray-300`}
                                                 onClick={() => setselectedrow(record.id)}>
                                                 {/* Employee Table Fields */}
-                                                <td className="px-2 py-[0.5mm] border border-gray-300">Sunday Pay ඉරිදා මුදල</td>
+                                                <td className="px-2 py-[0.5mm] border border-gray-300">Sunday /7th day මුදල</td>
                                                 <td className="px-1 py-[0.5mm] whitespace-nowrap overflow-hidden text-ellipsis border border-gray-300">{record.sundays || 0}</td>
                                                 <td className="px-2 py-[0.5mm] border border-gray-300">{record.sunday_rate * record.per_day_salary || 0}</td>
                                                 <td className="px-2 py-[0.5mm] border border-gray-300 text-right">{sundaypayepf.toFixed(2) || 0}</td>

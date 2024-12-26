@@ -2,6 +2,7 @@
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes, faEdit } from "@fortawesome/free-solid-svg-icons";
+import { useEffect } from "react";
 
 export default function AddPayrollModal({
   isOpen,
@@ -25,6 +26,16 @@ export default function AddPayrollModal({
   setsaving,
 }) {
   if (!isOpen) return null;
+
+  useEffect(() => {
+    const today = new Date();
+    const defaultDate = new Date(today.getFullYear(), today.getMonth(), 10); // 10th of current month
+    const formattedDate = defaultDate.toISOString().split("T")[0]; // Format to YYYY-MM-DD
+    setPayrollFields((prevFields) => ({
+      ...prevFields,
+      payroll_date: formattedDate,
+    }));
+  }, [setPayrollFields]);
 
   return (
     <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
@@ -195,7 +206,7 @@ export default function AddPayrollModal({
                 htmlFor="sundays"
                 className="block text-gray-700 font-medium mb-2 text-sm"
               >
-                Sunday rate
+                Sunday rate/7th Day
               </label>
               <input
                 type="number"
