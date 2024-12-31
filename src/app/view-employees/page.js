@@ -26,6 +26,7 @@ export default function EmployeeList() {
     const itemsPerPage = 6;
     const router = useRouter();
     const [loading, setLoading] = useState(true);
+    const [emplocation, setEmplocation] = useState("");
 
     useEffect(() => {
         if (status === "loading") return; // Wait for session to load
@@ -225,6 +226,7 @@ export default function EmployeeList() {
                         <p><strong>Employee Number:</strong> {employee.EmpNo}</p>
                         <p><strong>EPF Number:</strong> {employee.EpfNo}</p>
                         <p><strong>NIC/Passport:</strong> {employee.Nic_Passport}</p>
+                        <p><strong>Location:</strong> {employee.emplocation}</p>
 
                         <div className="absolute top-4 right-4 flex space-x-3">
                             <button onClick={() => handleEdit(employee)} aria-label="Edit">
@@ -314,6 +316,14 @@ export default function EmployeeList() {
                                     onChange={(e) => setEditEmployee({ ...editEmployee, Nic_Passport: e.target.value })}
                                     placeholder="NIC/Passport"
                                     className="w-full mb-3 p-3 border rounded-md"
+                                />
+                                <input
+                                    type="text"
+                                    id="emplocation"
+                                    value={editEmployee.emplocation || ""}
+                                    onChange={(e) => setEditEmployee({ ...editEmployee, emplocation: e.target.value })}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+
                                 />
                                 <button
                                     onClick={handleSave}

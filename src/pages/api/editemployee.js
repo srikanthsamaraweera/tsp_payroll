@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 export default async function handler(req, res) {
 
 
-    const { id, Surname, Firstname, Initials, EmpNo, EpfNo, Nic_Passport } = req.body;
+    const { id, Surname, Firstname, Initials, EmpNo, EpfNo, Nic_Passport, emplocation } = req.body;
     // console.log('passed data - ', id, Surname, Firstname, Initials, EmpNo, EpfNo, Nic_Passport)
 
 
@@ -26,9 +26,9 @@ export default async function handler(req, res) {
             return res.status(403).json({ error: "Only admins can edit records." });
         }
 
-        const { id, Surname, Firstname, Initials, EmpNo, EpfNo, Nic_Passport } = req.body;
+        const { id, Surname, Firstname, Initials, EmpNo, EpfNo, Nic_Passport, emplocation } = req.body;
 
-        console.log('editdata- ', id, Surname, Firstname, Initials, EmpNo, EpfNo, Nic_Passport);
+        console.log('editdata- ', id, Surname, Firstname, Initials, EmpNo, EpfNo, Nic_Passport, emplocation);
 
         try {
             const updatedEmployee = await prisma.employee.update({
@@ -40,6 +40,7 @@ export default async function handler(req, res) {
                     EmpNo,
                     EpfNo,
                     Nic_Passport,
+                    emplocation,
                 },
             });
 
