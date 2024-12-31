@@ -15,6 +15,7 @@ model employee {
   EmpNo        String     @unique(map: "EmpNo_UNIQUE") @db.VarChar(45)
   EpfNo        String     @unique(map: "EpfNo_UNIQUE") @db.VarChar(45)
   Nic_Passport String     @unique(map: "Nic_Passport_UNIQUE") @db.VarChar(45)
+  emplocation  String?    @db.VarChar(45)
   pay_roll     pay_roll[]
 }
 

@@ -13,6 +13,7 @@ export default function EmployeeForm() {
     const [empNo, setEmpNo] = useState("");
     const [epfNo, setEpfNo] = useState("");
     const [nicPassport, setNicPassport] = useState("");
+    const [emplocation, setEmplocation] = useState("");
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const router = useRouter();
@@ -38,7 +39,7 @@ export default function EmployeeForm() {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ surname, firstname, initials, empNo, epfNo, nicPassport }),
+                body: JSON.stringify({ surname, firstname, initials, empNo, epfNo, nicPassport, emplocation }),
             });
 
             if (response.ok) {
@@ -135,6 +136,18 @@ export default function EmployeeForm() {
                         onChange={(e) => setNicPassport(e.target.value)}
                         className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         required
+                    />
+                </div>
+
+                <div className="mb-4">
+                    <label htmlFor="emplocation" className="block text-gray-700 font-medium mb-1">Location</label>
+                    <input
+                        type="text"
+                        id="emplocation"
+                        value={emplocation}
+                        onChange={(e) => setEmplocation(e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+
                     />
                 </div>
 

@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 export default async function handler(req, res) {
     if (req.method === "POST") {
         try {
-            const { surname, firstname, initials, empNo, epfNo, nicPassport } = req.body;
+            const { surname, firstname, initials, empNo, epfNo, nicPassport, emplocation } = req.body;
 
             // Insert the employee record
             const employee = await prisma.employee.create({
@@ -17,6 +17,7 @@ export default async function handler(req, res) {
                     EmpNo: empNo,
                     EpfNo: epfNo,
                     Nic_Passport: nicPassport,
+                    emplocation: emplocation,
                 },
             });
 

@@ -25,17 +25,23 @@ export default function AddPayrollModal({
   saving,
   setsaving,
 }) {
-  if (!isOpen) return null;
-
   useEffect(() => {
     const today = new Date();
-    const defaultDate = new Date(today.getFullYear(), today.getMonth(), 10); // 10th of current month
-    const formattedDate = defaultDate.toISOString().split("T")[0]; // Format to YYYY-MM-DD
+    const defaultDate = new Date(today.getFullYear(), today.getMonth(), 10); // 10th of the current month
+
+    // Adjust for local time zone
+    const year = defaultDate.getFullYear();
+    const month = String(defaultDate.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+    const day = String(defaultDate.getDate()).padStart(2, "0");
+
+    const formattedDate = `${year}-${month}-${day}`; // Format to YYYY-MM-DD
     setPayrollFields((prevFields) => ({
       ...prevFields,
       payroll_date: formattedDate,
     }));
   }, [setPayrollFields]);
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
