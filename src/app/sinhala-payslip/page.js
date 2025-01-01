@@ -15,7 +15,10 @@ import payrollSummaryTable from "@/functions/pdfgen/payrollsummary";
 import paysliptabletopdf from "@/functions/pdfgen/paysliptabletopdf";
 import CanvasGen from "@/functions/pdfgen/canvasgen";
 import PayrollToCSV from "@/functions/pdfgen/payrolltable1";
+
 import './style.css'
+import EpfToCSV2 from "@/functions/excelgen/epfcsvgen";
+import EtfToCSV2 from "@/functions/excelgen/etfcsvgen";
 
 
 
@@ -296,6 +299,25 @@ export default function PayrollManagement() {
                     >
                         <FontAwesomeIcon icon={faFileCsv} className="mr-2" />
                         Export CSV
+                    </button>
+
+                    <button
+                        onClick={() => {
+                            EpfToCSV2(payrollData)
+                        }}
+                        className="px-6 py-1 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none"
+                    >
+                        <FontAwesomeIcon icon={faFileCsv} className="mr-2" />
+                        EPF CSV
+                    </button>
+                    <button
+                        onClick={() => {
+                            EtfToCSV2(payrollData)
+                        }}
+                        className="px-6 py-1 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none"
+                    >
+                        <FontAwesomeIcon icon={faFileCsv} className="mr-2" />
+                        ETF CSV
                     </button>
 
                 </div>
