@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faTrash, faEdit, faEye, faSearchPlus, faRefresh, faSearchMinus, faDollar, faFileCsv, faBinoculars, faNewspaper } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faTrash, faEdit, faEye, faSearchPlus, faRefresh, faSearchMinus, faDollar, faFileCsv, faBinoculars, faNewspaper, faMultiply, faListUl, faLaptopFile } from "@fortawesome/free-solid-svg-icons";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import PayrollToCSV from "@/functions/pdfgen/payrolltable1";
@@ -543,6 +543,15 @@ export default function PayrollManagement() {
                     >
                         <FontAwesomeIcon icon={faPlus} className="mr-2" />
                         Add Payroll
+                    </button>
+                    <button
+                        onClick={() => {
+                            router.push('/payroll-management/add-multiple')
+                        }}
+                        className="ml-2 px-6 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none"
+                    >
+                        <FontAwesomeIcon icon={faLaptopFile} className="mr-2" />
+                        Add Multiple
                     </button>
                 </div>
             </div>
