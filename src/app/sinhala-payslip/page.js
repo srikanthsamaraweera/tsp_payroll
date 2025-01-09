@@ -19,6 +19,7 @@ import PayrollToCSV from "@/functions/pdfgen/payrolltable1";
 import './style.css'
 import EpfToCSV2 from "@/functions/excelgen/epfcsvgen";
 import EtfToCSV2 from "@/functions/excelgen/etfcsvgen";
+import Reactmarkdown from 'react-markdown';
 
 
 
@@ -106,6 +107,10 @@ export default function PayrollManagement() {
         poya_days: "",
     });
     const recordsPerPage = 5000;
+
+    const [question, setQuestion] = useState("");
+    const [answer, setAnswer] = useState("");
+    const [chatloading, setChatLoading] = useState(false);
 
 
     // Fetch payroll data
@@ -218,6 +223,34 @@ export default function PayrollManagement() {
         return <p className="text-red-500 font-bold">Only admins can enter payroll data.</p>;
 
     }
+
+    const analyzeData = async () => {
+        if (!question.trim()) return;
+
+        setChatLoading(true);
+        setAnswer("");
+
+        console.log("payrollData front:", JSON.stringify(payrollData, null, 2));
+
+        try {
+            const encodedPayrollData = encodeURIComponent(JSON.stringify(payrollData));
+            const response = await fetch(`/api/openapi/analyze?payslipdata=${encodedPayrollData}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ question }),
+            });
+
+            const data = await response.json();
+            setAnswer(data.answer || "No response available.");
+        } catch (error) {
+            console.error("Error:", error);
+            setAnswer("Error occurred while analyzing data.");
+        } finally {
+            setChatLoading(false);
+        }
+    };
 
     return (
         <div className="min-h-screen bg-gray-100 p-6 print:bg-transparent">
@@ -707,6 +740,29 @@ export default function PayrollManagement() {
                 >
                     Next
                 </button>
+            </div>
+            {/* analysis code */}
+            <div style={{ padding: "2rem" }} className="print:hidden justify-center flex flex-col items-center">
+                <h1>Database Analysis</h1>
+                <textarea
+                    value={question}
+                    onChange={(e) => setQuestion(e.target.value)}
+                    placeholder="Ask a question about the database..."
+                    rows="4"
+                    cols="50"
+                    className="w-full p-2 border"
+                ></textarea>
+                <br />
+                <button onClick={analyzeData} disabled={loading} className="bg-blue-500 text-white px-4 py-2 rounded-lg">
+                    {chatloading ? "Analyzing..." : "Analyze"}
+                </button>
+                {answer && (
+                    <div style={{ marginTop: "1rem", padding: "1rem", border: "1px solid #ccc" }} className="bg-black text-white">
+                        <h3>AI Response:</h3>
+                        <Reactmarkdown>{answer}</Reactmarkdown>
+
+                    </div>
+                )}
             </div>
         </div >
     );
