@@ -127,6 +127,7 @@ export default function TopNav() {
 
           {/* Hamburger Menu */}
           <button
+            id="mobile-menu-button"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="focus:outline-none"
           >

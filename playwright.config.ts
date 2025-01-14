@@ -12,6 +12,15 @@ import { defineConfig, devices } from '@playwright/test';
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
+  use: {
+    baseURL: 'http://localhost:3000', // Replace with your app's local URL
+  },
+  webServer: {
+    command: 'npm run dev', // Adjust based on your development command
+    port: 3000,             // Ensure this matches your local dev server
+    timeout: 120 * 1000,
+    reuseExistingServer: !process.env.CI,
+  },
   testDir: './PlayWright-tests',
   /* Run tests in files in parallel */
   fullyParallel: true,
@@ -50,14 +59,14 @@ export default defineConfig({
     },
 
     /* Test against mobile viewports. */
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
-    // },
-    // {
-    //   name: 'Mobile Safari',
-    //   use: { ...devices['iPhone 12'] },
-    // },
+    {
+      name: 'Mobile Chrome',
+      use: { ...devices['Pixel 5'] },
+    },
+    {
+      name: 'Mobile Safari',
+      use: { ...devices['iPhone 12'] },
+    },
 
     /* Test against branded browsers. */
     // {

@@ -263,7 +263,7 @@ export default function PayrollManagement() {
 
             {/* Add Payroll Button */}
             <div className="print:hidden" >
-                <div className="flex  mb-6 gap-5 justify-center">
+                <div className="flex  mb-6 gap-5 justify-center flex-wrap">
                     <button
                         onClick={() => {
                             setshowsearchdrawer(!showsearchdrawer);

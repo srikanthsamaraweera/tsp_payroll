@@ -465,8 +465,8 @@ export default function PayrollManagement() {
 
 
             {/* Add Payroll Button */}
-            <div className="grid-cols-2 grid">
-                <div className="flex  mb-6 justify-start gap-5">
+            <div className="grid-cols-2  flex flex-wrap gap-2 justify-center">
+                <div className="flex  mb-6 justify-start gap-5 ">
                     <button
                         onClick={() => {
                             setshowsearchdrawer(!showsearchdrawer);
