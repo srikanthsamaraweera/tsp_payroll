@@ -7,6 +7,24 @@ NEXTAUTH_URL="http://localhost:3000"</br>
 NEXTAUTH_SECRET="Same value as Auth_secret"</br>
 OPENAI_API_KEY=api key from open ai</br>
 
+## Docker compose file 
+1. Create a file in the root directory named "docker-compose.yml"
+2. Add below code and change variables as necessary. 
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: "mysql://srikanth:Robinhood456@host.docker.internal:3306/tsp_payroll_cloud"
+      NEXTAUTH_URL: "http://localhost:3000"
+      NEXTAUTH_SECRET: "JIONTHAKJFJOADTHLHLKL"
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+
+
 
 
 
