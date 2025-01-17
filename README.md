@@ -1,11 +1,13 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 ## environment variables to be set in .env file:
-DATABASE_URL="mysql://username:password@localhost:3306/tsp_payroll_cloud"
-SiteURL="localhost:3000"
-AUTH_SECRET="Any value "
-NEXTAUTH_URL="http://localhost:3000"
-NEXTAUTH_SECRET="Same value as Auth_secret"
-OPENAI_API_KEY=api key from open ai
+DATABASE_URL="mysql://username:password@localhost:3306/tsp_payroll_cloud" </br>
+SiteURL="localhost:3000"</br>
+AUTH_SECRET="Any value "</br>
+NEXTAUTH_URL="http://localhost:3000"</br>
+NEXTAUTH_SECRET="Same value as Auth_secret"</br>
+OPENAI_API_KEY=api key from open ai</br>
+
+
 
 
 ## Getting Started
