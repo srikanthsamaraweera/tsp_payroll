@@ -22,7 +22,7 @@ services:
       DATABASE_URL: "mysql://username:password@host.docker.internal:3306/tsp_payroll_cloud"
       NEXTAUTH_URL: "http://localhost:3000"
       NEXTAUTH_SECRET: "Any random value"
-      OPENAI_API_KEY:"the open ai key "
+      OPENAI_API_KEY : "the open ai key "
     ports:
       - "3000:3000"
     restart: unless-stopped
