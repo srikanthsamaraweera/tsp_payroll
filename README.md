@@ -19,9 +19,9 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      DATABASE_URL: "mysql://srikanth:Robinhood456@host.docker.internal:3306/tsp_payroll_cloud"
+      DATABASE_URL: "mysql://username:password@host.docker.internal:3306/tsp_payroll_cloud"
       NEXTAUTH_URL: "http://localhost:3000"
-      NEXTAUTH_SECRET: "JIONTHAKJFJOADTHLHLKL"
+      NEXTAUTH_SECRET: "Any random value"
     ports:
       - "3000:3000"
     restart: unless-stopped
