@@ -50,9 +50,14 @@ export default function EmployeeForm() {
                 setEmpNo("");
                 setEpfNo("");
                 setNicPassport("");
+                setEmplocation("");
+
+                setTimeout(() => setSuccess(""), 5000);
             } else {
                 const data = await response.json();
                 setError(data.error || "Failed to add employee. Please try again.");
+                // Clear the error message after 5 seconds
+                setTimeout(() => setError(""), 5000);
             }
         } catch (err) {
             console.error("Error:", err);
