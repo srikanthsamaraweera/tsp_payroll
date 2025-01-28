@@ -8,6 +8,7 @@ export default function PayrollToCSV(payrollData) {
         "NIC",
         "Full Name",
         "Initials",
+        "Location",
         "EPF No",
         "Per day salary",
         "No of work days",
@@ -51,6 +52,7 @@ export default function PayrollToCSV(payrollData) {
         const nicPassport = row.employee?.Nic_Passport;
         const fullName = row.employee?.Firstname + " " + row.employee?.Surname;
         const initials = row.employee?.Initials;
+        const Location = row.employee?.emplocation;
         const epfNo = row.employee?.EpfNo;
         const perDaySalary = row.per_day_salary;
         const workDays = row.work_days;
@@ -96,6 +98,7 @@ export default function PayrollToCSV(payrollData) {
             nicPassport,
             fullName,
             initials,
+            Location,
             epfNo,
             perDaySalary,
             workDays,
