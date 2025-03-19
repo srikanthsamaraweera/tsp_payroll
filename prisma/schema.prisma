@@ -8,15 +8,19 @@ datasource db {
 }
 
 model employee {
-  id           Int        @id @default(autoincrement())
-  Surname      String     @db.VarChar(45)
-  Firstname    String?    @db.VarChar(45)
-  Initials     String     @db.VarChar(45)
-  EmpNo        String     @unique(map: "EmpNo_UNIQUE") @db.VarChar(45)
-  EpfNo        String     @unique(map: "EpfNo_UNIQUE") @db.VarChar(45)
-  Nic_Passport String     @unique(map: "Nic_Passport_UNIQUE") @db.VarChar(45)
-  emplocation  String?    @db.VarChar(45)
+  id           Int           @id @default(autoincrement())
+  Surname      String        @db.VarChar(45)
+  Firstname    String?       @db.VarChar(45)
+  Initials     String        @db.VarChar(45)
+  EmpNo        String        @unique(map: "EmpNo_UNIQUE") @db.VarChar(45)
+  EpfNo        String        @unique(map: "EpfNo_UNIQUE") @db.VarChar(45)
+  Nic_Passport String        @unique(map: "Nic_Passport_UNIQUE") @db.VarChar(45)
+  emplocation  String?       @db.VarChar(45)
+  cord_id      Int?
+  coordinators coordinators? @relation(fields: [cord_id], references: [co_id], onDelete: NoAction, onUpdate: NoAction, map: "cord_id")
   pay_roll     pay_roll[]
+
+  @@index([cord_id], map: "cord_id_idx")
 }
 
 model user {
@@ -68,4 +72,11 @@ model pay_roll {
   employee            employee  @relation(fields: [emp_id], references: [id], onUpdate: NoAction, map: "emp_key")
 
   @@index([emp_id], map: "FK")
+}
+
+model coordinators {
+  co_id    Int        @id @default(autoincrement())
+  name     String?    @unique(map: "name_UNIQUE") @db.VarChar(45)
+  location String?    @db.VarChar(45)
+  employee employee[]
 }
