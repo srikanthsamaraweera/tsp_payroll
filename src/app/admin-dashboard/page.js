@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation"; // Use next/navigation for App Router
 import { useSession } from "next-auth/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCoins, faDollar, faUsers } from "@fortawesome/free-solid-svg-icons";
+import { faCoins, faDatabase, faDollar, faUsers } from "@fortawesome/free-solid-svg-icons";
 
 export default function Dashboard() {
     const { data: session, status } = useSession();
@@ -107,6 +107,28 @@ export default function Dashboard() {
                                 Payroll Management
                             </h2>
                             <p className="text-gray-500 text-sm">Manage the payroll data</p>
+                        </>
+                    )}
+                </div>
+
+                {/* Database backup */}
+                <div
+                    onClick={() => handleButtonClick("/dbbackup")}
+                    className={`group cursor-pointer bg-white shadow-md hover:shadow-xl transition-shadow duration-300 rounded-lg p-6 w-full max-w-xs text-center ${buttonLoading === "/pay-rates" ? "opacity-50 pointer-events-none" : ""
+                        }`}
+                >
+                    {buttonLoading === "/dbbackup" ? (
+                        <p className="text-blue-500 text-lg font-semibold">Loading...</p>
+                    ) : (
+                        <>
+                            <FontAwesomeIcon
+                                icon={faDatabase}
+                                className="text-blue-500 group-hover:text-blue-600 transition-colors duration-300 text-4xl mb-4"
+                            />
+                            <h2 className="text-xl font-semibold text-gray-700 group-hover:text-blue-600 transition-colors duration-300">
+                                Data Backup
+                            </h2>
+                            <p className="text-gray-500 text-sm">Backup all data to a SQL file</p>
                         </>
                     )}
                 </div>
