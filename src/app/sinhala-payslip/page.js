@@ -54,6 +54,7 @@ export default function PayrollManagement() {
         empNo: "",
         epfNo: "",
         nicPassport: "",
+        emplocation: "",
     });
     const [payrollData, setPayrollData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -441,6 +442,14 @@ export default function PayrollManagement() {
                                         placeholder="NIC / Passport No"
                                         className="w-full px-4 py-1 border rounded-lg"
                                     />
+                                    <input
+                                        type="text"
+                                        name="emplocation"
+                                        value={searchParams.emplocation}
+                                        onChange={handleSearchChange}
+                                        placeholder="Location"
+                                        className="w-full px-4 py-1 border rounded-lg"
+                                    />
                                 </div>
                                 <button
                                     type="submit"
@@ -505,7 +514,7 @@ export default function PayrollManagement() {
                                     <div className="record  bg-white min-h-[148.5mm] border border-b-black border-dotted  pt-[4mm]" key={record.id + "a1"}>
                                         <div className="text-center w-full pb-2 pt-2">
                                             <h1>T.S.P. Manpower Pay Slip</h1>
-                                            <h2 className="font-bold text-sm">Date දිනය: {record.payroll_date.split('T')[0]} | NIC ජා.හැ.අංකය: {record.employee?.Nic_Passport || "-"} | EPF# අංකය: {record.employee?.EpfNo || "-"} | Name නම: {record.employee?.Initials} {record.employee?.Firstname} {record.employee?.Surname}</h2>
+                                            <h2 className="font-bold text-sm">Date දිනය: {record.payroll_date.split('T')[0]} | NIC ජා.හැ.අංකය: {record.employee?.Nic_Passport || "-"} | EPF# අංකය: {record.employee?.EpfNo || "-"} | Name නම: {record.employee?.Initials} {record.employee?.Firstname} {record.employee?.Surname}<br></br>| Location: {record.employee?.emplocation}</h2>
 
 
                                         </div>
