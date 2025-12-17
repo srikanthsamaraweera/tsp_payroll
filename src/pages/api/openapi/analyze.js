@@ -1,5 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
 import OpenAI from "openai";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "../../../app/api/auth/[...nextauth]/route";
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
@@ -10,8 +12,17 @@ export default async function handler(req, res) {
     if (req.method !== "POST") {
         return res.status(405).json({ message: "Only POST requests are allowed" });
     }
-    const url = new URL(req.url, `http://${req.headers.host}`);
-    const payslipdata = JSON.parse(decodeURIComponent(url.searchParams.get("payslipdata")));
+    const session = await getServerSession(req, res, authOptions);
+    if (!session || session.user?.account_type !== "admin") {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+    const { question, payslipdata } = req.body || {};
+    if (!question) {
+        return res.status(400).json({ message: "Question is required." });
+    }
+    if (!Array.isArray(payslipdata)) {
+        return res.status(400).json({ message: "Payslip data must be provided in the request body." });
+    }
     try {
         // Fetch database data excluding the `user` table
         const employees = await prisma.employee.findMany();
@@ -26,11 +37,6 @@ export default async function handler(req, res) {
           Pay Rates: ${JSON.stringify(payRates, null, 2)}
           Payroll: ${JSON.stringify(payRoll, null, 2)}
         `;
-
-        const { question } = req.body;
-        if (!question) {
-            return res.status(400).json({ message: "Question is required." });
-        }
 
         const prompt = `
           Here is the payslip data:
@@ -99,11 +105,9 @@ export default async function handler(req, res) {
         }).join("\n")}
 
           Question: ${question}
-          
+
           Provide a detailed analysis or answer.
         `;
-
-        console.log("ai prompt: ", prompt)
 
         // Call OpenAI API
         const response = await openai.chat.completions.create({

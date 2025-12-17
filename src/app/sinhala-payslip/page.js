@@ -238,16 +238,16 @@ export default function PayrollManagement() {
         setChatLoading(true);
         setAnswer("");
 
-        console.log("payrollData front:", JSON.stringify(payrollData, null, 2));
-
         try {
-            const encodedPayrollData = encodeURIComponent(JSON.stringify(payrollData));
-            const response = await fetch(`/api/openapi/analyze?payslipdata=${encodedPayrollData}`, {
+            const response = await fetch(`/api/openapi/analyze`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ question }),
+                body: JSON.stringify({
+                    question,
+                    payslipdata: payrollData,
+                }),
             });
 
             const data = await response.json();

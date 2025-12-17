@@ -1,13 +1,29 @@
 "use client"
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function AnalyzePage() {
+    const router = useRouter();
+    const { data: session, status } = useSession();
     const [question, setQuestion] = useState("");
     const [answer, setAnswer] = useState("");
     const [loading, setLoading] = useState(false);
 
+    useEffect(() => {
+        if (status === "loading") return;
+        if (!session) {
+            router.push("/login");
+            return;
+        }
+        if (session.user?.account_type !== "admin") {
+            router.push("/");
+        }
+    }, [session, status, router]);
+
     const analyzeData = async () => {
         if (!question.trim()) return;
+        if (!session || session.user?.account_type !== "admin") return;
 
         setLoading(true);
         setAnswer("");
