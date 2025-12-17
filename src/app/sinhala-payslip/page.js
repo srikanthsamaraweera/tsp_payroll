@@ -26,23 +26,28 @@ import Reactmarkdown from 'react-markdown';
 export default function PayrollManagement() {
     const componentRef = useRef();
 
-    const [nowdate, setnowdate] = useState(new Date().toLocaleString())
+    const [nowdate, setnowdate] = useState(new Date())
     useEffect(() => {
-        setnowdate(new Date().toLocaleString()); // Generate the date on the client side
+        setnowdate(new Date()); // Generate the date on the client side
     }, []);
 
 
     const router = useRouter()
 
-    const getPast30DaysDate = () => {
+    const getSafeDate = () => {
         const date = new Date(nowdate);
+        return Number.isNaN(date.getTime()) ? new Date() : date;
+    };
+
+    const getPast30DaysDate = () => {
+        const date = getSafeDate();
         date.setDate(date.getDate() - 30);
         return date.toISOString().split("T")[0]; // Format to YYYY-MM-DD
     };
 
     // Utility function to get tomorrow's date in YYYY-MM-DD format
     const getTomorrowDate = () => {
-        const date = new Date(nowdate);
+        const date = getSafeDate();
         date.setDate(date.getDate() + 1);
         return date.toISOString().split("T")[0]; // Format to YYYY-MM-DD
     };
