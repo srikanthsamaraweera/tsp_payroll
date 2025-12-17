@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation"; // Use next/navigation for App Router
 import { useSession } from "next-auth/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCoins, faDatabase, faDollar, faUsers } from "@fortawesome/free-solid-svg-icons";
+import { faCoins, faDatabase, faDollar, faUsers, faFileLines } from "@fortawesome/free-solid-svg-icons";
 
 export default function Dashboard() {
     const { data: session, status } = useSession();
@@ -129,6 +129,28 @@ export default function Dashboard() {
                                 Data Backup
                             </h2>
                             <p className="text-gray-500 text-sm">Backup all data to a SQL file</p>
+                        </>
+                    )}
+                </div>
+
+                {/* Sinhala Payslip */}
+                <div
+                    onClick={() => handleButtonClick("/sinhala-payslip")}
+                    className={`group cursor-pointer bg-white shadow-md hover:shadow-xl transition-shadow duration-300 rounded-lg p-6 w-full max-w-xs text-center ${buttonLoading === "/sinhala-payslip" ? "opacity-50 pointer-events-none" : ""
+                        }`}
+                >
+                    {buttonLoading === "/sinhala-payslip" ? (
+                        <p className="text-blue-500 text-lg font-semibold">Loading...</p>
+                    ) : (
+                        <>
+                            <FontAwesomeIcon
+                                icon={faFileLines}
+                                className="text-blue-500 group-hover:text-blue-600 transition-colors duration-300 text-4xl mb-4"
+                            />
+                            <h2 className="text-xl font-semibold text-gray-700 group-hover:text-blue-600 transition-colors duration-300">
+                                View Payslips
+                            </h2>
+                            <p className="text-gray-500 text-sm">View payslips and get printouts</p>
                         </>
                     )}
                 </div>
