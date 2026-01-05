@@ -1,6 +1,6 @@
 // pages/api/toggleEnabled.js
 import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcrypt'; // or 'bcryptjs'
+import bcrypt from 'bcryptjs'; // or 'bcryptjs'
 
 const prisma = new PrismaClient();
 const saltRounds = 10; // Define the number of salt rounds for hashing

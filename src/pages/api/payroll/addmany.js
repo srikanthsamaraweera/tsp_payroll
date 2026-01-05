@@ -1,9 +1,16 @@
 import { PrismaClient } from "@prisma/client";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 const prisma = new PrismaClient();
 
 export default async function handler(req, res) {
     if (req.method === "POST") {
+        const session = await getServerSession(req, res, authOptions);
+
+        if (!session || !["admin", "manager"].includes(session.user.account_type)) {
+            return res.status(403).json({ error: "Only admins or managers can perform this action." });
+        }
         const { payrollData } = req.body;
         console.log("payroll passed: ", payrollData)
 

@@ -27,6 +27,7 @@ export default function EmployeeList() {
     const router = useRouter();
     const [loading, setLoading] = useState(true);
     const [emplocation, setEmplocation] = useState("");
+    const isPrivileged = ["admin", "manager"].includes(session?.user?.account_type);
 
     useEffect(() => {
         if (status === "loading") return; // Wait for session to load
@@ -63,13 +64,13 @@ export default function EmployeeList() {
     }, [currentPage, itemsPerPage, searchTerm]);
 
     const handleEdit = (employee) => {
-        if (session?.user?.account_type === "admin") {
+        if (isPrivileged) {
             setError('')
             setSuccessMessage('')
             setEditEmployee(employee);
             setEditModalOpen(true);
         } else {
-            alert("Only admins can edit records.");
+            alert("Only admins or managers can edit records.");
         }
     };
 
@@ -107,7 +108,7 @@ export default function EmployeeList() {
 
     const handleDelete = (employee) => {
 
-        if (session?.user?.account_type === "admin") {
+        if (isPrivileged) {
             setLoading('Talking to server...')
             setError('')
             setSuccessMessage('')
@@ -117,7 +118,7 @@ export default function EmployeeList() {
             setDeleteModalOpen(true);
             setLoading('')
         } else {
-            alert("Only admins can delete records.");
+            alert("Only admins or managers can delete records.");
         }
     };
 
@@ -192,7 +193,7 @@ export default function EmployeeList() {
                     </form>
                 </div>
                 <div id="searchbar" className="border-solid text-center mb-5 md:mb-0 md:text-right">
-                    {session?.user?.account_type === "admin" ? (
+                    {isPrivileged ? (
                         <>
                             <Link
                                 href="/addemployee"
@@ -273,7 +274,7 @@ export default function EmployeeList() {
                         <h3 className="text-xl font-semibold mb-6 text-center">Edit Employee</h3>
                         {loading ? <div className="mb-4 p-4 bg-blue-100 rounded-lg"><p className="animate-bounce text-lg text-center text-blue-600">{loading}</p></div> : ""}
                         {error && <p className="text-red-500 text-center">{error}</p>}
-                        {session?.user?.account_type === "admin" ? (
+                        {isPrivileged ? (
                             <>
                                 <input
                                     type="text"
@@ -333,7 +334,7 @@ export default function EmployeeList() {
                                 </button>
                             </>
                         ) : (
-                            <p className="text-red-500 text-center">Only admins can edit records.</p>
+                            <p className="text-red-500 text-center">Only admins or managers can edit records.</p>
                         )}
                     </div>
                 </div>

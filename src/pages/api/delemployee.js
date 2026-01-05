@@ -14,9 +14,12 @@ export default async function handler(req, res) {
         // Use getServerSession to retrieve the session
         const session = await getServerSession(req, res, authOptions);
 
-        // Check if user has admin privileges
-        if (!session || session.user.account_type !== "admin") {
-            return res.status(403).json({ error: "Only admins can delete records." });
+        // Check if user has admin or manager privileges
+        if (
+            !session ||
+            !["admin", "manager"].includes(session.user.account_type)
+        ) {
+            return res.status(403).json({ error: "Only admins or managers can delete records." });
         }
 
         const { id } = req.body;

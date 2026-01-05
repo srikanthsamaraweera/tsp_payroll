@@ -7,9 +7,9 @@ const prisma = new PrismaClient();
 export default async function handler(req, res) {
     const session = await getServerSession(req, res, authOptions);
 
-    // Check if the user is an admin
-    if (!session || session.user.account_type !== 'admin') {
-        return res.status(403).json({ error: 'Only admins can perform this action.' });
+    // Check if the user is an admin or manager
+    if (!session || !['admin', 'manager'].includes(session.user.account_type)) {
+        return res.status(403).json({ error: 'Only admins or managers can perform this action.' });
     }
 
     if (req.method === 'GET') {
