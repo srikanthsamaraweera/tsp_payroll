@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation"; // Use next/navigation for App Router
 import { useSession } from "next-auth/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCoins, faDatabase, faDollar, faUsers, faFileLines } from "@fortawesome/free-solid-svg-icons";
+import { faCoins, faDatabase, faDollar, faUsers, faFileLines, faKey } from "@fortawesome/free-solid-svg-icons";
 
 export default function Dashboard() {
     const { data: session, status } = useSession();
@@ -151,6 +151,28 @@ export default function Dashboard() {
                                 View Payslips
                             </h2>
                             <p className="text-gray-500 text-sm">View payslips and get printouts</p>
+                        </>
+                    )}
+                </div>
+
+                {/* Change Password */}
+                <div
+                    onClick={() => handleButtonClick("/change-password")}
+                    className={`group cursor-pointer bg-white shadow-md hover:shadow-xl transition-shadow duration-300 rounded-lg p-6 w-full max-w-xs text-center ${buttonLoading === "/change-password" ? "opacity-50 pointer-events-none" : ""
+                        }`}
+                >
+                    {buttonLoading === "/change-password" ? (
+                        <p className="text-blue-500 text-lg font-semibold">Loading...</p>
+                    ) : (
+                        <>
+                            <FontAwesomeIcon
+                                icon={faKey}
+                                className="text-blue-500 group-hover:text-blue-600 transition-colors duration-300 text-4xl mb-4"
+                            />
+                            <h2 className="text-xl font-semibold text-gray-700 group-hover:text-blue-600 transition-colors duration-300">
+                                Change Password
+                            </h2>
+                            <p className="text-gray-500 text-sm">Update your password or reset users (admin)</p>
                         </>
                     )}
                 </div>

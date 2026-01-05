@@ -227,9 +227,8 @@ export default function PayrollManagement() {
 
     const [rownos, setrownos] = useState(0)
 
-    if (!session || session.user.account_type !== "admin") {
-        return <p className="text-red-500 font-bold">Only admins can enter payroll data.</p>;
-
+    if (!session || !["admin", "manager"].includes(session.user.account_type)) {
+        return <p className="text-red-500 font-bold">Only admins or managers can enter payroll data.</p>;
     }
 
     const analyzeData = async () => {

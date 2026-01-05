@@ -22,8 +22,11 @@ export default async function handler(req, res) {
         //     // Retrieve the session from the request headers
         // const session = await getSession({ req });
 
-        if (!session || session.user.account_type !== "admin") {
-            return res.status(403).json({ error: "Only admins can edit records." });
+        if (
+            !session ||
+            !["admin", "manager"].includes(session.user.account_type)
+        ) {
+            return res.status(403).json({ error: "Only admins or managers can edit records." });
         }
 
         const { id, Surname, Firstname, Initials, EmpNo, EpfNo, Nic_Passport, emplocation } = req.body;

@@ -23,9 +23,9 @@ export default function EmployeeForm() {
         return <p>Loading...</p>;
     }
 
-    // Restrict access to admin users only
-    if (session?.user?.account_type !== "admin") {
-        return <p className="text-red-500 font-bold">Only admins have access to this feature.</p>;
+    // Restrict access to admin or manager users only
+    if (!["admin", "manager"].includes(session?.user?.account_type)) {
+        return <p className="text-red-500 font-bold">Only admins or managers have access to this feature.</p>;
     }
 
     const handleSubmit = async (e) => {

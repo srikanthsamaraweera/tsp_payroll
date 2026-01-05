@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 export default async function handler(req, res) {
     const session = await getServerSession(req, res, authOptions);
 
-    if (!session || session.user.account_type !== 'admin') {
+    if (!session || !['admin', 'manager'].includes(session.user.account_type)) {
         return res.status(403).json({ error: 'Unauthorized access' });
     }
 

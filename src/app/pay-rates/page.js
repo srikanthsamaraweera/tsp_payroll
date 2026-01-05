@@ -62,9 +62,8 @@ export default function PayRates() {
     if (status === "loading") {
         return <p>Loading...</p>;
     }
-    if (!session || session.user.account_type !== "admin") {
-        return <p className="text-red-500 font-bold">Only admins have access to this feature.</p>;
-
+    if (!session || !["admin", "manager"].includes(session.user.account_type)) {
+        return <p className="text-red-500 font-bold">Only admins or managers have access to this feature.</p>;
     }
 
     // Add/Edit/Delete Handlers
