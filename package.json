@@ -19,7 +19,7 @@
     "html2canvas": "^1.4.1",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.7",
-    "next": "15.4.10",
+    "next": "16.1.7",
     "next-auth": "^4.24.10",
     "openai": "^4.77.4",
     "prisma": "^5.22.0",
